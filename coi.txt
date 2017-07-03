@@ -1,0 +1,7 @@
+"Conflict of Interest"
+{
+	"base"			"base"
+	"title"			"Conflict of Interest"
+	"menusystem" 	"1"
+	"maps"			"^coi_"
+}

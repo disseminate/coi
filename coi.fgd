@@ -1,0 +1,9 @@
+@include "base.fgd"
+
+@PointClass base(Targetname, Angles) studio("models/props_vehicles/truck001a.mdl") = coi_truck : "COI Truck"
+[
+]
+
+@PointClass base(Targetname, Angles) studio("models/props_junk/garbage_bag001a.mdl") = coi_money : "COI Money Bag"
+[
+]
