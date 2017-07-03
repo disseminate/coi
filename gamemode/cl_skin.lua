@@ -19,6 +19,7 @@ end
 SKIN = { };
 
 SKIN.COLOR_WHITE = Color( 255, 255, 255 );
+SKIN.COLOR_GRAY = Color( 255, 255, 255, 100 );
 SKIN.COLOR_GLASS = Color( 0, 0, 0, 150 );
 
 SKIN.COLOR_CLOSEBUTTON = Color( 220, 0, 0 );
