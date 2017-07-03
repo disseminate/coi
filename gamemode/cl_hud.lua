@@ -13,6 +13,20 @@ function GM:HUDShouldDraw( name )
 
 end
 
+local HUDApproaches = { };
+function HUDApproach( val, targ, default )
+
+	if( !HUDApproaches[val] ) then
+	
+		HUDApproaches[val] = default;
+
+	end
+
+	HUDApproaches[val] = math.Approach( HUDApproaches[val], targ, math.abs( ( HUDApproaches[val] - targ ) / 45 ) ); -- 45 is a "speed constant"
+	return HUDApproaches[val];
+
+end
+
 function GM:HUDPaint()
 
 	if( !LocalPlayer().Joined ) then
@@ -20,12 +34,14 @@ function GM:HUDPaint()
 	end
 
 	self:HUDPaintTimer();
+	self:HUDPaintHealth();
 
 end
 
 function GM:HUDPaintTimer()
 
 	if( #player.GetJoined() == 0 ) then return end
+	--if( self:GetState() == STATE_PREGAME ) then return end -- vgui will do this
 
 	local state = self:GetState();
 	local timeLeft = self:TimeLeftInState();
@@ -42,7 +58,7 @@ function GM:HUDPaintTimer()
 		col = self:GetSkin().COLOR_GRAY;
 	end
 
-	surface.SetFont( "COI 48" );
+	surface.SetFont( "COI Title 48" );
 
 	local w, h = surface.GetTextSize( text );
 
@@ -50,12 +66,40 @@ function GM:HUDPaintTimer()
 	surface.SetTextPos( ScrW() / 2 - w / 2, 40 );
 	surface.DrawText( text );
 
-	surface.SetFont( "COI 30" );
+	surface.SetFont( "COI Title 24" );
 
 	local w2, h2 = surface.GetTextSize( text2 );
 
 	surface.SetTextColor( self:GetSkin().COLOR_GRAY );
-	surface.SetTextPos( ScrW() / 2 + w / 2 + 10, 40 );
+	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, 40 );
 	surface.DrawText( text2 );
+
+end
+
+function GM:HUDPaintHealth()
+
+	local bw = 400;
+	local bh = 24;
+	local pad = 2;
+
+	surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
+	surface.DrawRect( 40, ScrH() - 40 - bh, bw, bh );
+
+	local hp = HUDApproach( "health", LocalPlayer():Health(), LocalPlayer():GetMaxHealth() );
+
+	if( hp > 0 ) then
+		
+		surface.SetDrawColor( self:GetSkin().COLOR_HEALTH );
+		surface.DrawRect( 40 + pad, ScrH() - 40 - bh + pad, ( bw - pad * 2 ) * ( hp / LocalPlayer():GetMaxHealth() ), bh - pad * 2 );
+
+	end
+
+	local hp = LocalPlayer():Health();
+
+	surface.SetFont( "COI 20" );
+	local w, h = surface.GetTextSize( hp );
+	surface.SetTextPos( 40 + bw / 2 - w / 2, ScrH() - 40 - bh + bh / 2 - h / 2 );
+	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+	surface.DrawText( hp );
 
 end
