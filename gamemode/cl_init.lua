@@ -5,6 +5,7 @@ include( "sh_state.lua" );
 include( "cl_binds.lua" );
 include( "cl_gui.lua" );
 include( "cl_hud.lua" );
+include( "cl_map.lua" );
 include( "cl_player.lua" );
 include( "cl_skin.lua" );
 include( "cl_state.lua" );

@@ -1,5 +1,29 @@
 local meta = FindMetaTable( "Panel" );
 
+local matBlurScreen = Material( "pp/blurscreen" );
+
+function surface.BackgroundBlur( x, y, w, h, a )
+
+	if( a == 0 ) then return end
+	
+	local Fraction = 1;
+
+	DisableClipping( true );
+
+	surface.SetMaterial( matBlurScreen );
+	surface.SetDrawColor( 255, 255, 255, 255 * ( a or 1 ) );
+
+	for i=0.33, 1, 0.33 do
+		matBlurScreen:SetFloat( "$blur", 5 * i );
+		matBlurScreen:Recompute();
+		if( render ) then render.UpdateScreenEffectTexture() end -- Todo: Make this available to menu Lua
+		surface.DrawTexturedRect( x * -1, y * -1, w, h );
+	end
+
+	DisableClipping( false );
+
+end
+
 function GM:CreateFrame( title, w, h )
 
 	local f = vgui.Create( "DFrame" );

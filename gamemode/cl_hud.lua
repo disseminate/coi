@@ -8,6 +8,9 @@ local HUDElements = {
 function GM:HUDShouldDraw( name )
 
 	if( table.HasValue( HUDElements, name ) ) then return false; end
+	if( !LocalPlayer().Joined ) then
+		if( name == "CHudCrosshair" ) then return false end
+	end
 
 	return self.BaseClass:HUDShouldDraw( name );
 
@@ -30,11 +33,31 @@ end
 function GM:HUDPaint()
 
 	if( !LocalPlayer().Joined ) then
+		self:HUDPaintJoining();
 		return;
 	end
 
 	self:HUDPaintTimer();
 	self:HUDPaintHealth();
+
+end
+
+function GM:HUDPaintJoining()
+
+	surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), 1 );
+
+	surface.SetFont( "COI Title 128" );
+	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+	local t = "Conflict of Interest";
+	local w, h = surface.GetTextSize( t );
+	surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() / 2 - h / 2 );
+	surface.DrawText( t );
+
+	surface.SetFont( "COI Title 30" );
+	local t = "Press Space";
+	local w2, h2 = surface.GetTextSize( t );
+	surface.SetTextPos( ScrW() / 2 - w2 / 2, ScrH() / 2 + h / 2 + 10 );
+	surface.DrawText( t );
 
 end
 

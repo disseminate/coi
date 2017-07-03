@@ -36,3 +36,20 @@ function GM:TimeLeftInState()
 	end
 
 end
+
+function GM:InitializeTeams()
+
+	local trucks = ents.FindByClass( "coi_truck" );
+	local n = #trucks;
+
+	if( !self.Trucks ) then
+		self.Trucks = trucks;
+	end
+
+	for k, v in pairs( trucks ) do
+
+		team.SetUp( k, "Crew #" .. k, HSVToColor( k * 260, 0.8, 1 ) );
+
+	end
+
+end
