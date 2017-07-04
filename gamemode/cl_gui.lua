@@ -174,3 +174,46 @@ function GM:CreatePanel( p, dock, w, h )
 	return n;
 
 end
+
+function GM:CreateScrollPanel( p, dock, w, h )
+
+	local n = vgui.Create( "DScrollPanel", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+
+	function n:Paint( w, h )
+
+		if( self.PaintBackground ) then
+
+			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS_DARK );
+			surface.DrawRect( 0, 0, w, h );
+
+		end
+
+	end
+
+	function n:SetPaintBackground( b )
+
+		self.PaintBackground = b;
+
+	end
+
+	return n;
+
+end
+
+function GM:CreateLabel( p, dock, font, text, align )
+
+	local n = vgui.Create( "DLabel", p );
+	n:Dock( dock );
+	n:SetFont( font );
+	n:SetText( text );
+	n:SizeToContents();
+	n:SetContentAlignment( align );
+	n:SetTextColor( self:GetSkin().COLOR_WHITE );
+	
+	return n;
+
+end

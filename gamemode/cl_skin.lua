@@ -36,6 +36,33 @@ function SKIN:PaintFrame( panel, w, h )
 
 end
 
+function SKIN:PaintVScrollBar( panel, w, h )
+
+
+
+end
+
+function SKIN:PaintScrollBarGrip( panel, w, h )
+
+	surface.SetDrawColor( self.COLOR_GLASS );
+	surface.DrawRect( 0, 0, w, h );
+
+end
+
+function SKIN:PaintButtonDown( panel, w, h )
+
+	surface.SetDrawColor( self.COLOR_GLASS );
+	surface.DrawRect( 0, 0, w, h );
+
+end
+
+function SKIN:PaintButtonUp( panel, w, h )
+
+	surface.SetDrawColor( self.COLOR_GLASS );
+	surface.DrawRect( 0, 0, w, h );
+
+end
+
 derma.DefineSkin( "COI", "COI Skin", SKIN );
 
 function GM:ForceDermaSkin()
