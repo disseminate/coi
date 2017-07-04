@@ -1,5 +1,79 @@
 local meta = FindMetaTable( "Panel" );
 
+local matBlurScreen = Material( "pp/blurscreen" );
+
+function surface.BackgroundBlur( x, y, w, h, a )
+
+	if( a == 0 ) then return end
+	
+	local Fraction = 1;
+
+	DisableClipping( true );
+
+	surface.SetMaterial( matBlurScreen );
+	surface.SetDrawColor( 255, 255, 255, 255 * ( a or 1 ) );
+
+	for i=0.33, 1, 0.33 do
+		matBlurScreen:SetFloat( "$blur", 5 * i );
+		matBlurScreen:Recompute();
+		if( render ) then render.UpdateScreenEffectTexture() end -- Todo: Make this available to menu Lua
+		surface.DrawTexturedRect( x * -1, y * -1, w, h );
+	end
+
+	DisableClipping( false );
+
+end
+
+function meta:FadeIn()
+
+	self:SetAlpha( 0 );
+	self:AlphaTo( 255, 0.1 );
+
+	self:SetMouseInputEnabled( true );
+
+end
+
+function meta:FadeOut( noclose )
+
+	self:AlphaTo( 0, 0.1, 0, function()
+		
+		if( !noclose ) then
+			
+			self:Remove();
+			
+		end
+		
+	end );
+
+	self:SetMouseInputEnabled( false );
+
+end
+
+function meta:BindInput( f )
+
+	function self:Think()
+
+		local fm = f( self );
+
+		if( self:GetText() != fm ) then
+			self:SetText( fm );
+			surface.SetFont( self:GetFont() );
+
+			local w, h = surface.GetTextSize( fm );
+			local mw, mh = self:GetSize();
+			if( mw != w or mh != h ) then
+				self:SetSize( mw, mh );
+			end
+
+			self:InvalidateLayout();
+		end
+
+	end
+
+	return self;
+
+end
+
 function GM:CreateFrame( title, w, h )
 
 	local f = vgui.Create( "DFrame" );
@@ -85,27 +159,126 @@ function GM:CreateIconButton( p, dock, w, h, icon, click )
 
 end
 
-function meta:FadeIn()
+function GM:CreatePanel( p, dock, w, h )
 
-	self:SetAlpha( 0 );
-	self:AlphaTo( 255, 0.1 );
+	local n = vgui.Create( "EditablePanel", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
 
-	self:SetMouseInputEnabled( true );
+	function n:Paint( w, h )
+
+		if( self.BlurBackground ) then
+
+			surface.BackgroundBlur( 0, 0, w, h, 1 )
+
+		end
+
+		if( self.PaintBackground ) then
+
+			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS );
+			surface.DrawRect( 0, 0, w, h );
+
+		end
+
+	end
+
+	function n:SetBackgroundBlur( b )
+
+		self.BlurBackground = b;
+
+	end
+
+	function n:SetPaintBackground( b )
+
+		self.PaintBackground = b;
+
+	end
+
+	return n;
 
 end
 
-function meta:FadeOut( noclose )
+function GM:CreateScrollPanel( p, dock, w, h )
 
-	self:AlphaTo( 0, 0.1, 0, function()
-		
-		if( !noclose ) then
-			
-			self:Remove();
-			
+	local n = vgui.Create( "DScrollPanel", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+
+	function n:Paint( w, h )
+
+		if( self.PaintBackground ) then
+
+			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS );
+			surface.DrawRect( 0, 0, w, h );
+
 		end
-		
-	end );
 
-	self:SetMouseInputEnabled( false );
+	end
+
+	function n:SetPaintBackground( b )
+
+		self.PaintBackground = b;
+
+	end
+
+	return n;
+
+end
+
+function GM:CreateLabel( p, dock, font, text, align )
+
+	local n = vgui.Create( "DLabel", p );
+	n:Dock( dock );
+	n:SetFont( font );
+	n:SetText( text );
+	n:SizeToContents();
+	if( align ) then
+		n:SetContentAlignment( align );
+	end
+	n:SetTextColor( self:GetSkin().COLOR_WHITE );
+	
+	return n;
+
+end
+
+function GM:CreateModelPanel( p, dock, w, h, model, campos, lookat, fov )
+
+	local n = vgui.Create( "DModelPanel", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+	n:SetModel( model );
+	n:SetCamPos( campos );
+	n:SetLookAt( lookat );
+	n:SetFOV( fov );
+
+	return n;
+
+end
+
+function GM:CreateButton( p, dock, w, h, text, click )
+
+	local n = vgui.Create( "DButton", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+	n:SetFont( "COI Title 24" );
+	n:SetText( text );
+	n:SetTextColor( self:GetSkin().COLOR_WHITE );
+	n.DoClick = click;
+
+	function n:SetButtonColor( col )
+
+		self.ButtonColor = col;
+
+	end
+
+	return n;
 
 end

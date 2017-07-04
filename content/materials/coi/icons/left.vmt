@@ -1,0 +1,7 @@
+UnlitGeneric
+{
+	$basetexture "coi/icons/left"
+	$translucent 1
+	$transparent 1
+	$vertexcolor 1
+}
