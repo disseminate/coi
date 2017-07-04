@@ -10,3 +10,4 @@ include( "cl_map.lua" );
 include( "cl_player.lua" );
 include( "cl_skin.lua" );
 include( "cl_state.lua" );
+include( "cl_think.lua" );

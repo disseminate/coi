@@ -39,7 +39,22 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SendState();
 	ply:SetCustomCollisionCheck( true );
 
-	ply:SetTeam( TEAM_UNJOINED );
+	if( ply:IsBot() ) then
+
+		ply.Joined = true;
+
+		ply:SetTeamAuto();
+		ply:SetColorToTeam();
+
+		net.Start( "nJoin" );
+			net.WriteEntity( ply );
+		net.Broadcast();
+
+	else
+
+		ply:SetTeam( TEAM_UNJOINED );
+
+	end
 
 end
 

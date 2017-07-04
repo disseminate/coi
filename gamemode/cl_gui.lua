@@ -49,6 +49,31 @@ function meta:FadeOut( noclose )
 
 end
 
+function meta:BindInput( f )
+
+	function self:Think()
+
+		local fm = f( self );
+
+		if( self:GetText() != fm ) then
+			self:SetText( fm );
+			surface.SetFont( self:GetFont() );
+
+			local w, h = surface.GetTextSize( fm );
+			local mw, mh = self:GetSize();
+			if( mw != w or mh != h ) then
+				self:SetSize( mw, mh );
+			end
+
+			self:InvalidateLayout();
+		end
+
+	end
+
+	return self;
+
+end
+
 function GM:CreateFrame( title, w, h )
 
 	local f = vgui.Create( "DFrame" );
@@ -152,7 +177,7 @@ function GM:CreatePanel( p, dock, w, h )
 
 		if( self.PaintBackground ) then
 
-			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS_DARK );
+			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS );
 			surface.DrawRect( 0, 0, w, h );
 
 		end
@@ -187,7 +212,7 @@ function GM:CreateScrollPanel( p, dock, w, h )
 
 		if( self.PaintBackground ) then
 
-			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS_DARK );
+			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS );
 			surface.DrawRect( 0, 0, w, h );
 
 		end
@@ -211,9 +236,49 @@ function GM:CreateLabel( p, dock, font, text, align )
 	n:SetFont( font );
 	n:SetText( text );
 	n:SizeToContents();
-	n:SetContentAlignment( align );
+	if( align ) then
+		n:SetContentAlignment( align );
+	end
 	n:SetTextColor( self:GetSkin().COLOR_WHITE );
 	
+	return n;
+
+end
+
+function GM:CreateModelPanel( p, dock, w, h, model, campos, lookat, fov )
+
+	local n = vgui.Create( "DModelPanel", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+	n:SetModel( model );
+	n:SetCamPos( campos );
+	n:SetLookAt( lookat );
+	n:SetFOV( fov );
+
+	return n;
+
+end
+
+function GM:CreateButton( p, dock, w, h, text, click )
+
+	local n = vgui.Create( "DButton", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+	n:SetFont( "COI Title 24" );
+	n:SetText( text );
+	n:SetTextColor( self:GetSkin().COLOR_WHITE );
+	n.DoClick = click;
+
+	function n:SetButtonColor( col )
+
+		self.ButtonColor = col;
+
+	end
+
 	return n;
 
 end

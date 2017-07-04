@@ -37,6 +37,42 @@ function GM:TimeLeftInState()
 
 end
 
+function GM:StateThink()
+	
+	if( CLIENT and !LocalPlayer().Joined ) then return end
+
+	local s = self:GetState();
+	if( s == self.CacheState ) then
+		return;
+	end
+
+	self:OnStateTransition( s, self.CacheState );
+	self.CacheState = s;
+
+end
+
+function GM:OnStateTransition( state, oldstate )
+
+	if( CLIENT ) then
+
+		if( state == STATE_GAME and oldstate == STATE_PREGAME ) then
+			
+			if( self.Loadout and self.Loadout:IsValid() ) then
+				self.Loadout:FadeOut();
+			end
+
+		end
+
+		if( state == STATE_PREGAME ) then
+			
+			self:CreateLoadoutPanel();
+
+		end
+
+	end
+
+end
+
 function GM:InitializeTeams()
 
 	local trucks = ents.FindByClass( "coi_truck" );
@@ -48,7 +84,7 @@ function GM:InitializeTeams()
 
 	for k, v in pairs( trucks ) do
 
-		team.SetUp( k, "Crew #" .. k, HSVToColor( k * 260, 0.7, 1 ) );
+		team.SetUp( k, "Crew #" .. k, HSVToColor( ( k - 1 ) * 70, 0.5, 1 ) );
 
 	end
 

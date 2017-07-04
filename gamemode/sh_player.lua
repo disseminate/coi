@@ -23,4 +23,9 @@ function GM:StartCommand( ply, cmd )
 		cmd:ClearMovement();
 	end
 
+	if( self:GetState() == STATE_PREGAME ) then
+		cmd:ClearButtons();
+		cmd:ClearMovement();
+	end
+
 end

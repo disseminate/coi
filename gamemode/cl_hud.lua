@@ -37,8 +37,12 @@ function GM:HUDPaint()
 		return;
 	end
 
-	self:HUDPaintTimer();
-	self:HUDPaintHealth();
+	if( self:GetState() != STATE_PREGAME ) then
+
+		self:HUDPaintTimer();
+		self:HUDPaintHealth();
+
+	end
 
 end
 
