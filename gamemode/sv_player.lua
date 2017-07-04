@@ -12,6 +12,9 @@ local function nJoin( len, ply )
 
 		ply.Joined = true;
 
+		ply:SetTeamAuto();
+		ply:SetColorToTeam();
+
 		net.Start( "nJoin" );
 			net.WriteEntity( ply );
 		net.Broadcast();
@@ -36,6 +39,8 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SendState();
 	ply:SetCustomCollisionCheck( true );
 
+	ply:SetTeam( TEAM_UNJOINED );
+
 end
 
 function meta:SendPlayers()
@@ -52,3 +57,78 @@ function meta:SendPlayers()
 
 end
 util.AddNetworkString( "nPlayers" );
+
+function meta:SetTeamAuto( noMsg )
+
+	local trucks = GAMEMODE.Trucks;
+
+	local amt = math.huge;
+	local t = -1;
+
+	for k, v in pairs( trucks ) do
+
+		if( team.NumPlayers( k ) < amt ) then
+			t = k;
+			amt = team.NumPlayers( k );
+		end
+
+	end
+
+	if( t > -1 ) then
+
+		self:SetTeam( t );
+
+		if( !noMsg ) then
+
+			net.Start( "nSetTeamAuto" );
+				net.WriteUInt( t, 16 );
+			net.Send( self );
+
+		end
+
+	end
+
+end
+util.AddNetworkString( "nSetTeamAuto" );
+
+function meta:SetColorToTeam()
+
+	local col = team.GetColor( self:Team() );
+	self:SetPlayerColor( Vector( col.r / 255, col.g / 255, col.b / 255 ) );
+
+end
+
+function GM:AreTeamsUnbalanced()
+
+	return !self:CanChangeTeam();
+
+end
+
+function GM:CanChangeTeam( cur, targ )
+
+	-- TODO
+	return true;
+
+end
+
+function GM:RebalanceTeams()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		v:SetTeam( TEAM_UNJOINED );
+
+	end
+
+	for _, v in pairs( player.GetAll() ) do
+
+		v:SetTeamAuto( true );
+		v:SetColorToTeam();
+
+		net.Start( "nSetTeamAutoRebalance" );
+			net.WriteUInt( v:Team(), 16 );
+		net.Send( v );
+
+	end
+
+end
+util.AddNetworkString( "nSetTeamAutoRebalance" );

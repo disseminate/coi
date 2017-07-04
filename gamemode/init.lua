@@ -10,6 +10,7 @@ AddCSLuaFile( "cl_binds.lua" );
 AddCSLuaFile( "cl_gui.lua" );
 AddCSLuaFile( "cl_hud.lua" );
 AddCSLuaFile( "cl_init.lua" );
+AddCSLuaFile( "cl_loadout.lua" );
 AddCSLuaFile( "cl_map.lua" );
 AddCSLuaFile( "cl_player.lua" );
 AddCSLuaFile( "cl_skin.lua" );

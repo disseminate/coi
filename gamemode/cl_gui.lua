@@ -24,6 +24,31 @@ function surface.BackgroundBlur( x, y, w, h, a )
 
 end
 
+function meta:FadeIn()
+
+	self:SetAlpha( 0 );
+	self:AlphaTo( 255, 0.1 );
+
+	self:SetMouseInputEnabled( true );
+
+end
+
+function meta:FadeOut( noclose )
+
+	self:AlphaTo( 0, 0.1, 0, function()
+		
+		if( !noclose ) then
+			
+			self:Remove();
+			
+		end
+		
+	end );
+
+	self:SetMouseInputEnabled( false );
+
+end
+
 function GM:CreateFrame( title, w, h )
 
 	local f = vgui.Create( "DFrame" );
@@ -109,27 +134,43 @@ function GM:CreateIconButton( p, dock, w, h, icon, click )
 
 end
 
-function meta:FadeIn()
+function GM:CreatePanel( p, dock, w, h )
 
-	self:SetAlpha( 0 );
-	self:AlphaTo( 255, 0.1 );
+	local n = vgui.Create( "EditablePanel", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
 
-	self:SetMouseInputEnabled( true );
+	function n:Paint( w, h )
 
-end
+		if( self.BlurBackground ) then
 
-function meta:FadeOut( noclose )
+			surface.BackgroundBlur( 0, 0, w, h, 1 )
 
-	self:AlphaTo( 0, 0.1, 0, function()
-		
-		if( !noclose ) then
-			
-			self:Remove();
-			
 		end
-		
-	end );
 
-	self:SetMouseInputEnabled( false );
+		if( self.PaintBackground ) then
+
+			surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS_DARK );
+			surface.DrawRect( 0, 0, w, h );
+
+		end
+
+	end
+
+	function n:SetBackgroundBlur( b )
+
+		self.BlurBackground = b;
+
+	end
+
+	function n:SetPaintBackground( b )
+
+		self.PaintBackground = b;
+
+	end
+
+	return n;
 
 end

@@ -48,8 +48,10 @@ function GM:InitializeTeams()
 
 	for k, v in pairs( trucks ) do
 
-		team.SetUp( k, "Crew #" .. k, HSVToColor( k * 260, 0.8, 1 ) );
+		team.SetUp( k, "Crew #" .. k, HSVToColor( k * 260, 0.7, 1 ) );
 
 	end
+
+	team.SetUp( TEAM_UNJOINED, "Unjoined", Color( 128, 128, 128 ), false );
 
 end
