@@ -72,22 +72,35 @@ function GM:ScoreboardShow()
 
 							table.insert( self.PlayerCache, v );
 
-							local row = GAMEMODE:CreatePanel( self, TOP, 0, 64 );
-							row:DockPadding( 8, 8, 8, 8 );
+							local row = GAMEMODE:CreatePanel( self, TOP, 0, 48 );
+							row:DockPadding( 4, 4, 4, 4 );
 							row:SetPaintBackground( true );
 							row:DockMargin( 0, 0, 0, 4 );
-							y = y + 64 + 4; -- row + margin
+							y = y + 48 + 4; -- row + margin
 
-								local av = vgui.Create( "AvatarImage", row );
-								av:Dock( LEFT );
-								av:SetSize( 48, 48 );
-								av:SetPlayer( v, 64 );
+								local av = GAMEMODE:CreateAvatarImage( row, LEFT, 40, 40, v );
 								av:DockMargin( 0, 0, 10, 0 );
 
 								local p4 = GAMEMODE:CreatePanel( row, FILL );
-									local n = GAMEMODE:CreateLabel( p4, TOP, "COI Title 24", v:Nick(), 7 ):BindInput( function()
+									local n = GAMEMODE:CreateLabel( p4, FILL, "COI 20", v:Nick(), 4 ):BindInput( function()
 										if( v and v:IsValid() ) then return v:Nick() end
 										return "";
+									end );
+									local ping = GAMEMODE:CreateLabel( p4, RIGHT, "COI 16", "999", 6 ):BindInput( function()
+										if( v and v:IsValid() ) then return "" .. v:Ping() end
+										return "";
+									end );
+									ping:DockMargin( 10, 0, 10, 0 );
+									local m = GAMEMODE:CreateIconButton( p4, RIGHT, 40, 40, v:IsMuted() and self:GetSkin().ICON_AUDIO_OFF or self:GetSkin().ICON_AUDIO_ON, function( b )
+
+										if( v:IsMuted() ) then
+											v:SetMuted( false );
+											b:SetIcon( self:GetSkin().ICON_AUDIO_ON );
+										else
+											v:SetMuted( true );
+											b:SetIcon( self:GetSkin().ICON_AUDIO_OFF );
+										end
+
 									end );
 
 						end

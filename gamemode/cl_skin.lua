@@ -32,6 +32,8 @@ SKIN.COLOR_CLOSEBUTTON = Color( 220, 0, 0 );
 SKIN.ICON_CLOSE = Material( "coi/icons/close" );
 SKIN.ICON_LEFT = Material( "coi/icons/left" );
 SKIN.ICON_RIGHT = Material( "coi/icons/right" );
+SKIN.ICON_AUDIO_OFF = Material( "coi/icons/audio-off" );
+SKIN.ICON_AUDIO_ON = Material( "coi/icons/audio-on" );
 
 SKIN.MAT_GREEN = Material( "coi/vgui/green" );
 

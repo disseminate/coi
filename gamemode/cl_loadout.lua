@@ -86,10 +86,7 @@ function GM:CreateLoadoutPanel()
 					p3:DockMargin( 0, 0, 0, 10 );
 					p3:DockPadding( 10, 10, 10, 10 );
 
-						local av = vgui.Create( "AvatarImage", p3 );
-						av:Dock( LEFT );
-						av:SetSize( 60, 60 );
-						av:SetPlayer( v, 64 );
+						local av = GAMEMODE:CreateAvatarImage( p3, LEFT, 60, 60, v );
 						av:DockMargin( 0, 0, 10, 0 );
 
 						local p4 = GAMEMODE:CreatePanel( p3, FILL );
