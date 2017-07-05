@@ -45,9 +45,18 @@ end
 
 function GM:CanChangeTeam( cur, targ )
 
+	if( !self.Trucks ) then return false end
+	if( !self.Trucks[targ] ) then return false end -- No changing to unconnected/etc teams
+
 	if( self:GetState() == STATE_GAME ) then return false end
 	if( cur == targ ) then return false end
-	-- TODO
+	
+	local diff = team.NumPlayers( targ ) - team.NumPlayers( cur );
+
+	-- Can always join teams with less players
+	-- Can't join teams with more
+	if( diff > 0 ) then return false end
+
 	return true;
 
 end
