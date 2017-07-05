@@ -68,8 +68,6 @@ function GM:PlayerSpawn( ply )
 			net.WriteEntity( ply );
 		net.Broadcast();
 
-		ply:SpawnAtTruck();
-
 	end
 
 	ply:SetColorToTeam();
@@ -168,11 +166,12 @@ util.AddNetworkString( "nSetTeamAutoRebalance" );
 local function nJoinTeam( len, ply )
 
 	local t = net.ReadUInt( 16 );
-
+	
 	if( !GAMEMODE:CanChangeTeam( ply:Team(), t ) ) then return end
 
 	ply:SetTeam( t );
 	ply:SetColorToTeam();
+	ply:SpawnAtTruck();
 
 end
 net.Receive( "nJoinTeam", nJoinTeam );

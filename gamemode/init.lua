@@ -16,6 +16,7 @@ AddCSLuaFile( "cl_loadout.lua" );
 AddCSLuaFile( "cl_map.lua" );
 AddCSLuaFile( "cl_player.lua" );
 AddCSLuaFile( "cl_pp.lua" );
+AddCSLuaFile( "cl_scoreboard.lua" );
 AddCSLuaFile( "cl_skin.lua" );
 AddCSLuaFile( "cl_state.lua" );
 AddCSLuaFile( "cl_think.lua" );
