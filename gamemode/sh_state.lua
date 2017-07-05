@@ -69,6 +69,12 @@ function GM:OnStateTransition( state, oldstate )
 
 		end
 
+		if( state == STATE_POSTGAME ) then
+
+			self:HUDResetGameOver();
+
+		end
+
 	end
 
 	if( state == STATE_PREGAME and oldstate == STATE_POSTGAME ) then
@@ -113,5 +119,11 @@ function GM:InitializeTeams()
 	end
 
 	team.SetUp( TEAM_UNJOINED, "Unjoined", Color( 128, 128, 128 ), false );
+
+end
+
+function GM:InRushPeriod()
+
+	return self:GetState() == STATE_GAME and self:TimeLeftInState() <= 60;
 
 end

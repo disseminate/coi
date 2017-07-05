@@ -40,12 +40,13 @@ function GM:Reset()
 	for _, v in pairs( player.GetAll() ) do
 
 		v.HasMoney = false;
+		v.Safe = false;
 		v:Spawn();
 
 	end
 
 	game.CleanUpMap();
-	
+
 	self:ResetMapTrucks();
 
 end

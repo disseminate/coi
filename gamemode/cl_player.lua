@@ -7,6 +7,7 @@ local function nPlayers( len )
 		local ply = net.ReadEntity();
 		ply.Joined = net.ReadBool();
 		ply.HasMoney = net.ReadBool();
+		ply.Safe = net.ReadBool();
 
 	end
 
@@ -16,6 +17,43 @@ net.Receive( "nPlayers", nPlayers );
 function GM:PrePlayerDraw( ply )
 
 	if( !ply.Joined ) then return true end
+
+	if( ply.Safe ) then
+
+		local teams = self.Teams;
+		if( !teams ) then return end
+		if( !teams[ply:Team()] ) then return end
+		if( !teams[ply:Team()].Truck or !teams[ply:Team()].Truck:IsValid() ) then return end
+
+		local truck = teams[ply:Team()].Truck;
+		local p0 = truck:GetPos();
+
+		local n = 1;
+		for k, v in pairs( team.GetPlayers( ply:Team() ) ) do
+			if( v == ply ) then
+				n = k;
+				break;
+			end
+		end
+
+		local x = 20 - ( ( n - 1 ) % 5 ) * 16;
+		local y = 24;
+		if( n % 11 >= 6 ) then
+			y = -24;
+		end
+		local z = -5;
+
+		local ang = truck:GetAngles();
+		if( n % 11 >= 6 ) then
+			ang:RotateAroundAxis( truck:GetUp(), -90 );
+		else
+			ang:RotateAroundAxis( truck:GetUp(), 90 );
+		end
+
+		ply:SetPos( p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z );
+		ply:SetRenderAngles( ang );
+
+	end
 
 end
 
@@ -45,6 +83,16 @@ local function nSetMoney( len )
 end
 net.Receive( "nSetMoney", nSetMoney );
 
+local function nSetSafe( len )
+
+	local ply = net.ReadEntity();
+	local safe = net.ReadBool();
+
+	ply.Safe = safe;
+
+end
+net.Receive( "nSetSafe", nSetSafe );
+
 function GM:NetworkEntityCreated( ent )
 
 	if( ent and ent:IsValid() ) then
@@ -52,6 +100,12 @@ function GM:NetworkEntityCreated( ent )
 		if( ent:IsPlayer() and ent:IsBot() ) then
 
 			ent.Joined = true;
+
+		end
+
+		if( self.Teams and ent:GetClass() == "coi_truck" and #ents.FindByClass( "coi_truck" ) == #self.Teams ) then
+
+			self:ResetMapTrucks();
 
 		end
 

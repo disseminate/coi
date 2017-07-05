@@ -85,6 +85,7 @@ function meta:SendPlayers()
 			net.WriteEntity( v );
 			net.WriteBool( v.Joined );
 			net.WriteBool( v.HasMoney );
+			net.WriteBool( v.Safe );
 
 		end
 	net.Send( self );
@@ -196,9 +197,19 @@ util.AddNetworkString( "nSetMoney" );
 
 function GM:KeyPress( ply, key )
 
-	if( ply.HasMoney and key == IN_ATTACK2 ) then
+	if( ply.HasMoney and key == IN_ATTACK2 and self:GetState() == STATE_GAME ) then
 
 		ply:DropMoney( true );
+
+	end
+
+	if( ply.Safe and key == IN_USE and self:InRushPeriod() ) then
+		
+		ply.Safe = false;
+		net.Start( "nSetSafe" );
+			net.WriteEntity( ply );
+			net.WriteBool( false );
+		net.Broadcast();
 
 	end
 

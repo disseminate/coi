@@ -8,7 +8,7 @@ local HUDElements = {
 function GM:HUDShouldDraw( name )
 
 	if( table.HasValue( HUDElements, name ) ) then return false; end
-	if( !LocalPlayer().Joined ) then
+	if( !LocalPlayer().Joined or self:GetState() == STATE_POSTGAME ) then
 		if( name == "CHudCrosshair" ) then return false end
 	end
 
@@ -17,7 +17,8 @@ function GM:HUDShouldDraw( name )
 end
 
 local HUDApproaches = { };
-function HUDApproach( val, targ, default )
+local HUDTimes = { };
+function HUDApproach( val, targ, default, speed )
 
 	if( !HUDApproaches[val] ) then
 	
@@ -25,8 +26,28 @@ function HUDApproach( val, targ, default )
 
 	end
 
-	HUDApproaches[val] = math.Approach( HUDApproaches[val], targ, math.abs( ( HUDApproaches[val] - targ ) / 45 ) ); -- 45 is a "speed constant"
+	HUDApproaches[val] = math.Approach( HUDApproaches[val], targ, math.abs( ( HUDApproaches[val] - targ ) / ( speed or 45 ) ) );
 	return HUDApproaches[val];
+
+end
+function HUDEase( val, duration, start, endpos, easeIn, easeOut )
+
+	if( !HUDApproaches[val] ) then
+		HUDApproaches[val] = 0;
+		HUDTimes[val] = CurTime();
+	end
+
+	local mul = ( CurTime() - HUDTimes[val] ) / duration;
+
+	HUDApproaches[val] = math.EaseInOut( math.Clamp( mul, 0, 1 ), easeIn or 1, easeOut or 1 );
+	return HUDApproaches[val] * ( endpos - start ) + start;
+
+end
+
+function HUDClear( val )
+
+	HUDApproaches[val] = nil;
+	HUDTimes[val] = nil;
 
 end
 
@@ -42,6 +63,8 @@ function GM:HUDPaint()
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
 		self:HUDPaintMoney();
+		self:HUDPaintRush();
+		self:HUDPaintGameOver();
 
 	end
 
@@ -189,6 +212,135 @@ function GM:HUDPaintMoney()
 				end
 
 			end
+
+		end
+
+	end
+
+end
+
+function GM:HUDPaintRush()
+
+	local a;
+
+	if( self:InRushPeriod() ) then
+
+		a = HUDApproach( "rush_warn", 1, 0 );
+
+	else
+
+		a = HUDApproach( "rush_warn", 0, 0 );
+
+	end
+
+	if( a > 0 ) then
+
+		surface.SetAlphaMultiplier( a );
+
+			local t = "Get to your truck before you're arrested!";
+			surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+			surface.SetFont( "COI Title 30" );
+			local w, h = surface.GetTextSize( t );
+			surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - h - 40 );
+			surface.DrawText( t );
+
+		surface.SetAlphaMultiplier( 1 );
+
+	end
+
+end
+
+function GM:HUDResetGameOver()
+
+	for i = 1, 20 do
+		HUDClear( "gameover_" .. i );
+	end
+
+	self.TestTime = CurTime();
+
+end
+
+function GM:HUDPaintGameOver()
+
+	--if( self:GetState() != STATE_POSTGAME ) then return end
+
+	--local t = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
+
+	if( !self.TestTime ) then
+		self.TestTime = CurTime();
+	end
+	local dt = CurTime() - self.TestTime;
+
+	surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
+
+	if( dt < 5 ) then
+
+		surface.SetFont( "COI Title 64" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = "Heist";
+		local w, h = surface.GetTextSize( t );
+		if( dt < 4 ) then
+			local ym = HUDEase( "gameover_1", 1, -ScrH() * 0.2, ScrH() / 2 - 100, 0, 1 );
+			surface.SetTextPos( ScrW() / 2 - w / 2, ym );
+		else
+			local ym = HUDEase( "gameover_3", 1, ScrH() / 2 - 100, ScrH() * 1.2, 1, 0 );
+			surface.SetTextPos( ScrW() / 2 - w / 2, ym );
+		end
+		surface.DrawText( t );
+
+		if( dt > 0.7 ) then
+
+			surface.SetFont( "COI Title 128" );
+			local t = "Successful";
+
+			if( LocalPlayer().Safe ) then
+				surface.SetTextColor( self:GetSkin().COLOR_SUCCESS );
+			else
+				surface.SetTextColor( self:GetSkin().COLOR_FAIL );
+				t = "Failed";
+			end
+
+			local w, h = surface.GetTextSize( t );
+			if( dt < 4.3 ) then
+				local ym = HUDEase( "gameover_2", 1, -ScrH() * 0.2, ScrH() / 2, 0, 1 );
+				surface.SetTextPos( ScrW() / 2 - w / 2, ym );
+			else
+				local ym = HUDEase( "gameover_4", 0.7, ScrH() / 2, ScrH() * 1.2, 1, 0 );
+				surface.SetTextPos( ScrW() / 2 - w / 2, ym );
+			end
+			surface.DrawText( t );
+
+		end
+
+	elseif( dt < 10 ) then
+
+		surface.SetFont( "COI Title 64" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = "Winning Crew";
+		local w, h = surface.GetTextSize( t );
+		if( dt < 9 ) then
+			local xm = HUDEase( "gameover_5", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
+			surface.SetTextPos( xm, ScrH() / 2 - h / 2 - 100 );
+		else
+			local xm = HUDEase( "gameover_7", 1, ScrW() / 2 - w / 2, -w, 1, 0 );
+			surface.SetTextPos( xm, ScrH() / 2 - h / 2 - 100 );
+		end
+		surface.DrawText( t );
+
+		if( dt > 5.7 ) then
+
+			surface.SetFont( "COI Title 128" );
+			surface.SetTextColor( self:GetSkin().COLOR_FAIL );
+			local t = "The Good Crew";
+			local w, h = surface.GetTextSize( t );
+			if( dt < 9.3 ) then
+				local xm = HUDEase( "gameover_6", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
+				surface.SetTextPos( xm, ScrH() / 2 - h / 2 );
+			else
+				local xm = HUDEase( "gameover_8", 0.7, ScrW() / 2 - w / 2, -w, 1, 0 );
+				surface.SetTextPos( xm, ScrH() / 2 - h / 2 );
+			end
+			surface.DrawText( t );
 
 		end
 

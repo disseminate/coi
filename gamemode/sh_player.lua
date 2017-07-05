@@ -28,6 +28,17 @@ function GM:StartCommand( ply, cmd )
 		cmd:ClearMovement();
 	end
 
+	if( ply.Safe ) then
+		local fl = cmd:GetButtons();
+		if( bit.band( fl, IN_USE ) == IN_USE ) then
+			cmd:SetButtons( IN_USE );
+		else
+			cmd:ClearButtons();
+		end
+
+		cmd:ClearMovement();
+	end
+
 end
 
 function GM:ShouldCollide( e1, e2 )

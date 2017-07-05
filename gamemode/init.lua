@@ -1,5 +1,6 @@
 include( "sh_enum.lua" );
 include( "shared.lua" );
+include( "sh_anim.lua" );
 include( "sh_class.lua" );
 include( "sh_player.lua" );
 include( "sh_state.lua" );
@@ -9,6 +10,7 @@ include( "sv_state.lua" );
 include( "sv_think.lua" );
 
 AddCSLuaFile( "cl_binds.lua" );
+AddCSLuaFile( "cl_calcview.lua" );
 AddCSLuaFile( "cl_gui.lua" );
 AddCSLuaFile( "cl_hud.lua" );
 AddCSLuaFile( "cl_init.lua" );
@@ -20,6 +22,7 @@ AddCSLuaFile( "cl_scoreboard.lua" );
 AddCSLuaFile( "cl_skin.lua" );
 AddCSLuaFile( "cl_state.lua" );
 AddCSLuaFile( "cl_think.lua" );
+AddCSLuaFile( "sh_anim.lua" );
 AddCSLuaFile( "sh_class.lua" );
 AddCSLuaFile( "sh_enum.lua" );
 AddCSLuaFile( "sh_player.lua" );
