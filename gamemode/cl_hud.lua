@@ -63,7 +63,7 @@ function GM:HUDPaint()
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
 		self:HUDPaintMoney();
-		self:HUDPaintRush();
+		self:HUDPaintDirectionArrow();
 		self:HUDPaintGameOver();
 
 	end
@@ -219,37 +219,6 @@ function GM:HUDPaintMoney()
 
 end
 
-function GM:HUDPaintRush()
-
-	local a;
-
-	if( self:InRushPeriod() ) then
-
-		a = HUDApproach( "rush_warn", 1, 0 );
-
-	else
-
-		a = HUDApproach( "rush_warn", 0, 0 );
-
-	end
-
-	if( a > 0 ) then
-
-		surface.SetAlphaMultiplier( a );
-
-			local t = "Get to your truck before you're arrested!";
-			surface.SetTextColor( self:GetSkin().COLOR_WARNING );
-			surface.SetFont( "COI Title 30" );
-			local w, h = surface.GetTextSize( t );
-			surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - h - 40 );
-			surface.DrawText( t );
-
-		surface.SetAlphaMultiplier( 1 );
-
-	end
-
-end
-
 function GM:HUDResetGameOver()
 
 	for i = 1, 20 do
@@ -260,11 +229,69 @@ function GM:HUDResetGameOver()
 
 end
 
+function GM:HUDPaintDirectionArrow()
+
+	local a;
+	local pos = LocalPlayer():GetPos();
+
+	local teams = self.Teams;
+	if( !teams ) then return end
+	if( !teams[LocalPlayer():Team()] ) then return end
+	if( !teams[LocalPlayer():Team()].Truck or !teams[LocalPlayer():Team()].Truck:IsValid() ) then return end
+
+	local truck = teams[LocalPlayer():Team()].Truck;
+
+	local tpos = truck:GetPos();
+
+	if( math.abs( tpos.z - pos.z ) < 100 and ( LocalPlayer().HasMoney or self:InRushPeriod() ) and !LocalPlayer().Safe ) then
+
+		a = HUDApproach( "arrow", 1, 0 );
+
+	else
+
+		a = HUDApproach( "arrow", 0, 0 );
+
+	end
+
+	if( a > 0 ) then
+
+		local aim = LocalPlayer():GetAimVector():Angle();
+		local d = math.AngleDifference( aim.y, ( tpos - pos ):Angle().y );
+
+		self:GetSkin().ICON_ARROW:SetFloat( "$alpha", a );
+
+		surface.SetDrawColor( self:GetSkin().COLOR_WHITE );
+		surface.SetMaterial( self:GetSkin().ICON_ARROW );
+		surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 40 - 100, 64, 64, 90 - d );
+
+		surface.SetAlphaMultiplier( a );
+
+			surface.SetFont( "COI Title 30" );
+			local t;
+
+			if( LocalPlayer().HasMoney ) then
+				surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+				t = "Put the money in the truck!";
+			else
+				t = "Get to your truck before you're arrested!";
+				surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+			end
+
+			local w, h = surface.GetTextSize( t );
+			surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h );
+			surface.DrawText( t );
+
+		surface.SetAlphaMultiplier( 1 );
+
+	end
+
+end
+
 function GM:HUDPaintGameOver()
 
 	if( self:GetState() != STATE_POSTGAME ) then return end
 
-	local dt = CurTime() - ( STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState() );
+	local dt = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
 
 	surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
 

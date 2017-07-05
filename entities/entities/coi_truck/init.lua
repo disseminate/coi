@@ -2,14 +2,22 @@ AddCSLuaFile( "cl_init.lua" );
 include( "shared.lua" );
 
 function ENT:Use( ply )
+	
+	if( GAMEMODE:InRushPeriod() ) then
 
-	if( GAMEMODE:InRushPeriod() and !ply.Safe ) then
+		if( !ply.Safe ) then
 
-		ply.Safe = true;
-		net.Start( "nSetSafe" );
-			net.WriteEntity( ply );
-			net.WriteBool( true );
-		net.Broadcast();
+			if( ( ply.LastUnsafe and CurTime() - ply.LastUnsafe >= 0.1 ) or !ply.LastUnsafe ) then
+				
+				ply.Safe = true;
+				net.Start( "nSetSafe" );
+					net.WriteEntity( ply );
+					net.WriteBool( true );
+				net.Broadcast();
+
+			end
+
+		end
 
 	end
 

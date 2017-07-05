@@ -1,0 +1,6 @@
+UnlitGeneric
+{
+	$basetexture "coi/icons/arrow"
+	$translucent 1
+	$transparent 1
+}

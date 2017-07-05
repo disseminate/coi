@@ -38,6 +38,7 @@ SKIN.ICON_LEFT = Material( "coi/icons/left" );
 SKIN.ICON_RIGHT = Material( "coi/icons/right" );
 SKIN.ICON_AUDIO_OFF = Material( "coi/icons/audio-off" );
 SKIN.ICON_AUDIO_ON = Material( "coi/icons/audio-on" );
+SKIN.ICON_ARROW = Material( "coi/icons/arrow" );
 
 SKIN.MAT_GREEN = Material( "coi/vgui/green" );
 

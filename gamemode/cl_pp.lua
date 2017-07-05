@@ -41,8 +41,9 @@ function GM:PreDrawViewModel()
 		self.MoneyViewmodel:SetPos( newPos );
 		self.MoneyViewmodel:SetRenderOrigin( newPos );
 		self.MoneyViewmodel:SetRenderAngles( ang );
+		cam.IgnoreZ( true )
 			self.MoneyViewmodel:DrawModel();
-
+		cam.IgnoreZ( false );
 	elseif( self.MoneyViewmodel ) then
 
 		self.MoneyViewmodel:Remove();

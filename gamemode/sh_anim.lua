@@ -2,7 +2,7 @@ function GM:CalcMainActivity( ply, vel )
 
 	local ideal, override = self.BaseClass:CalcMainActivity( ply, vel );
 
-	if( ply.Safe ) then
+	if( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
 		return ACT_HL2MP_SIT, -1;
 

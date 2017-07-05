@@ -206,6 +206,7 @@ function GM:KeyPress( ply, key )
 	if( ply.Safe and key == IN_USE and self:InRushPeriod() ) then
 		
 		ply.Safe = false;
+		ply.LastUnsafe = CurTime();
 		net.Start( "nSetSafe" );
 			net.WriteEntity( ply );
 			net.WriteBool( false );

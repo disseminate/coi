@@ -2,7 +2,7 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 
 	local tab = table.Copy( self.BaseClass:CalcView( ply, origin, angles, fov, znear, zfar ) );
 
-	if( ply.Safe ) then
+	if( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
 		local teams = self.Teams;
 		if( !teams ) then return end
@@ -28,6 +28,7 @@ end
 function GM:ShouldDrawLocalPlayer( ply )
 
 	if( ply.Safe ) then return true end
+	if( self:GetState() == STATE_PREGAME ) then return true end
 	return false;
 
 end

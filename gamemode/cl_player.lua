@@ -15,10 +15,10 @@ end
 net.Receive( "nPlayers", nPlayers );
 
 function GM:PrePlayerDraw( ply )
-
+	
 	if( !ply.Joined ) then return true end
 
-	if( ply.Safe ) then
+	if( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
 		local teams = self.Teams;
 		if( !teams ) then return end
