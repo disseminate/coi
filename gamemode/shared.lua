@@ -24,3 +24,15 @@ function RequireDir( dir )
 	return EXPORTS;
 
 end
+
+function Alpha( col, amt )
+
+	if( amt == 1 ) then return col end
+	
+	local col = table.Copy( col );
+
+	col.a = col.a * amt;
+
+	return col;
+
+end

@@ -45,8 +45,8 @@ end
 
 function GM:CanChangeTeam( cur, targ )
 
-	if( !self.Trucks ) then return false end
-	if( !self.Trucks[targ] ) then return false end -- No changing to unconnected/etc teams
+	if( !self.Teams ) then return false end
+	if( !self.Teams[targ] ) then return false end -- No changing to unconnected/etc teams
 
 	if( self:GetState() == STATE_GAME ) then return false end
 	if( cur == targ ) then return false end

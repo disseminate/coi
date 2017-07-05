@@ -181,6 +181,7 @@ function GM:CreateLoadoutPanel()
 									if( !v or !v:IsValid() or v:Team() != self.Team ) then
 
 										self.Invalidated = true;
+										break;
 
 									end
 
@@ -191,6 +192,7 @@ function GM:CreateLoadoutPanel()
 									if( v:Team() == self.Team and !table.HasValue( self.PlayerCache, v ) ) then
 
 										self.Invalidated = true;
+										break;
 
 									end
 

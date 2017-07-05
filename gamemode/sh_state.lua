@@ -79,21 +79,36 @@ function GM:OnStateTransition( state, oldstate )
 
 end
 
-function GM:InitializeTeams()
+function GM:ResetMapTrucks()
 
 	local trucks = ents.FindByClass( "coi_truck" );
-	local n = #trucks;
 
-	if( !self.Trucks ) then
-		self.Trucks = trucks;
+	if( !self.Teams ) then
+		self.Teams = { };
 	end
-
+	
 	for k, v in pairs( trucks ) do
+		
+		self.Teams[k] = {
+			Truck = v,
+			SpawnPos = v:GetPos() + v:GetForward() * -180
+		};
 
-		team.SetUp( k, "Crew #" .. k, HSVToColor( ( k - 1 ) * 70, 0.5, 1 ) );
 		if( SERVER ) then
 			v:SetTeam( k );
 		end
+		
+	end
+
+end
+
+function GM:InitializeTeams()
+
+	self:ResetMapTrucks();
+
+	for k, v in pairs( self.Teams ) do
+
+		team.SetUp( k, "Crew #" .. k, HSVToColor( ( k - 1 ) * 70, 0.5, 1 ) );
 
 	end
 

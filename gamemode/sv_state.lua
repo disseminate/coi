@@ -45,5 +45,7 @@ function GM:Reset()
 	end
 
 	game.CleanUpMap();
+	
+	self:ResetMapTrucks();
 
 end

@@ -39,7 +39,6 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:SendPlayers();
 	ply:SendState();
-	ply:SetCustomCollisionCheck( true );
 
 	ply:SetTeam( TEAM_UNJOINED );
 
@@ -56,6 +55,8 @@ function GM:PlayerSpawn( ply )
 	player_manager.OnPlayerSpawn( ply );
 	player_manager.RunClass( ply, "Spawn" );
 	hook.Call( "PlayerSetModel", GAMEMODE, ply );
+
+	ply:SetCustomCollisionCheck( true );
 
 	if( ply:IsBot() ) then
 
@@ -93,12 +94,12 @@ util.AddNetworkString( "nPlayers" );
 
 function meta:SetTeamAuto( noMsg )
 
-	local trucks = GAMEMODE.Trucks;
+	local teams = GAMEMODE.Teams;
 
 	local amt = math.huge;
 	local t = -1;
 
-	for k, v in pairs( trucks ) do
+	for k, v in pairs( teams ) do
 
 		if( team.NumPlayers( k ) < amt ) then
 			t = k;
@@ -133,11 +134,12 @@ end
 
 function meta:SpawnAtTruck()
 
-	if( !GAMEMODE.Trucks ) then return end
-	if( !GAMEMODE.Trucks[self:Team()] ) then return end
+	if( !GAMEMODE.Teams ) then return end
+	if( !GAMEMODE.Teams[self:Team()] ) then return end
+	if( !GAMEMODE.Teams[self:Team()].SpawnPos ) then return end
 
-	local t = GAMEMODE.Trucks[self:Team()];
-	self:SetPos( t:GetPos() + t:GetForward() * -180 );
+	local t = GAMEMODE.Teams[self:Team()].SpawnPos;
+	self:SetPos( t );
 
 end
 

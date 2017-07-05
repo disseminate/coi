@@ -45,7 +45,7 @@ end
 
 function SKIN:PaintVScrollBar( panel, w, h )
 
-
+	
 
 end
 
@@ -89,12 +89,12 @@ function SKIN:PaintButton( panel, w, h )
 		panel.HoverPerc = math.Approach( panel.HoverPerc, 0, ( panel.HoverPerc ) * ( 1 / 45 ) );
 	end
 
-	surface.SetAlphaMultiplier( 1 - 0.3 * panel.HoverPerc );
-		surface.SetDrawColor( panel.ButtonColor or self.COLOR_GLASS );
-		surface.DrawRect( 0, 0, w, h );
-		surface.SetDrawColor( self.COLOR_GLASS_OUTLINE );
-		surface.DrawOutlinedRect( 0, 0, w, h );
-	surface.SetAlphaMultiplier( 1 );
+	-- there is no surface.GetAlphaMultiplier, so guess what I have to do
+	local col = Alpha( panel.ButtonColor or self.COLOR_GLASS, 1 - 0.3 * panel.HoverPerc );
+	surface.SetDrawColor( col );
+	surface.DrawRect( 0, 0, w, h );
+	surface.SetDrawColor( self.COLOR_GLASS_OUTLINE );
+	surface.DrawOutlinedRect( 0, 0, w, h );
 
 end
 

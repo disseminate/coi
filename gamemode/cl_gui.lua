@@ -92,9 +92,10 @@ function meta:BindInput( f )
 
 		if( self:GetText() != fm ) then
 			self:SetText( fm );
+			
 			surface.SetFont( self:GetFont() );
-
 			local w, h = surface.GetTextSize( fm );
+
 			local mw, mh = self:GetSize();
 			if( mw != w or mh != h ) then
 				self:SetSize( mw, mh );
