@@ -71,6 +71,12 @@ function GM:OnStateTransition( state, oldstate )
 
 	end
 
+	if( state == STATE_PREGAME and oldstate == STATE_POSTGAME ) then
+
+		self:Reset();
+
+	end
+
 end
 
 function GM:InitializeTeams()
@@ -85,6 +91,9 @@ function GM:InitializeTeams()
 	for k, v in pairs( trucks ) do
 
 		team.SetUp( k, "Crew #" .. k, HSVToColor( ( k - 1 ) * 70, 0.5, 1 ) );
+		if( SERVER ) then
+			v:SetTeam( k );
+		end
 
 	end
 

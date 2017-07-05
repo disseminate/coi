@@ -23,3 +23,15 @@ function ENT:Initialize()
 	end
 
 end
+
+function ENT:SetupDataTables()
+
+	self:NetworkVar( "Int", 0, "Money" );
+	self:NetworkVar( "Int", 1, "Team" );
+
+	if( SERVER ) then
+		self:SetMoney( 0 );
+		self:SetTeam( 0 );
+	end
+
+end

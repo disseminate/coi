@@ -12,3 +12,13 @@ local function nJoin( len )
 
 end
 net.Receive( "nJoin", nJoin );
+
+function GM:Reset()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		v.HasMoney = false;
+
+	end
+
+end

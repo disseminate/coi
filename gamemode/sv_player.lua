@@ -19,6 +19,8 @@ local function nJoin( len, ply )
 			net.WriteEntity( ply );
 		net.Broadcast();
 
+		ply:SpawnAtTruck();
+
 		if( #player.GetJoined() == 1 ) then
 			GAMEMODE:ResetState();
 		end
@@ -39,6 +41,22 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SendState();
 	ply:SetCustomCollisionCheck( true );
 
+	ply:SetTeam( TEAM_UNJOINED );
+
+end
+
+function GM:PlayerSpawn( ply )
+
+	player_manager.SetPlayerClass( ply, "coi" );
+
+	ply:UnSpectate();
+
+	ply:SetupHands();
+
+	player_manager.OnPlayerSpawn( ply );
+	player_manager.RunClass( ply, "Spawn" );
+	hook.Call( "PlayerSetModel", GAMEMODE, ply );
+
 	if( ply:IsBot() ) then
 
 		ply.Joined = true;
@@ -50,11 +68,10 @@ function GM:PlayerInitialSpawn( ply )
 			net.WriteEntity( ply );
 		net.Broadcast();
 
-	else
-
-		ply:SetTeam( TEAM_UNJOINED );
-
 	end
+
+	ply:SetColorToTeam();
+	ply:SpawnAtTruck();
 
 end
 
@@ -66,6 +83,7 @@ function meta:SendPlayers()
 
 			net.WriteEntity( v );
 			net.WriteBool( v.Joined );
+			net.WriteBool( v.HasMoney );
 
 		end
 	net.Send( self );
@@ -113,16 +131,13 @@ function meta:SetColorToTeam()
 
 end
 
-function GM:AreTeamsUnbalanced()
+function meta:SpawnAtTruck()
 
-	return !self:CanChangeTeam();
+	if( !GAMEMODE.Trucks ) then return end
+	if( !GAMEMODE.Trucks[self:Team()] ) then return end
 
-end
-
-function GM:CanChangeTeam( cur, targ )
-
-	-- TODO
-	return true;
+	local t = GAMEMODE.Trucks[self:Team()];
+	self:SetPos( t:GetPos() + t:GetForward() * -180 );
 
 end
 
@@ -147,3 +162,63 @@ function GM:RebalanceTeams()
 
 end
 util.AddNetworkString( "nSetTeamAutoRebalance" );
+
+local function nJoinTeam( len, ply )
+
+	local t = net.ReadUInt( 16 );
+	
+	if( !GAMEMODE:CanChangeTeam( ply:Team(), t ) ) then return end
+
+	ply:SetTeam( t );
+	ply:SetColorToTeam();
+	ply:SpawnAtTruck();
+
+end
+net.Receive( "nJoinTeam", nJoinTeam );
+util.AddNetworkString( "nJoinTeam" );
+
+function GM:PlayerTakeMoney( ply, ent )
+
+	if( !ply.HasMoney ) then
+		
+		ply.HasMoney = true;
+		net.Start( "nSetMoney" );
+			net.WriteEntity( ply );
+			net.WriteBool( true );
+		net.Broadcast();
+
+	end
+
+end
+util.AddNetworkString( "nSetMoney" );
+
+function GM:KeyPress( ply, key )
+
+	if( ply.HasMoney and key == IN_ATTACK2 ) then
+
+		ply:DropMoney( true );
+
+	end
+
+end
+
+function meta:DropMoney( thrown )
+
+	self.HasMoney = false;
+	net.Start( "nSetMoney" );
+		net.WriteEntity( self );
+		net.WriteBool( false );
+	net.Broadcast();
+	
+	self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
+
+	local bag = ents.Create( "coi_money" );
+	bag:SetPos( self:GetShootPos() + self:GetAimVector() * 32 );
+	bag:SetAngles( Angle( math.Rand( -180, 180 ), math.Rand( -180, 180 ), math.Rand( -180, 180 ) ) );
+	bag.Owner = self;
+	bag:SetDropped( true );
+	bag:SetThrown( thrown );
+	bag:Spawn();
+	bag:Activate();
+
+end
