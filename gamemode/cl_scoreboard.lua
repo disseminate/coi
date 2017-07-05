@@ -60,6 +60,8 @@ function GM:ScoreboardShow()
 					if( self.Invalidated ) then
 
 						self.Invalidated = false;
+						self.PlayerCache = { };
+						
 						local y = 30 + 20; -- title + title margin
 
 						for _, v in pairs( team.GetPlayers( k ) ) do
