@@ -289,11 +289,19 @@ end
 
 function GM:HUDPaintGameOver()
 
+	if( self:GetState() == STATE_POSTGAME ) then
+
+		local dt = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
+
+		surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
+
+	elseif( self:GetState() == STATE_PREGAME ) then
+
+		surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), 1 );
+
+	end
+
 	if( self:GetState() != STATE_POSTGAME ) then return end
-
-	local dt = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
-
-	surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
 
 	if( dt < 5 ) then
 
