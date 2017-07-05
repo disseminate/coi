@@ -61,10 +61,12 @@ function GM:ScoreboardShow()
 
 						self.Invalidated = false;
 						self.PlayerCache = { };
-						
+
 						local y = 30 + 20; -- title + title margin
 
 						for _, v in pairs( team.GetPlayers( k ) ) do
+
+							table.insert( self.PlayerCache, v );
 
 							local row = GAMEMODE:CreatePanel( p2, TOP, 0, 64 );
 							row:DockPadding( 8, 8, 8, 8 );
