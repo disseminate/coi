@@ -262,14 +262,9 @@ end
 
 function GM:HUDPaintGameOver()
 
-	--if( self:GetState() != STATE_POSTGAME ) then return end
+	if( self:GetState() != STATE_POSTGAME ) then return end
 
-	--local t = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
-
-	if( !self.TestTime ) then
-		self.TestTime = CurTime();
-	end
-	local dt = CurTime() - self.TestTime;
+	local dt = CurTime() - ( STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState() );
 
 	surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
 
