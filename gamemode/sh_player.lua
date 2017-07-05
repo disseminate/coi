@@ -23,9 +23,31 @@ function GM:StartCommand( ply, cmd )
 		cmd:ClearMovement();
 	end
 
-	if( self:GetState() == STATE_PREGAME ) then
+	if( self:GetState() == STATE_PREGAME and false ) then -- TODO
 		cmd:ClearButtons();
 		cmd:ClearMovement();
 	end
+
+end
+
+function GM:ShouldCollide( e1, e2 )
+
+	if( e1:IsPlayer() and e2:IsPlayer() ) then return false end
+	return self.BaseClass:ShouldCollide( e1, e2 );
+
+end
+
+function GM:AreTeamsUnbalanced()
+
+	return !self:CanChangeTeam();
+
+end
+
+function GM:CanChangeTeam( cur, targ )
+
+	if( self:GetState() == STATE_GAME ) then return false end
+	if( cur == targ ) then return false end
+	-- TODO
+	return true;
 
 end

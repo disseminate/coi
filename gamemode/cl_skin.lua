@@ -22,6 +22,7 @@ SKIN.COLOR_WHITE = Color( 255, 255, 255 );
 SKIN.COLOR_GRAY = Color( 255, 255, 255, 150 );
 SKIN.COLOR_GLASS = Color( 0, 0, 0, 180 );
 SKIN.COLOR_GLASS_OUTLINE = Color( 0, 0, 0, 150 );
+SKIN.COLOR_GLASS_LIGHT = Color( 0, 0, 0, 120 );
 SKIN.COLOR_GLASS_DARK = Color( 0, 0, 0, 220 );
 SKIN.COLOR_HEALTH = Color( 255, 30, 20 );
 SKIN.COLOR_MONEY = Color( 122, 255, 62 );
@@ -65,6 +66,16 @@ function SKIN:PaintButtonUp( panel, w, h )
 end
 
 function SKIN:PaintButton( panel, w, h )
+
+	if( panel:GetDisabled() ) then
+
+		surface.SetAlphaMultiplier( 0.3 );
+			surface.SetDrawColor( panel.ButtonColor or self.COLOR_GLASS );
+			surface.DrawRect( 0, 0, w, h );
+		surface.SetAlphaMultiplier( 1 );
+		return;
+
+	end
 
 	if( !panel.HoverPerc ) then
 		panel.HoverPerc = 0;

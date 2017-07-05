@@ -24,6 +24,41 @@ function surface.BackgroundBlur( x, y, w, h, a )
 
 end
 
+function surface.DrawProgressCircle( x, y, perc, radius, bgCol )
+
+	perc = math.Clamp( perc, 0, 1 );
+	
+	local nOuterVerts = 64;
+	local v = { };
+
+	surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_WHITE );
+
+	for outer = 0, nOuterVerts do
+		local perc1 = outer / nOuterVerts;
+		local perc2 = ( outer + 1 ) / nOuterVerts;
+		local r1 = ( perc1 - 0.25 ) * ( 2 * math.pi );
+		local r2 = ( perc2 - 0.25 ) * ( 2 * math.pi );
+		
+		local x1 = math.cos( r1 ) * radius;
+		local y1 = math.sin( r1 ) * radius;
+		local x2 = math.cos( r2 ) * radius;
+		local y2 = math.sin( r2 ) * radius;
+
+		table.insert( v, { x = x + x1, y = y + y1 } );
+
+		if( perc1 <= perc and perc > 0 ) then
+			surface.DrawLine( x + x1, y + y1, x + x2, y + y2 );
+		end
+	end
+
+	bgCol = bgCol or GAMEMODE:GetSkin().COLOR_GLASS_LIGHT;
+	
+	surface.SetDrawColor( bgCol );
+	draw.NoTexture();
+	surface.DrawPoly( v );
+
+end
+
 function meta:FadeIn()
 
 	self:SetAlpha( 0 );

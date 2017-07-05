@@ -34,3 +34,16 @@ function GM:OnReloaded()
 	self:BroadcastState();
 
 end
+
+function GM:Reset()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		v.HasMoney = false;
+		v:Spawn();
+
+	end
+
+	game.CleanUpMap();
+
+end

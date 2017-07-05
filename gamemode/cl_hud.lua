@@ -41,6 +41,7 @@ function GM:HUDPaint()
 
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
+		self:HUDPaintMoney();
 
 	end
 
@@ -128,5 +129,69 @@ function GM:HUDPaintHealth()
 	surface.SetTextPos( 40 + bw / 2 - w / 2, ScrH() - 40 - bh + bh / 2 - h / 2 );
 	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 	surface.DrawText( hp );
+
+end
+
+function GM:HUDPaintMoney()
+
+	for _, v in pairs( ents.FindByClass( "coi_money" ) ) do
+
+		if( v:GetDropped() ) then
+
+			local p = v:GetPos();
+
+			local dist = LocalPlayer():GetPos():Distance( p );
+
+			if( dist < 1000 ) then
+
+				local amul = 1;
+				if( dist >= 700 ) then
+
+					amul = 1 - ( ( dist - 700 ) / 300 );
+
+				end
+
+				local trace = { };
+				trace.start = EyePos();
+				trace.endpos = p;
+				trace.filter = { LocalPlayer() };
+				local tr = util.TraceLine( trace );
+
+				if( tr.Entity and tr.Entity:IsValid() and tr.Entity == v ) then
+
+					surface.SetAlphaMultiplier( amul );
+					
+					local pp = p:ToScreen();
+					local rad = 50;
+
+					local p = math.Clamp( ( v:GetDieTime() - CurTime() ) / 15, 0, 1 );
+					
+					surface.DrawProgressCircle( pp.x, pp.y, p, rad );
+
+					local t = "" .. math.abs( math.ceil( v:GetDieTime() - CurTime() ) );
+
+					surface.SetFont( "COI Title 48" );
+					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+					surface.DrawText( t );
+
+					local t = "Money";
+
+					surface.SetFont( "COI Title 24" );
+					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y + ( rad * 1.3 ) );
+					surface.DrawText( t );
+
+					surface.SetAlphaMultiplier( 1 );
+
+				end
+
+			end
+
+		end
+
+	end
 
 end

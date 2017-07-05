@@ -43,11 +43,15 @@ function GM:CreateLoadoutPanel()
 				self.PlayerCache = { };
 			end
 
+			if( !self.TeamCache ) then
+				self.TeamCache = LocalPlayer():Team();
+			end
+
 			for _, v in pairs( self.PlayerCache ) do
 
 				if( !v or !v:IsValid() or v:Team() != LocalPlayer():Team() ) then
 
-					GAMEMODE.Loadout.MyTeamInvalidated = true;
+					self.Invalidated = true;
 
 				end
 
@@ -57,61 +61,80 @@ function GM:CreateLoadoutPanel()
 
 				if( v:Team() == LocalPlayer():Team() and !table.HasValue( self.PlayerCache, v ) ) then
 
-					GAMEMODE.Loadout.MyTeamInvalidated = true;
+					self.Invalidated = true;
 
 				end
 
 			end
 
-			if( !self.TeamCache ) then
-				self.TeamCache = LocalPlayer():Team();
-			end
-
 			if( self.TeamCache != LocalPlayer():Team() ) then
-				GAMEMODE.Loadout.MyTeamInvalidated = true;
+				self.Invalidated = true;
 			end
 
-			if( GAMEMODE.Loadout.MyTeamInvalidated ) then
+			if( self.Invalidated ) then
 				
-				GAMEMODE.Loadout.MyTeamInvalidated = false;
-				self:Clear();
+				self.Invalidated = false;
+				self:GetCanvas():Clear();
 				self.PlayerCache = { };
+				self.TeamCache = LocalPlayer():Team();
 
 				for _, v in pairs( team.GetPlayers( LocalPlayer():Team() ) ) do
 					table.insert( self.PlayerCache, v );
 
-					local p3 = GAMEMODE:CreatePanel( self, TOP, 0, 80 );
+					local p3 = GAMEMODE:CreatePanel( self:GetCanvas(), TOP, 0, 80 );
 					p3:SetPaintBackground( true );
 					p3:DockMargin( 0, 0, 0, 10 );
 					p3:DockPadding( 10, 10, 10, 10 );
 
-					local av = vgui.Create( "AvatarImage", p3 );
-					av:Dock( LEFT );
-					av:SetSize( 60, 60 );
-					av:SetPlayer( v, 64 );
-					av:DockMargin( 0, 0, 10, 0 );
+						local av = vgui.Create( "AvatarImage", p3 );
+						av:Dock( LEFT );
+						av:SetSize( 60, 60 );
+						av:SetPlayer( v, 64 );
+						av:DockMargin( 0, 0, 10, 0 );
 
-					local p4 = GAMEMODE:CreatePanel( p3, FILL );
-						local n = GAMEMODE:CreateLabel( p4, TOP, "COI Title 24", v:Nick() );
+						local p4 = GAMEMODE:CreatePanel( p3, FILL );
+							local n = GAMEMODE:CreateLabel( p4, TOP, "COI Title 24", v:Nick(), 7 );
 				end
 
 			end
 
 		end
-		GAMEMODE.Loadout.MyTeamInvalidated = true;
+		p2.Invalidated = true;
 		
 		local l = self:CreateLabel( p1, TOP, "COI Title 30", "Other Teams", 7 );
 		l:DockMargin( 0, 0, 0, 20 );
 		local p2 = self:CreateScrollPanel( p1, FILL );
 		p2:DockMargin( 0, 0, 0, 20 );
+		function p2:Think() -- has to be handled by the parent: Think() isn't called when invisible
+
+			if( self:GetCanvas() and self:GetCanvas():IsValid() ) then
+				
+				for _, v in pairs( self:GetCanvas():GetChildren() ) do
+				
+					if( v.Team ) then
+
+						if( v.Team == LocalPlayer():Team() ) then
+							v:SetVisible( false );
+						else
+							v:SetVisible( true );
+						end
+
+					end
+
+				end
+
+			end
+
+		end
 
 			for k, v in pairs( team.GetAllTeams() ) do
 
-				if( k >= 1 and k <= 128 and k != LocalPlayer():Team() ) then
+				if( k >= 1 and k <= 128 ) then
 					
 					local p3 = GAMEMODE:CreatePanel( p2, TOP, 0, 100 );
 					p3:SetPaintBackground( true );
 					p3:DockMargin( 0, 0, 0, 10 );
+					p3.Team = k;
 
 						local p4 = GAMEMODE:CreatePanel( p3, LEFT, 200, 0 );
 						p4:DockPadding( 10, 10, 10, 10 );
@@ -121,6 +144,26 @@ function GM:CreateLoadoutPanel()
 							local l = GAMEMODE:CreateLabel( p4, TOP, "COI 20", "99 members", 7 ):BindInput( function()
 								return team.NumPlayers( k ) .. " members";
 							end );
+							l:DockMargin( 0, 0, 0, 10 );
+							local b = GAMEMODE:CreateButton( p4, TOP, 80, 26, "Join", function()
+								net.Start( "nJoinTeam" );
+									net.WriteUInt( k, 16 );
+								net.SendToServer();
+							end );
+							function b:Think()
+
+								if( !GAMEMODE:CanChangeTeam( LocalPlayer():Team(), k ) ) then
+
+									self:SetDisabled( true );
+
+								else
+
+									self:SetDisabled( false );
+
+								end
+
+							end
+							b:SetFont( "COI 20" );
 
 						local p4 = GAMEMODE:CreatePanel( p3, FILL );
 						p4:DockPadding( 10, 10, 10, 10 );

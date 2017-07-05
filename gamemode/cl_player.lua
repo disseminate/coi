@@ -6,6 +6,7 @@ local function nPlayers( len )
 
 		local ply = net.ReadEntity();
 		ply.Joined = net.ReadBool();
+		ply.HasMoney = net.ReadBool();
 
 	end
 
@@ -33,3 +34,27 @@ local function nSetTeamAutoRebalance( len )
 
 end
 net.Receive( "nSetTeamAutoRebalance", nSetTeamAutoRebalance );
+
+local function nSetMoney( len )
+
+	local ply = net.ReadEntity();
+	local has = net.ReadBool();
+
+	ply.HasMoney = has;
+
+end
+net.Receive( "nSetMoney", nSetMoney );
+
+function GM:NetworkEntityCreated( ent )
+
+	if( ent and ent:IsValid() ) then
+
+		if( ent:IsPlayer() and ent:IsBot() ) then
+
+			ent.Joined = true;
+
+		end
+
+	end
+
+end
