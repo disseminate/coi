@@ -16,7 +16,7 @@ function surface.BackgroundBlur( x, y, w, h, a )
 	for i=0.33, 1, 0.33 do
 		matBlurScreen:SetFloat( "$blur", 5 * i );
 		matBlurScreen:Recompute();
-		if( render ) then render.UpdateScreenEffectTexture() end -- Todo: Make this available to menu Lua
+		if( render ) then render.UpdateScreenEffectTexture() end
 		surface.DrawTexturedRect( x * -1, y * -1, w, h );
 	end
 

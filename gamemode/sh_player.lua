@@ -23,7 +23,7 @@ function GM:StartCommand( ply, cmd )
 		cmd:ClearMovement();
 	end
 
-	if( self:GetState() == STATE_PREGAME and false ) then -- TODO
+	if( self:GetState() == STATE_PREGAME ) then
 		cmd:ClearButtons();
 		cmd:ClearMovement();
 	end

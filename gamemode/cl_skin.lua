@@ -33,6 +33,8 @@ SKIN.ICON_CLOSE = Material( "coi/icons/close" );
 SKIN.ICON_LEFT = Material( "coi/icons/left" );
 SKIN.ICON_RIGHT = Material( "coi/icons/right" );
 
+SKIN.MAT_GREEN = Material( "coi/vgui/green" );
+
 function SKIN:PaintFrame( panel, w, h )
 
 	surface.SetDrawColor( self.COLOR_GLASS );
