@@ -230,20 +230,71 @@ function GM:CreateLoadoutPanel()
 		local p2 = self:CreatePanel( p1, TOP, 0, 400 );
 		p2:SetPaintBackground( true );
 		p2:DockPadding( 10, 10, 10, 10 );
-			local m = self:CreateModelPanel( p2, TOP, 0, 200, "models/Kleiner.mdl", Vector( 50, 50, 64 ), Vector( 0, 0, 60 ), 20 );
-			m:DockMargin( 0, 0, 0, 10 );
+
+		local keys = table.GetKeys( self.Items );
+		local item = keys[1];
+		local ItemData = {
+			Name = self.Items[item].Name,
+			Desc = self.Items[item].Desc,
+			Price = self.Items[item].Price
+		};
+
+			local itemModel = self:CreateModelPanel( p2, TOP, 0, 200, self.Items[item].Model, Vector( 50, 50, 20 ), Vector( 0, 0, 0 ), 20 );
+			local a, b = itemModel.Entity:GetModelBounds();
+			itemModel:SetLookAt( ( a + b ) / 2 );
+			itemModel:DockMargin( 0, 0, 0, 10 );
 			
 			local p3 = self:CreatePanel( p2, FILL );
 				local p4 = self:CreatePanel( p3, TOP, 0, 24 );
-					local lT = self:CreateLabel( p4, FILL, "COI Title 24", "Shotgun", 4 );
-					local lP = self:CreateLabel( p4, RIGHT, "COI 20", "$1,200", 6 );
+					local lT = self:CreateLabel( p4, FILL, "COI Title 24", "Shotgun", 4 ):BindInput( function() return ItemData.Name end );
+					local lP = self:CreateLabel( p4, RIGHT, "COI 20", "$1,200", 6 ):BindInput( function() return "$" .. string.Comma( ItemData.Price ) end );
 					lP:SetTextColor( self:GetSkin().COLOR_MONEY );
-				local d = self:CreateLabel( p3, FILL, "COI 16", "An effective killing device.", 7 );
+				local d = self:CreateLabel( p3, FILL, "COI 16", "An effective killing device.", 7 ):BindInput( function() return ItemData.Desc end );
 			
 			local p3 = self:CreatePanel( p2, BOTTOM, 0, 40 );
-				local left = self:CreateIconButton( p3, LEFT, 40, 40, self:GetSkin().ICON_LEFT, function() end );
+
+				local function updateItem( dir )
+
+					local idx = -1;
+					for k, v in pairs( keys ) do
+						if( v == item ) then
+							idx = k;
+							break;
+						end
+					end
+
+					if( idx > -1 ) then
+
+						idx = idx + dir;
+
+						if( idx < 1 ) then
+							idx = #keys;
+						end
+						if( idx > #keys ) then
+							idx = 1;
+						end
+
+						item = keys[idx];
+						
+						ItemData.Name = self.Items[item].Name;
+						ItemData.Desc = self.Items[item].Desc;
+						ItemData.Price = self.Items[item].Price;
+
+						itemModel:SetModel( self.Items[item].Model );
+						local a, b = itemModel.Entity:GetModelBounds();
+						itemModel:SetLookAt( ( a + b ) / 2 );
+
+					end
+
+				end
+
+				local left = self:CreateIconButton( p3, LEFT, 40, 40, self:GetSkin().ICON_LEFT, function()
+					updateItem( -1 );
+				end );
 				left:DockMargin( 0, 0, 10, 0 );
-				local right = self:CreateIconButton( p3, RIGHT, 40, 40, self:GetSkin().ICON_RIGHT, function() end );
+				local right = self:CreateIconButton( p3, RIGHT, 40, 40, self:GetSkin().ICON_RIGHT, function()
+					updateItem( 1 );
+				end );
 				right:DockMargin( 10, 0, 0, 0 );
 				local buy = self:CreateButton( p3, FILL, 0, 0, "Buy", function() end );
 				buy:SetTextColor( self:GetSkin().COLOR_MONEY );
