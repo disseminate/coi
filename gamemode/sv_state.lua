@@ -50,3 +50,13 @@ function GM:Reset()
 	self:ResetMapTrucks();
 
 end
+
+function GM:DebugAdvanceTime( amt )
+
+	self.StateCycleStart = self.StateCycleStart - amt;
+
+	net.Start( "nReceiveState" );
+		net.WriteFloat( self.StateCycleStart );
+	net.Broadcast();
+
+end

@@ -1,5 +1,9 @@
 function GM:CreateLoadoutPanel()
 
+	if( self.Loadout and self.Loadout:IsValid() ) then
+		self.Loadout:Remove();
+	end
+
 	self.Loadout = self:CreatePanel( nil, NODOCK, ScrW(), ScrH() );
 	self.Loadout:SetPaintBackground( true );
 	self.Loadout:SetBackgroundBlur( true );

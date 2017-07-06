@@ -58,15 +58,16 @@ function GM:HUDPaint()
 		return;
 	end
 
-	if( self:GetState() != STATE_PREGAME ) then
+	if( self:GetState() == STATE_GAME ) then
 
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
 		self:HUDPaintMoney();
 		self:HUDPaintDirectionArrow();
-		self:HUDPaintGameOver();
 
 	end
+
+	self:HUDPaintGameOver();
 
 end
 
@@ -219,16 +220,6 @@ function GM:HUDPaintMoney()
 
 end
 
-function GM:HUDResetGameOver()
-
-	for i = 1, 20 do
-		HUDClear( "gameover_" .. i );
-	end
-
-	self.TestTime = CurTime();
-
-end
-
 function GM:HUDPaintDirectionArrow()
 
 	local a;
@@ -267,12 +258,10 @@ function GM:HUDPaintDirectionArrow()
 		surface.SetAlphaMultiplier( a );
 
 			surface.SetFont( "COI Title 30" );
-			local t;
+			surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+			local t = "Put the money in the truck!";
 
-			if( LocalPlayer().HasMoney ) then
-				surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-				t = "Put the money in the truck!";
-			else
+			if( self:InRushPeriod() ) then
 				t = "Get to your truck before you're arrested!";
 				surface.SetTextColor( self:GetSkin().COLOR_WARNING );
 			end
@@ -287,11 +276,31 @@ function GM:HUDPaintDirectionArrow()
 
 end
 
+function GM:HUDResetGameOver()
+
+	for i = 1, 30 do
+		HUDClear( "gameover_" .. i );
+	end
+
+	for i = 1, 128 do -- a man can dream
+		HUDClear( "gameover_pl" .. i );
+	end
+
+	for i = 1, 128 do
+		HUDClear( "gameover_pl2" .. i );
+	end
+
+	for i = 1, 128 do
+		HUDClear( "gameover_plout" .. i );
+	end
+
+end
+
 function GM:HUDPaintGameOver()
 
-	if( self:GetState() == STATE_POSTGAME ) then
+	local dt = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
 
-		local dt = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
+	if( self:GetState() == STATE_POSTGAME ) then
 
 		surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
 
@@ -302,6 +311,28 @@ function GM:HUDPaintGameOver()
 	end
 
 	if( self:GetState() != STATE_POSTGAME ) then return end
+
+	local a = math.Clamp( dt, 0, 1 );
+
+	surface.SetAlphaMultiplier( a );
+
+		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_DARK );
+		surface.DrawRect( 0, 0, ScrW(), ScrH() );
+
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		surface.SetFont( "COI 18" );		
+		local t = "Next round begins in";
+		local w, h = surface.GetTextSize( t );
+		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 30 - 40 - 10 - h );
+		surface.DrawText( t );
+
+		surface.SetFont( "COI Title 30" );		
+		local t = string.ToMinutesSeconds( self:TimeLeftInState() );
+		local w, h = surface.GetTextSize( t );
+		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - h - 40 );
+		surface.DrawText( t );
+
+	surface.SetAlphaMultiplier( 1 );
 
 	if( dt < 5 ) then
 
@@ -332,10 +363,10 @@ function GM:HUDPaintGameOver()
 
 			local w, h = surface.GetTextSize( t );
 			if( dt < 4.3 ) then
-				local ym = HUDEase( "gameover_2", 1, -ScrH() * 0.2, ScrH() / 2, 0, 1 );
+				local ym = HUDEase( "gameover_2", 1, -ScrH() * 0.2, ScrH() / 2 - h / 2, 0, 1 );
 				surface.SetTextPos( ScrW() / 2 - w / 2, ym );
 			else
-				local ym = HUDEase( "gameover_4", 0.7, ScrH() / 2, ScrH() * 1.2, 1, 0 );
+				local ym = HUDEase( "gameover_4", 0.7, ScrH() / 2 - h / 2, ScrH() * 1.2, 1, 0 );
 				surface.SetTextPos( ScrW() / 2 - w / 2, ym );
 			end
 			surface.DrawText( t );
@@ -344,9 +375,13 @@ function GM:HUDPaintGameOver()
 
 	elseif( dt < 10 ) then
 
+		for i = 1, 4 do
+			HUDClear( "gameover_" .. i );
+		end
+
 		surface.SetFont( "COI Title 64" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-		local t = "Winning Crew";
+		local t = "Best Crew";
 		local w, h = surface.GetTextSize( t );
 		if( dt < 9 ) then
 			local xm = HUDEase( "gameover_5", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
@@ -360,8 +395,8 @@ function GM:HUDPaintGameOver()
 		if( dt > 5.7 ) then
 
 			surface.SetFont( "COI Title 128" );
-			surface.SetTextColor( self:GetSkin().COLOR_FAIL );
-			local t = "The Good Crew";
+			surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
+			local t = team.GetName( LocalPlayer():Team() );
 			local w, h = surface.GetTextSize( t );
 			if( dt < 9.3 ) then
 				local xm = HUDEase( "gameover_6", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
@@ -371,6 +406,202 @@ function GM:HUDPaintGameOver()
 				surface.SetTextPos( xm, ScrH() / 2 - h / 2 );
 			end
 			surface.DrawText( t );
+
+		end
+
+	elseif( dt < 20 ) then
+
+		dt = dt - 10;
+		for i = 5, 8 do
+			HUDClear( "gameover_" .. i );
+		end
+
+		local numTeam = team.NumPlayers( LocalPlayer():Team() );
+		local totalY = numTeam * 30 + ( numTeam - 1 ) * 10 + 40 + 64;
+
+		surface.SetFont( "COI Title 64" );
+		surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
+		local t = team.GetName( LocalPlayer():Team() );
+		local w, h = surface.GetTextSize( t );
+		local dest = ScrH() / 2 - totalY / 2;
+		if( dt < 9 ) then
+			local ym = HUDEase( "gameover_1", 1, -ScrH() * 0.2, dest, 0, 1 );
+			surface.SetTextPos( ScrW() / 2 - w - 40, ym );
+		else
+			local ym = HUDEase( "gameover_3", 1, dest, ScrH() * 1.2, 1, 0 );
+			surface.SetTextPos( ScrW() / 2 - w - 40, ym );
+		end
+		surface.DrawText( t );
+
+		if( dt > 1 ) then
+
+			local ddt = 0.4 * ( 4 / numTeam );
+
+			surface.SetFont( "COI Title 30" );
+			surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+
+			for k, v in pairs( team.GetPlayers( LocalPlayer():Team() ) ) do
+
+				local theirTime = ddt * k;
+				if( ( dt - 1 ) > theirTime ) then
+
+					local t = v:Nick();
+					local w, h = surface.GetTextSize( t );
+					local dest = ScrH() / 2 - totalY / 2 + 64 + 40 + ( 30 + 10 ) * ( k - 1 );
+					if( dt < 9 ) then
+						local ym = HUDEase( "gameover_pl" .. k, 1, -ScrH() * 0.2, dest, 0, 1 );
+						surface.SetTextPos( ScrW() / 2 - w - 40, ym );
+					else
+						local ym = HUDEase( "gameover_pl2" .. k, 1, dest, ScrH() * 1.2, 1, 0 );
+						surface.SetTextPos( ScrW() / 2 - w - 40, ym );
+					end
+					surface.DrawText( t );
+
+				end
+
+			end
+
+		end
+
+		if( dt > 4 ) then
+
+			local amt = 123546;
+
+			if( dt > 6 and dt < 8 ) then
+
+				local perc = 1 - ( dt - 6 ) / 2;
+				amt = math.floor( perc * 123546 );
+
+			elseif( dt >= 8 ) then
+
+				amt = 0;
+
+			end
+
+			surface.SetFont( "COI Title 64" );
+			surface.SetTextColor( self:GetSkin().COLOR_MONEY );
+			local t = "$" .. string.Comma( amt );
+			local w, h = surface.GetTextSize( t );
+			local dest = ScrH() / 2 - totalY / 2;
+			if( dt < 9 ) then
+				surface.SetTextPos( ScrW() / 2 + 40, dest );
+			else
+				local ym = HUDEase( "gameover_2", 1, dest, ScrH() * 1.2, 1, 0 );
+				surface.SetTextPos( ScrW() / 2 + 40, ym );
+			end
+			
+			surface.DrawText( t );
+
+			surface.SetFont( "COI Title 30" );
+
+			local numTeamSafe = 0;
+			for _, v in pairs( team.GetPlayers( LocalPlayer():Team() ) ) do
+
+				if( v.Safe ) then
+
+					numTeamSafe = numTeamSafe + 1;
+
+				end
+
+			end
+
+			for k, v in pairs( team.GetPlayers( LocalPlayer():Team() ) ) do
+
+				local amt = 0;
+
+				if( v.Safe ) then
+
+					if( dt > 6 and dt < 8 ) then
+
+						local perc = ( dt - 6 ) / 2;
+						amt = math.floor( perc * 123546 / numTeamSafe );
+
+					elseif( dt >= 8 ) then
+
+						amt = math.floor( 123546 / numTeamSafe );
+
+					end
+
+					surface.SetTextColor( self:GetSkin().COLOR_MONEY );
+					
+				else
+
+					surface.SetTextColor( self:GetSkin().COLOR_FAIL );
+
+				end
+
+				local t = "$" .. string.Comma( amt );
+				local w, h = surface.GetTextSize( t );
+				local dest = ScrH() / 2 - totalY / 2 + 64 + 40 + ( 30 + 10 ) * ( k - 1 );
+				if( dt < 9 ) then
+					surface.SetTextPos( ScrW() / 2 + 40, dest );
+				else
+					local ym = HUDEase( "gameover_plout" .. k, 1, dest, ScrH() * 1.2, 1, 0 );
+					surface.SetTextPos( ScrW() / 2 + 40, ym );
+				end
+				
+				surface.DrawText( t );
+
+			end
+
+		end
+
+	elseif( dt < 30 ) then
+
+		dt = dt - 20;
+
+		local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 );
+
+		local awards = { "Most Bags Collected", "Most Money", "Most Kills", "Most Tases" };
+		surface.SetFont( "COI Title 30" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+
+		for k, v in pairs( awards ) do
+
+			local t = v;
+			local w, h = surface.GetTextSize( t );
+			if( dt < 8 ) then
+				local xm = HUDEase( "gameover_" .. ( 4 + k * 2 ), 1 + 0.2 * k, -ScrW() * 0.2, ScrW() / 2 - 40 - w, 0, 1 );
+				surface.SetTextPos( xm, y );
+			else
+				local xm = HUDEase( "gameover_" .. ( 5 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 - 40 - w, -ScrW() * 0.2, 1, 0 );
+				surface.SetTextPos( xm, y );
+			end
+
+			surface.DrawText( t );
+			y = y + 64 + 40;
+
+		end
+
+		if( dt > 2 ) then
+
+			local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 ) - 17;
+
+			local players = { LocalPlayer(), LocalPlayer(), LocalPlayer(), LocalPlayer() };
+			surface.SetFont( "COI Title 64" );
+
+			for k, v in pairs( players ) do
+
+				if( v and v:IsValid() ) then
+					
+					surface.SetTextColor( team.GetColor( v:Team() ) );
+					local t = v:Nick();
+					local w, h = surface.GetTextSize( t );
+					if( dt < 8 ) then
+						local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
+						surface.SetTextPos( xm, y );
+					else
+						local xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
+						surface.SetTextPos( xm, y );
+					end
+
+					surface.DrawText( t );
+
+				end
+
+				y = y + 64 + 40;
+
+			end
 
 		end
 

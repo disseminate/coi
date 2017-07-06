@@ -13,8 +13,8 @@ function surface.BackgroundBlur( x, y, w, h, a )
 	surface.SetMaterial( matBlurScreen );
 	surface.SetDrawColor( 255, 255, 255, 255 * ( a or 1 ) );
 
-	for i=0.33, 1, 0.33 do
-		matBlurScreen:SetFloat( "$blur", 5 * i );
+	for i=0, 1, 0.33 do
+		matBlurScreen:SetFloat( "$blur", 7 * i );
 		matBlurScreen:Recompute();
 		if( render ) then render.UpdateScreenEffectTexture() end
 		surface.DrawTexturedRect( x * -1, y * -1, w, h );
