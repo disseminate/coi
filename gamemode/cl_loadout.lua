@@ -253,9 +253,31 @@ function GM:CreateLoadoutPanel()
 		l:DockMargin( 0, 0, 0, 20 );
 
 		local p2 = self:CreatePanel( p1, FILL );
-			local invPanel = self:CreatePanel( p2, TOP, 0, 300 );
+			local pw = 840 * ( ScrW() / 1920 ); -- dirty...
+			local ph = 300 * ( ScrH() / 1080 );
+
+			local invPanel = self:CreateScrollPanel( p2, TOP, pw, ph );
 			invPanel:SetPaintBackground( true );
 			invPanel:DockMargin( 0, 0, 0, 20 );
+			invPanel.IconSize = pw / 16;
+			invPanel:SetTall( invPanel.IconSize * 6 );
+
+			-- should now have a properly scaled 16x6 grid!
+
+			function invPanel:Paint( w, h )
+
+				surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS );
+				surface.DrawRect( 0, 0, w, h );
+				surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS_LIGHT );
+
+				for i = 1, 15 do
+					surface.DrawLine( i * self.IconSize, 0, i * self.IconSize, h );
+				end
+				for j = 1, 5 do
+					surface.DrawLine( 0, j * self.IconSize, w, j * self.IconSize );
+				end
+				
+			end
 
 			local p3 = self:CreatePanel( p2, TOP, 0, 200 );
 				local primary = self:CreatePanel( p3, FILL );
