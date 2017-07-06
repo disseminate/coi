@@ -75,6 +75,14 @@ function GM:OnStateTransition( state, oldstate )
 
 		end
 
+	else
+
+		if( state == STATE_POSTGAME ) then
+
+			self:SendStateMoney();
+
+		end
+
 	end
 
 	if( state == STATE_PREGAME and oldstate == STATE_POSTGAME ) then

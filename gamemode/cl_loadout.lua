@@ -272,7 +272,9 @@ function GM:CreateLoadoutPanel()
 			p3:DockMargin( 0, 0, 0, 20 );
 			
 			local l = self:CreateLabel( p2, TOP, "COI 24", "You have", 9 );
-			local l2 = self:CreateLabel( p2, TOP, "COI Title 48", "$1,243,566", 9 );
+			local l2 = self:CreateLabel( p2, TOP, "COI Title 48", "$" .. string.Comma( 0 ), 9 ):BindInput( function()
+				return "$" .. string.Comma( self.Money or 0 );
+			end );
 			l2:SetTextColor( self:GetSkin().COLOR_MONEY );
 
 

@@ -30,7 +30,7 @@ function ENT:Use( ply )
 		end
 
 		local amt = math.random( 200, 500 );
-		self:SetMoney( self:GetMoney() + amt );
+		team.AddScore( self:GetTeam(), amt );
 
 		net.Start( "nMsgTruckDeposit" );
 			net.WriteUInt( amt, 32 );
@@ -39,7 +39,7 @@ function ENT:Use( ply )
 		self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );
 
 		ply.HasMoney = false;
-		net.Start( "nSetMoney" );
+		net.Start( "nSetHasMoney" );
 			net.WriteEntity( ply );
 			net.WriteBool( false );
 		net.Broadcast();

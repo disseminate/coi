@@ -32,7 +32,7 @@ function ENT:Draw()
 		end
 
 		surface.SetFont( "COI Title 128" );
-		local n = "$" .. string.Comma( self:GetMoney() );
+		local n = "$" .. string.Comma( team.GetScore( self:GetTeam() ) );
 		surface.SetTextColor( GAMEMODE:GetSkin().COLOR_MONEY );
 		local w, h = surface.GetTextSize( n );
 		surface.SetTextPos( -w / 2, y and y + 10 or -h / 2 );

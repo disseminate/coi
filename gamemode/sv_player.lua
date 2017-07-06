@@ -42,6 +42,12 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:SetTeam( TEAM_UNJOINED );
 
+	if( !ply:IsBot() ) then
+
+		ply:InitializeSQL();
+
+	end
+
 end
 
 function GM:PlayerSpawn( ply )
@@ -185,7 +191,7 @@ function GM:PlayerTakeMoney( ply, ent )
 	if( !ply.HasMoney ) then
 		
 		ply.HasMoney = true;
-		net.Start( "nSetMoney" );
+		net.Start( "nSetHasMoney" );
 			net.WriteEntity( ply );
 			net.WriteBool( true );
 		net.Broadcast();
@@ -193,7 +199,7 @@ function GM:PlayerTakeMoney( ply, ent )
 	end
 
 end
-util.AddNetworkString( "nSetMoney" );
+util.AddNetworkString( "nSetHasMoney" );
 
 function GM:KeyPress( ply, key )
 
@@ -219,7 +225,7 @@ end
 function meta:DropMoney( thrown )
 
 	self.HasMoney = false;
-	net.Start( "nSetMoney" );
+	net.Start( "nSetHasMoney" );
 		net.WriteEntity( self );
 		net.WriteBool( false );
 	net.Broadcast();

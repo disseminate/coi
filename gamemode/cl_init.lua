@@ -10,6 +10,7 @@ include( "cl_gui.lua" );
 include( "cl_hud.lua" );
 include( "cl_loadout.lua" );
 include( "cl_map.lua" );
+include( "cl_money.lua" );
 include( "cl_player.lua" );
 include( "cl_pp.lua" );
 include( "cl_scoreboard.lua" );

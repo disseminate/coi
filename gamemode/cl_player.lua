@@ -73,7 +73,7 @@ local function nSetTeamAutoRebalance( len )
 end
 net.Receive( "nSetTeamAutoRebalance", nSetTeamAutoRebalance );
 
-local function nSetMoney( len )
+local function nSetHasMoney( len )
 
 	local ply = net.ReadEntity();
 	local has = net.ReadBool();
@@ -81,7 +81,7 @@ local function nSetMoney( len )
 	ply.HasMoney = has;
 
 end
-net.Receive( "nSetMoney", nSetMoney );
+net.Receive( "nSetHasMoney", nSetHasMoney );
 
 local function nSetSafe( len )
 

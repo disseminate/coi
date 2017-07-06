@@ -5,7 +5,9 @@ include( "sh_class.lua" );
 include( "sh_player.lua" );
 include( "sh_state.lua" );
 include( "sv_map.lua" );
+include( "sv_money.lua" );
 include( "sv_player.lua" );
+include( "sv_sql.lua" );
 include( "sv_state.lua" );
 include( "sv_think.lua" );
 
@@ -16,6 +18,7 @@ AddCSLuaFile( "cl_hud.lua" );
 AddCSLuaFile( "cl_init.lua" );
 AddCSLuaFile( "cl_loadout.lua" );
 AddCSLuaFile( "cl_map.lua" );
+AddCSLuaFile( "cl_money.lua" );
 AddCSLuaFile( "cl_player.lua" );
 AddCSLuaFile( "cl_pp.lua" );
 AddCSLuaFile( "cl_scoreboard.lua" );
