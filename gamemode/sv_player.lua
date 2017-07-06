@@ -21,6 +21,8 @@ local function nJoin( len, ply )
 
 		ply:SpawnAtTruck();
 
+		ply:InitializeSQL();
+
 		if( #player.GetJoined() == 1 ) then
 			GAMEMODE:ResetState();
 		end
@@ -41,12 +43,6 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SendState();
 
 	ply:SetTeam( TEAM_UNJOINED );
-
-	if( !ply:IsBot() ) then
-
-		ply:InitializeSQL();
-
-	end
 
 end
 
@@ -240,5 +236,31 @@ function meta:DropMoney( thrown )
 	bag:SetThrown( thrown );
 	bag:Spawn();
 	bag:Activate();
+
+end
+
+function GM:Loadout()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		v:Loadout();
+
+	end
+
+end
+
+function meta:Loadout()
+
+	if( self.PrimaryLoadout ) then
+		local i = GAMEMODE.Items[self.PrimaryLoadout];
+		self:Give( i.SWEP );
+		self.PrimaryLoadout = nil;
+	end
+
+	if( self.SecondaryLoadout ) then
+		local i = GAMEMODE.Items[self.SecondaryLoadout];
+		self:Give( i.SWEP );
+		self.SecondaryLoadout = nil;
+	end
 
 end

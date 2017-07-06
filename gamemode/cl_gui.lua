@@ -295,7 +295,11 @@ function GM:CreateModelPanel( p, dock, w, h, model, campos, lookat, fov )
 	end
 	n:SetModel( model );
 	n:SetCamPos( campos );
-	n:SetLookAt( lookat );
+	local a, b = n.Entity:GetModelBounds();
+	n:SetLookAt( ( a + b ) / 2 );
+	if( lookat ) then
+		n:SetLookAt( lookat );
+	end
 	n:SetFOV( fov );
 
 	return n;

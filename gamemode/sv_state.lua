@@ -41,6 +41,7 @@ function GM:Reset()
 
 		v.HasMoney = false;
 		v.Safe = false;
+		v:StripWeapons();
 		v:Spawn();
 
 	end

@@ -296,7 +296,35 @@ function GM:CreateLoadoutPanel()
 					updateItem( 1 );
 				end );
 				right:DockMargin( 10, 0, 0, 0 );
-				local buy = self:CreateButton( p3, FILL, 0, 0, "Buy", function() end );
+				local buy = self:CreateButton( p3, FILL, 0, 0, "Buy", function()
+				
+					net.Start( "nBuyItem" );
+						net.WriteString( item );
+					net.SendToServer();
+
+					surface.PlaySound( Sound( "coi/kaching2.wav" ) );
+				
+				end );
+				function buy:Think()
+
+					LocalPlayer():CheckInventory();
+
+					local dis = false;
+					if( table.HasValue( LocalPlayer().Inventory, item ) ) then
+						dis = true;
+					end
+
+					if( ( LocalPlayer().Money or 0 ) < ItemData.Price ) then
+						dis = true;
+					end
+
+					if( dis ) then
+						self:SetDisabled( true );
+					else
+						self:SetDisabled( false );
+					end
+
+				end
 				buy:SetTextColor( self:GetSkin().COLOR_MONEY );
 
 	local p1 = self:CreatePanel( self.Loadout, FILL );
@@ -330,25 +358,178 @@ function GM:CreateLoadoutPanel()
 				
 			end
 
+			local primary, secondary;
+
+			invPanel:Receiver( "item", function( self, tab, dropped, idx, x, y )
+
+				local pan = tab[1];
+
+				if( dropped and pan:GetParent() != self:GetCanvas() ) then
+
+					pan:GetParent().SelectedItem = nil;
+
+					if( pan.Primary ) then
+
+						net.Start( "nClearPrimaryLoadout" );
+						net.SendToServer();
+
+					elseif( pan.Secondary ) then
+
+						net.Start( "nClearSecondaryLoadout" );
+						net.SendToServer();
+
+					end
+
+					pan:Remove();
+
+					surface.PlaySound( Sound( "coi/equip.wav" ) );
+
+				end
+
+			end );
+
+			self.Loadout.Inventory = invPanel;
+			self:ResetLoadoutInventory();
+
 			local p3 = self:CreatePanel( p2, TOP, 0, 200 );
-				local primary = self:CreatePanel( p3, FILL );
+				primary = self:CreatePanel( p3, FILL );
 				primary:SetPaintBackground( true );
 				primary:DockMargin( 0, 0, 20, 0 );
-				primary:DockPadding( 10, 10, 10, 10 );
-				self:CreateLabel( primary, FILL, "COI 20", "Primary", 7 );
+				self:CreateLabel( primary, FILL, "COI 20", "Primary", 7 ):DockMargin( 10, 10, 0, 0 );
+				primary:Receiver( "item", function( self, tab, dropped, idx, x, y )
 
-				local secondary = self:CreatePanel( p3, RIGHT, ScrW() * 0.17, 0 );
+					local pan = tab[1];
+					local v = pan.Item;
+					local item = GAMEMODE.Items[v];
+
+					if( dropped and !self.SelectedItem and !item.Secondary ) then
+					
+						self.SelectedItem = v;
+
+						net.Start( "nSetPrimaryLoadout" );
+							net.WriteString( v );
+						net.SendToServer();
+
+						local mdl = GAMEMODE:CreateModelPanel( self, FILL, 0, 0, item.Model, Vector( 50, 50, 20 ), nil, 20 );
+						GAMEMODE:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+						mdl.Primary = true;
+						mdl:Droppable( "item" );
+						function mdl.DoClick( mdl )
+
+							mdl:Remove();
+							self.SelectedItem = nil;
+
+							surface.PlaySound( Sound( "coi/equip.wav" ) );
+
+							net.Start( "nClearPrimaryLoadout" );
+							net.SendToServer();
+
+						end
+						self.Model = mdl;
+
+						surface.PlaySound( Sound( "coi/equip.wav" ) );
+
+					end
+
+				end );
+
+				secondary = self:CreatePanel( p3, RIGHT, ScrW() * 0.17, 0 );
 				secondary:SetPaintBackground( true );
-				secondary:DockPadding( 10, 10, 10, 10 );
-				self:CreateLabel( secondary, FILL, "COI 20", "Secondary", 7 );
+				self:CreateLabel( secondary, FILL, "COI 20", "Secondary", 7 ):DockMargin( 10, 10, 0, 0 );
+				secondary:Receiver( "item", function( self, tab, dropped, idx, x, y )
+
+					local pan = tab[1];
+					local v = pan.Item;
+					local item = GAMEMODE.Items[v];
+
+					if( dropped and !self.SelectedItem and item.Secondary ) then
+					
+						self.SelectedItem = v;
+
+						net.Start( "nSetSecondaryLoadout" );
+							net.WriteString( v );
+						net.SendToServer();
+
+						local mdl = GAMEMODE:CreateModelPanel( self, FILL, 0, 0, item.Model, Vector( 50, 50, 20 ), nil, 20 );
+						GAMEMODE:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+						mdl.Secondary = true;
+						mdl:Droppable( "item" );
+						function mdl.DoClick( mdl )
+
+							mdl:Remove();
+							self.SelectedItem = nil;
+
+							surface.PlaySound( Sound( "coi/equip.wav" ) );
+
+							net.Start( "nClearSecondaryLoadout" );
+							net.SendToServer();
+
+						end
+						self.Model = mdl;
+
+						surface.PlaySound( Sound( "coi/equip.wav" ) );
+
+					end
+
+				end );
 
 			p3:DockMargin( 0, 0, 0, 20 );
 			
 			local l = self:CreateLabel( p2, TOP, "COI 24", "You have", 9 );
 			local l2 = self:CreateLabel( p2, TOP, "COI Title 48", "$" .. string.Comma( 0 ), 9 ):BindInput( function()
-				return "$" .. string.Comma( self.Money or 0 );
+				return "$" .. string.Comma( LocalPlayer().Money or 0 );
 			end );
 			l2:SetTextColor( self:GetSkin().COLOR_MONEY );
 
+
+end
+
+function GM:ResetLoadoutInventory()
+
+	if( !self.Loadout or !self.Loadout:IsValid() or !self.Loadout.Inventory or !self.Loadout.Inventory:IsValid() ) then return end
+	local i = self.Loadout.Inventory;
+
+	i:Clear();
+
+	LocalPlayer():CheckInventory();
+
+	local cx = 0;
+	local cy = 0;
+	local maxh = 0;
+
+	for _, v in pairs( LocalPlayer().Inventory ) do
+
+		local item = self.Items[v];
+
+		if( item ) then
+
+			local iw = item.W * i.IconSize;
+			local ih = item.H * i.IconSize;
+			mdl = self:CreateModelPanel( i, NODOCK, iw, ih, item.Model, Vector( 50, 50, 20 ), nil, 20 );
+
+			if( cx + iw >= i:GetWide() ) then
+
+				cx = 0;
+				cy = cy + maxh;
+				maxh = 0;
+
+			end
+
+			mdl:SetPos( cx, cy );
+			
+			self:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+
+			if( ih > maxh ) then
+				maxh = ih;
+			end
+
+			cx = cx + iw;
+
+			mdl.Item = v;
+			mdl:Droppable( "item" );
+
+		end
+
+	end
 
 end
