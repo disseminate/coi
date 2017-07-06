@@ -12,8 +12,15 @@ function GM:CreateLoadoutPanel()
 	self.Loadout:FadeIn();
 	self.Loadout:SetKeyboardInputEnabled( false );
 
-	local l = self:CreateLabel( self.Loadout, TOP, "COI Title 64", "Select Your Loadout", 7 );
-	l:DockMargin( 0, 0, 0, 20 );
+	local p1 = self:CreatePanel( self.Loadout, TOP, 0, 64 );
+	p1:DockMargin( 0, 0, 0, 20 );
+		local l = self:CreateLabel( p1, LEFT, "COI Title 64", "Select Your Loadout", 7 );
+		local p2 = self:CreatePanel( p1, RIGHT, 200, 0 );
+		p2:DockPadding( 0, 17, 0, 17 );
+			local l = self:CreateLabel( p2, TOP, "COI 16", "Conflict of Interest β", 9 );
+			l:SetTextColor( Alpha( self:GetSkin().COLOR_WHITE, 0.7 ) );
+			local l = self:CreateLabel( p2, TOP, "COI 14", "Everything subject to change.", 9 );
+			l:SetTextColor( Alpha( self:GetSkin().COLOR_WHITE, 0.6 ) );
 
 	local p1 = self:CreatePanel( self.Loadout, BOTTOM, 0, 68 );
 
