@@ -60,9 +60,10 @@ function GM:HUDPaint()
 
 	if( self:GetState() == STATE_GAME ) then
 
+		self:HUDPaintMoney();
+		self:HUDPaintPlayers();
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
-		self:HUDPaintMoney();
 		self:HUDPaintDirectionArrow();
 
 		self:HUDPaintUnconsciousness();
@@ -208,6 +209,58 @@ function GM:HUDPaintMoney()
 					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 					local w, h = surface.GetTextSize( t );
 					surface.SetTextPos( pp.x - w / 2, pp.y + ( rad * 1.3 ) );
+					surface.DrawText( t );
+
+					surface.SetAlphaMultiplier( 1 );
+
+				end
+
+			end
+
+		end
+
+	end
+
+end
+
+function GM:HUDPaintPlayers()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		if( v != LocalPlayer() ) then
+
+			local p = v:EyePos();
+
+			local dist = LocalPlayer():EyePos():Distance( p );
+
+			if( dist < 1000 ) then
+
+				local amul = 1;
+				if( dist >= 700 ) then
+
+					amul = 1 - ( ( dist - 700 ) / 300 );
+
+				end
+
+				local trace = { };
+				trace.start = EyePos();
+				trace.endpos = p + Vector( 0, 0, 32 );
+				trace.filter = { LocalPlayer(), v };
+				local tr = util.TraceLine( trace );
+
+				if( tr.Fraction == 1 ) then
+
+					surface.SetAlphaMultiplier( amul );
+					
+					local eye = v:EyePos() + Vector( 0, 0, 16 );
+					local pp = eye:ToScreen();
+					pp.y = pp.y - 8;
+					
+					local t = v:Nick();
+					surface.SetFont( "COI 20" );
+					surface.SetTextColor( team.GetColor( v:Team() ) );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
 					surface.DrawText( t );
 
 					surface.SetAlphaMultiplier( 1 );
