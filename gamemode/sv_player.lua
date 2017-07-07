@@ -40,6 +40,7 @@ function GM:PlayerInitialSpawn( ply )
 	ply.Joined = false;
 
 	ply:SetTeam( TEAM_UNJOINED );
+	ply:CollisionRulesChanged();
 
 end
 
@@ -129,6 +130,7 @@ function meta:SetTeamAuto( noMsg )
 	if( t > -1 ) then
 
 		self:SetTeam( t );
+		self:CollisionRulesChanged();
 
 		if( !noMsg ) then
 
@@ -188,6 +190,7 @@ local function nJoinTeam( len, ply )
 	if( !GAMEMODE:CanChangeTeam( ply:Team(), t ) ) then return end
 
 	ply:SetTeam( t );
+	ply:CollisionRulesChanged();
 	ply:SetColorToTeam();
 	ply:SpawnAtTruck();
 
@@ -307,6 +310,11 @@ function GM:EntityTakeDamage( ply, dmg )
 				consc = true;
 				fattac = i.Owner;
 
+			elseif( i:GetClass() == "coi_taser" ) then
+
+				consc = true;
+				fattac = i.Owner;
+
 			end
 
 		end
@@ -404,6 +412,16 @@ end
 function GM:PlayerDeath( ply, inflictor, attacker )
 
 	self.BaseClass:PlayerDeath( ply, inflictor, attacker );
+
+	if( ply.HasMoney ) then
+
+		local ang = ply:GetAngles();
+		ang.p = 20;
+		ang.r = 0;
+
+		ply:DropMoney( true, ang:Forward() );
+
+	end
 
 	if( attacker and attacker:IsValid() and attacker:IsPlayer() ) then
 

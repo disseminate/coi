@@ -101,6 +101,7 @@ end
 
 function ENT:CanTargetPlayer( ply )
 
+	if( !self:Alive() ) then return false end
 	if( !ply or !ply:IsValid() ) then return false end
 	if( !ply:Alive() ) then return false end
 	if( ply.Safe ) then return false end

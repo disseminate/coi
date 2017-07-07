@@ -1,6 +1,20 @@
 SWEP.Base = "weapon_base";
 SWEP.PrintName = "COI Base";
 
+function SWEP:Attack()
+
+	local bull = { };
+	bull.Attacker = self.Owner;
+	bull.Damage = 5;
+	bull.Dir = self.Owner:GetAimVector();
+	bull.Spread = Vector( self.Primary.Spread, self.Primary.Spread, 0 );
+	bull.Src = self.Owner:GetShootPos();
+	bull.Num = self.Primary.Num or 1;
+	bull.Force = self.Primary.Force or 1;
+	self:FireBullets( bull );
+
+end
+
 function SWEP:PrimaryAttack()
 
 	if( self.Primary.Firearm ) then
@@ -13,15 +27,7 @@ function SWEP:PrimaryAttack()
 				self.Owner:EmitSound( self.Primary.Sound );
 			end
 
-			local bull = { };
-			bull.Attacker = self.Owner;
-			bull.Damage = 5;
-			bull.Dir = self.Owner:GetAimVector();
-			bull.Spread = Vector( self.Primary.Spread, self.Primary.Spread, 0 );
-			bull.Src = self.Owner:GetShootPos();
-			bull.Num = self.Primary.Num or 1;
-			bull.Force = self.Primary.Force or 1;
-			self:FireBullets( bull );
+			self:Attack();
 
 			self:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 			self.Owner:MuzzleFlash();
