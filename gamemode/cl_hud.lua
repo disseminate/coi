@@ -72,6 +72,8 @@ function GM:HUDPaint()
 
 	self:HUDPaintGameOver();
 
+	self:HUDPaintBlackScreen();
+
 end
 
 function GM:HUDPaintJoining()
@@ -676,6 +678,45 @@ function GM:HUDPaintGameOver()
 			end
 
 		end
+
+	end
+
+end
+
+function GM:HUDPaintBlackScreen()
+
+	local a = 0;
+
+	if( self:GetState() == STATE_POSTGAME and self:TimeLeftInState() <= 2 ) then
+
+		if( self:TimeLeftInState() > 1 ) then
+
+			a = 1 - ( self:TimeLeftInState() - 1 );
+
+		else
+
+			a = 1;
+
+		end
+
+	elseif( self:GetState() == STATE_PREGAME and STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() <= 1.2 ) then
+
+		if( STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() > 0.2 ) then
+
+			a = 1 - ( ( STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() ) - 0.2 );
+
+		else
+
+			a = 1;
+
+		end
+
+	end
+
+	if( a > 0 ) then
+
+		surface.SetDrawColor( Color( 0, 0, 0, a * 255 ) );
+		surface.DrawRect( 0, 0, ScrW(), ScrH() );
 
 	end
 
