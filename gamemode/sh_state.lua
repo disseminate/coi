@@ -103,21 +103,15 @@ end
 function GM:ResetMapTrucks()
 
 	local trucks = ents.FindByClass( "coi_truck" );
-
-	if( !self.Teams ) then
-		self.Teams = { };
-	end
+	self.Teams = { };
 	
 	for k, v in pairs( trucks ) do
-		
-		self.Teams[k] = {
-			Truck = v,
-			SpawnPos = v:GetPos() + v:GetForward() * -180
-		};
 
 		if( SERVER ) then
 			v:SetTeam( k );
 		end
+
+		table.insert( self.Teams, k );
 		
 	end
 
@@ -129,7 +123,7 @@ function GM:InitializeTeams()
 
 	for k, v in pairs( self.Teams ) do
 
-		team.SetUp( k, "Crew #" .. k, HSVToColor( ( k - 1 ) * 70, 0.5, 1 ) );
+		team.SetUp( v, "Crew #" .. v, HSVToColor( ( v - 1 ) * 70, 0.5, 1 ) );
 
 	end
 

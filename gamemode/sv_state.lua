@@ -57,7 +57,7 @@ function GM:Reset()
 
 	for k, v in pairs( self.Teams ) do
 
-		team.SetScore( k, 0 );
+		team.SetScore( v, 0 );
 
 	end
 
@@ -66,6 +66,7 @@ function GM:Reset()
 	self:ResetMapTrucks();
 
 end
+util.AddNetworkString( "nResetTrucks" );
 
 function GM:DebugAdvanceTime( amt )
 

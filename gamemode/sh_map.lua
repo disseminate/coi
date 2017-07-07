@@ -2,10 +2,24 @@ local meta = FindMetaTable( "Player" );
 
 function meta:GetTruck()
 
-	local teams = GAMEMODE.Teams;
-	if( teams and teams[self:Team()] and teams[self:Team()].Truck and teams[self:Team()].Truck:IsValid() ) then
+	for _, v in pairs( ents.FindByClass( "coi_truck" ) ) do
 
-		return teams[self:Team()].Truck;
+		if( v.GetTeam and v:GetTeam() == self:Team() ) then
+
+			return v;
+
+		end
+
+	end
+
+end
+
+function meta:GetSpawnPos()
+
+	local truck = self:GetTruck();
+	if( truck and truck:IsValid() ) then
+
+		return truck:GetPos() + truck:GetForward() * -180;
 
 	end
 
@@ -15,7 +29,7 @@ function meta:GetBagMoney()
 
 	for k, v in pairs( GAMEMODE.Teams ) do
 
-		if( team.NumPlayers( k ) == 0 ) then
+		if( team.NumPlayers( v ) == 0 ) then
 
 			return 20, 50;
 

@@ -22,11 +22,11 @@ function GM:SendStateMoney()
 
 	for k, v in pairs( self.Teams ) do
 
-		local amtTotal = team.GetScore( k );
+		local amtTotal = team.GetScore( v );
 
 		local nPlayers = 0;
 
-		for _, n in pairs( team.GetPlayers( k ) ) do
+		for _, n in pairs( team.GetPlayers( v ) ) do
 
 			if( n.Safe ) then
 
@@ -38,7 +38,7 @@ function GM:SendStateMoney()
 
 		local amt = math.floor( amtTotal / nPlayers );
 
-		for _, n in pairs( team.GetPlayers( k ) ) do
+		for _, n in pairs( team.GetPlayers( v ) ) do
 
 			if( n.Safe ) then
 

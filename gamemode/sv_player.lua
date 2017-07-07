@@ -112,9 +112,9 @@ function meta:SetTeamAuto( noMsg )
 
 	for k, v in pairs( teams ) do
 
-		if( team.NumPlayers( k ) < amt ) then
-			t = k;
-			amt = team.NumPlayers( k );
+		if( team.NumPlayers( v ) < amt ) then
+			t = v;
+			amt = team.NumPlayers( v );
 		end
 
 	end
@@ -145,12 +145,10 @@ end
 
 function meta:SpawnAtTruck()
 
-	if( !GAMEMODE.Teams ) then return end
-	if( !GAMEMODE.Teams[self:Team()] ) then return end
-	if( !GAMEMODE.Teams[self:Team()].SpawnPos ) then return end
-
-	local t = GAMEMODE.Teams[self:Team()].SpawnPos;
-	self:SetPos( t );
+	local pos = self:GetSpawnPos();
+	if( pos ) then
+		self:SetPos( pos );
+	end
 
 end
 

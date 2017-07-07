@@ -284,7 +284,7 @@ function GM:HUDPaintDirectionArrow()
 
 	local truck = LocalPlayer():GetTruck();
 
-	if( truck ) then
+	if( truck and truck:IsValid() ) then
 
 		local tpos = truck:GetPos();
 
@@ -449,11 +449,11 @@ function GM:HUDPaintGameOver()
 		local bestAmt = -1;
 		for k, v in pairs( self.Teams ) do
 
-			local s = team.GetScore( k );
+			local s = team.GetScore( v );
 			if( s > bestAmt ) then
 
 				bestAmt = s;
-				best = k;
+				best = v;
 
 			end
 
@@ -661,11 +661,11 @@ function GM:HUDPaintGameOver()
 			local bestAmt = -1;
 			for k, v in pairs( self.Teams ) do
 
-				local s = team.GetScore( k );
+				local s = team.GetScore( v );
 				if( s > bestAmt ) then
 
 					bestAmt = s;
-					best = k;
+					best = v;
 
 				end
 

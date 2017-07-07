@@ -22,7 +22,7 @@ function GM:PrePlayerDraw( ply )
 
 		local truck = ply:GetTruck();
 
-		if( truck ) then
+		if( truck and truck:IsValid() ) then
 			
 			local p0 = truck:GetPos();
 
@@ -102,12 +102,6 @@ function GM:NetworkEntityCreated( ent )
 		if( ent:IsPlayer() and ent:IsBot() ) then
 
 			ent.Joined = true;
-
-		end
-
-		if( self.Teams and ent:GetClass() == "coi_truck" and #ents.FindByClass( "coi_truck" ) == #self.Teams ) then
-
-			self:ResetMapTrucks();
 
 		end
 
