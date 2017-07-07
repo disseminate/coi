@@ -43,6 +43,8 @@ function GM:Reset()
 		v.Safe = false;
 
 		v.Bags = 0;
+		v.Kills = 0;
+		v.Knockouts = 0;
 
 		v.Unconscious = false;
 		v.UnconsciousTime = nil;
@@ -92,9 +94,41 @@ function GM:SendStats()
 		end
 
 	end
+
+	local kills = player.GetJoined()[1];
+	local killsMax = 0;
+
+	for _, v in pairs( player.GetJoined() ) do
+
+		if( v.Kills and v.Kills > killsMax ) then
+
+			killsMax = v.Kills;
+			kills = v;
+
+		end
+
+	end
+
+	local knocks = player.GetJoined()[1];
+	local knocksMax = 0;
+
+	for _, v in pairs( player.GetJoined() ) do
+
+		if( v.Knockouts and v.Knockouts > knocksMax ) then
+
+			knocksMax = v.Knockouts;
+			knocks = v;
+
+		end
+
+	end
+
+	--Knockouts
 	
 	net.Start( "nSendStats" );
 		net.WriteEntity( bags );
+		net.WriteEntity( kills );
+		net.WriteEntity( knocks );
 	net.Broadcast();
 
 end

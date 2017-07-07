@@ -640,7 +640,7 @@ function GM:HUDPaintGameOver()
 
 		local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 );
 
-		local awards = { "Most Bags Collected", "Most Money", "Most Kills", "Most Tases" };
+		local awards = { "Most Bags Collected", "Most Money", "Most Kills", "Most Knockouts" };
 		surface.SetFont( "COI Title 30" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 
@@ -687,6 +687,18 @@ function GM:HUDPaintGameOver()
 				if( self.Stats.MostBags ) then
 
 					players[1] = self.Stats.MostBags;
+
+				end
+
+				if( self.Stats.MostKills ) then
+
+					players[3] = self.Stats.MostKills;
+
+				end
+
+				if( self.Stats.MostKnockouts ) then
+
+					players[4] = self.Stats.MostKnockouts;
 
 				end
 

@@ -68,7 +68,7 @@ function GM:PlayerSpawn( ply )
 
 	ply:SetCustomCollisionCheck( true );
 
-	if( ply:IsBot() ) then
+	if( ply:IsBot() and !ply.Joined ) then
 
 		ply.Joined = true;
 
@@ -277,19 +277,28 @@ end
 
 function GM:EntityTakeDamage( ply, dmg )
 
+	local a = dmg:GetAttacker();
+	local i = dmg:GetInflictor();
+
 	if( ply:IsPlayer() ) then
+
+		if( a and a:IsValid() and a:IsPlayer() and a:Team() == ply:Team() ) then
+			return true;
+		end
 
 		if( ply.Unconscious ) then
 			return true;
 		end
 
 		local consc = false;
+		local fattac = nil;
 
-		if( dmg:GetInflictor() and dmg:GetInflictor():IsValid() ) then
+		if( i and i:IsValid() ) then
 			
-			if( dmg:GetInflictor():GetClass() == "coi_money" ) then
+			if( i:GetClass() == "coi_money" ) then
 
 				consc = true;
+				fattac = i.Owner;
 
 			end
 
@@ -308,6 +317,12 @@ function GM:EntityTakeDamage( ply, dmg )
 				ply.Unconscious = true;
 				ply.UnconsciousTime = CurTime();
 				ply.Consciousness = 30;
+
+				if( fattac and fattac:IsValid() ) then
+
+					fattac.Knockouts = ( fattac.Knockouts or 0 ) + 1;
+
+				end
 
 				ply:Freeze( true );
 
@@ -369,6 +384,18 @@ function GM:ConsciousnessThink()
 			v:Freeze( false );
 			v:CollisionRulesChanged();
 		end
+
+	end
+
+end
+
+function GM:PlayerDeath( ply, inflictor, attacker )
+
+	self.BaseClass:PlayerDeath( ply, inflictor, attacker );
+
+	if( attacker and attacker:IsValid() and attacker:IsPlayer() ) then
+
+		attacker.Kills = ( attacker.Kills or 0 ) + 1;
 
 	end
 
