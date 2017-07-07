@@ -11,6 +11,8 @@ function GM:InitPostEntity()
 
 	self:InitializeTeams();
 
+	self:CheckNavmesh();
+
 end
 
 function meta:SyncMapData()

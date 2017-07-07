@@ -62,6 +62,7 @@ function GM:HUDPaint()
 
 		self:HUDPaintMoney();
 		self:HUDPaintPlayers();
+		self:HUDPaintCops();
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
 		self:HUDPaintDirectionArrow();
@@ -142,7 +143,7 @@ function GM:HUDPaintHealth()
 	surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
 	surface.DrawRect( 40, ScrH() - 40 - bh, bw, bh );
 
-	local hp = HUDApproach( "health", LocalPlayer():Health(), LocalPlayer():GetMaxHealth() );
+	local hp = HUDApproach( "health", math.max( LocalPlayer():Health(), 0 ), LocalPlayer():GetMaxHealth() );
 
 	if( hp > 0 ) then
 		
@@ -151,7 +152,7 @@ function GM:HUDPaintHealth()
 
 	end
 
-	local hp = LocalPlayer():Health();
+	local hp = math.max( LocalPlayer():Health(), 0 );
 
 	surface.SetFont( "COI 20" );
 	local w, h = surface.GetTextSize( hp );
@@ -277,6 +278,54 @@ function GM:HUDPaintPlayers()
 
 end
 
+function GM:HUDPaintCops()
+
+	for _, v in pairs( ents.FindByClass( "coi_cop" ) ) do
+
+		local p = v:GetPos() + Vector( 0, 0, 64 );
+
+		local dist = LocalPlayer():EyePos():Distance( p );
+
+		if( dist < 1000 ) then
+
+			local amul = 1;
+			if( dist >= 700 ) then
+
+				amul = 1 - ( ( dist - 700 ) / 300 );
+
+			end
+
+			local trace = { };
+			trace.start = EyePos();
+			trace.endpos = p + Vector( 0, 0, 32 );
+			trace.filter = { LocalPlayer(), v };
+			local tr = util.TraceLine( trace );
+
+			if( tr.Fraction == 1 ) then
+
+				surface.SetAlphaMultiplier( amul );
+				
+				local eye = v:GetPos() + Vector( 0, 0, 64 + 16 );
+				local pp = eye:ToScreen();
+				pp.y = pp.y - 8;
+				
+				local t = "Cop";
+				surface.SetFont( "COI 20" );
+				surface.SetTextColor( Color( 255, 255, 255 ) );
+				local w, h = surface.GetTextSize( t );
+				surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+				surface.DrawText( t );
+
+				surface.SetAlphaMultiplier( 1 );
+
+			end
+
+		end
+
+	end
+
+end
+
 function GM:HUDPaintDirectionArrow()
 
 	local a;
@@ -316,7 +365,7 @@ function GM:HUDPaintDirectionArrow()
 				local t = "Put the money in the truck!";
 
 				if( self:InRushPeriod() ) then
-					t = "Get to your truck before you're arrested!";
+					t = "Get to your truck before it leaves!";
 					surface.SetTextColor( self:GetSkin().COLOR_WARNING );
 				end
 
