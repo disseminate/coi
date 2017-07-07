@@ -35,7 +35,7 @@ function ENT:Use( ply )
 		ply.Bags = ( ply.Bags or 0 ) + 1;
 
 		net.Start( "nMsgTruckDeposit" );
-			net.WriteUInt( amt, 32 );
+			net.WriteUInt( amt, NET_MAX_BAG_MONEY );
 		net.Send( ply );
 
 		self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );

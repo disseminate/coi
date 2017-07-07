@@ -7,3 +7,7 @@
 @PointClass base(Targetname, Angles) studio("models/props_junk/garbage_bag001a.mdl") = coi_money : "COI Money Bag"
 [
 ]
+
+@PointClass iconsprite("editor/info_target.vmt") = coi_copspawner : "COI Police Spawnpoint"
+[
+]

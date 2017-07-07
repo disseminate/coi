@@ -48,7 +48,9 @@ function GM:PrePlayerDraw( ply )
 				ang:RotateAroundAxis( truck:GetUp(), 90 );
 			end
 
-			ply:SetPos( p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z );
+			local rpos = p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z;
+			ply:SetPos( rpos );
+			ply:SetRenderOrigin( rpos );
 			ply:SetRenderAngles( ang );
 
 		end

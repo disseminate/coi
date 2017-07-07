@@ -79,9 +79,9 @@ net.Receive( "nMsgWrongTruck", nMsgWrongTruck );
 
 local function nMsgTruckDeposit( len )
 
-	local amt = net.ReadUInt( 32 );
+	local amt = net.ReadUInt( NET_MAX_BAG_MONEY );
 
-	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, "Nice work. You earned ", GAMEMODE:GetSkin().COLOR_MONEY, "$" .. string.Comma( amt ), GAMEMODE:GetSkin().COLOR_WHITE, " for your team." );
+	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, table.Random( { "Nice work", "Good job", "Well done", "Nice" } ) .. ". You earned ", GAMEMODE:GetSkin().COLOR_MONEY, "$" .. string.Comma( amt ), GAMEMODE:GetSkin().COLOR_WHITE, " for your team." );
 
 end
 net.Receive( "nMsgTruckDeposit", nMsgTruckDeposit );
