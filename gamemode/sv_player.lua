@@ -218,7 +218,7 @@ function GM:KeyPress( ply, key )
 
 end
 
-function meta:DropMoney( thrown )
+function meta:DropMoney( thrown, ao )
 
 	self.HasMoney = false;
 	net.Start( "nSetHasMoney" );
@@ -228,15 +228,17 @@ function meta:DropMoney( thrown )
 	
 	self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
 
+	ao = ao or self:GetAimVector();
+
 	local bag = ents.Create( "coi_money" );
-	bag:SetPos( self:GetShootPos() + self:GetAimVector() * 32 );
+	bag:SetPos( self:GetShootPos() + ao * 32 );
 	bag:SetAngles( Angle( math.Rand( -180, 180 ), math.Rand( -180, 180 ), math.Rand( -180, 180 ) ) );
 	bag.Owner = self;
 	bag:SetDropped( true );
 	bag:SetThrown( thrown );
 	bag:Spawn();
 	bag:Activate();
-
+	
 end
 
 function GM:Loadout()
@@ -261,6 +263,105 @@ function meta:Loadout()
 		local i = GAMEMODE.Items[self.SecondaryLoadout];
 		self:Give( i.SWEP );
 		self.SecondaryLoadout = nil;
+	end
+
+end
+
+function GM:EntityTakeDamage( ply, dmg )
+
+	if( ply:IsPlayer() ) then
+
+		if( ply.Unconscious ) then
+			return true;
+		end
+
+		local consc = false;
+
+		if( dmg:GetInflictor() and dmg:GetInflictor():IsValid() ) then
+			
+			if( dmg:GetInflictor():GetClass() == "coi_money" ) then
+
+				consc = true;
+
+			end
+
+		end
+
+		if( consc ) then
+
+			if( !ply.Consciousness ) then
+				ply.Consciousness = 100;
+			end
+
+			ply.Consciousness = math.Clamp( ply.Consciousness - dmg:GetDamage(), 0, 100 );
+
+			if( ply.Consciousness <= 0 ) then
+
+				ply.Unconscious = true;
+				ply.UnconsciousTime = CurTime();
+				ply.Consciousness = 30;
+
+				ply:Freeze( true );
+
+				ply:CollisionRulesChanged();
+
+				net.Start( "nUnconscious" );
+					net.WriteEntity( ply );
+				net.Broadcast();
+
+				if( ply.HasMoney ) then
+
+					local ang = ply:GetAngles();
+					ang.p = 20;
+					ang.r = 0;
+
+					ply:DropMoney( true, ang:Forward() );
+
+				end
+
+			else
+
+				net.Start( "nSetConsciousness" );
+					net.WriteUInt( ply.Consciousness, 7 );
+				net.Send( ply );
+
+			end
+
+			return true;
+
+		end
+
+	end
+
+end
+util.AddNetworkString( "nUnconscious" );
+util.AddNetworkString( "nSetConsciousness" );
+
+function GM:ConsciousnessThink()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		if( !v.NextConsciousRecover ) then
+			v.NextConsciousRecover = CurTime();
+		end
+
+		if( !v.Consciousness ) then
+			v.Consciousness = 100;
+		end
+
+		if( CurTime() >= v.NextConsciousRecover ) then
+
+			v.NextConsciousRecover = CurTime() + 1;
+			v.Consciousness = math.Clamp( v.Consciousness + 5, 0, 100 );
+
+		end
+
+		if( v.Unconscious and CurTime() >= v.UnconsciousTime + 5 ) then
+			v.Unconscious = false;
+			v:Freeze( false );
+			v:CollisionRulesChanged();
+		end
+
 	end
 
 end

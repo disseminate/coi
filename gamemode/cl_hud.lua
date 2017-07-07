@@ -65,6 +65,8 @@ function GM:HUDPaint()
 		self:HUDPaintMoney();
 		self:HUDPaintDirectionArrow();
 
+		self:HUDPaintUnconsciousness();
+
 	end
 
 	self:HUDPaintGameOver();
@@ -271,6 +273,24 @@ function GM:HUDPaintDirectionArrow()
 			surface.DrawText( t );
 
 		surface.SetAlphaMultiplier( 1 );
+
+	end
+
+end
+
+function GM:HUDPaintUnconsciousness()
+
+	if( !LocalPlayer().Unconscious and LocalPlayer().Consciousness < 100 ) then
+
+		surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), 1 - ( LocalPlayer().Consciousness / 100 ) );
+
+	end
+
+	if( LocalPlayer().Unconscious ) then
+
+		local d = ( CurTime() - LocalPlayer().UnconsciousTime ) / 5;
+
+		surface.DrawProgressCircle( ScrW() / 2, ScrH() / 2, d, 64 );
 
 	end
 

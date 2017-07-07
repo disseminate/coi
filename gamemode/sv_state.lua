@@ -41,6 +41,11 @@ function GM:Reset()
 
 		v.HasMoney = false;
 		v.Safe = false;
+
+		v.Unconscious = false;
+		v.UnconsciousTime = nil;
+		v.Consciousness = 100;
+
 		v:StripWeapons();
 		v:Spawn();
 

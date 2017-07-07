@@ -112,3 +112,54 @@ function GM:NetworkEntityCreated( ent )
 	end
 
 end
+
+local function nUnconscious( len )
+
+	local ply = net.ReadEntity();
+
+	ply.Unconscious = true;
+	ply:CollisionRulesChanged();
+
+	ply.UnconsciousTime = CurTime();
+	if( ply == LocalPlayer() ) then
+		ply.Consciousness = 30;
+	end
+
+end
+net.Receive( "nUnconscious", nUnconscious );
+
+local function nSetConsciousness( len )
+
+	local amt = net.ReadUInt( 7 );
+	LocalPlayer().Consciousness = amt;
+
+end
+net.Receive( "nSetConsciousness", nSetConsciousness );
+
+function GM:ConsciousnessThink()
+
+	if( !LocalPlayer().NextConsciousRecover ) then
+		LocalPlayer().NextConsciousRecover = CurTime();
+	end
+
+	if( !LocalPlayer().Consciousness ) then
+		LocalPlayer().Consciousness = 100;
+	end
+
+	if( CurTime() >= LocalPlayer().NextConsciousRecover ) then
+
+		LocalPlayer().NextConsciousRecover = CurTime() + 1;
+		LocalPlayer().Consciousness = math.Clamp( LocalPlayer().Consciousness + 5, 0, 100 );
+
+	end
+
+	for _, v in pairs( player.GetAll() ) do
+
+		if( v.Unconscious and CurTime() >= v.UnconsciousTime + 5 ) then
+			v.Unconscious = false;
+			v:CollisionRulesChanged();
+		end
+
+	end
+
+end
