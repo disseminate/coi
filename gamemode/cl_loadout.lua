@@ -122,9 +122,15 @@ function GM:CreateLoadoutPanel()
 					if( v.Team ) then
 
 						if( v.Team == LocalPlayer():Team() ) then
-							v:SetVisible( false );
+							if( v:IsVisible() ) then
+								v:SetVisible( false );
+								v:InvalidateParent();
+							end
 						else
-							v:SetVisible( true );
+							if( !v:IsVisible() ) then
+								v:SetVisible( true );
+								v:InvalidateParent();
+							end
 						end
 
 					end
