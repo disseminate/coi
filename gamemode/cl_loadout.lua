@@ -265,6 +265,7 @@ function GM:CreateLoadoutPanel()
 					local lP = self:CreateLabel( p4, RIGHT, "COI 20", "$1,200", 6 ):BindInput( function() return "$" .. string.Comma( ItemData.Price ) end );
 					lP:SetTextColor( self:GetSkin().COLOR_MONEY );
 				local d = self:CreateLabel( p3, FILL, "COI 16", "An effective killing device.", 7 ):BindInput( function() return ItemData.Desc end );
+				d:SetWrap( true );
 			
 			local p3 = self:CreatePanel( p2, BOTTOM, 0, 40 );
 
@@ -347,17 +348,15 @@ function GM:CreateLoadoutPanel()
 		l:DockMargin( 0, 0, 0, 20 );
 
 		local p2 = self:CreatePanel( p1, FILL );
-			local pw = 840 * ( ScrW() / 1920 ); -- dirty...
+			local fakeW = ScrW() * 0.5 - 40 - ( 40 * 2 ); -- dirty... but necessary for icon sizes
 			local ph = 300 * ( ScrH() / 1080 );
 
-			local invPanel = self:CreateScrollPanel( p2, TOP, pw, ph );
+			local invPanel = self:CreateScrollPanel( p2, TOP, 0, ph );
 			invPanel:SetPaintBackground( true );
 			invPanel:DockMargin( 0, 0, 0, 20 );
-			invPanel.IconSize = pw / 16;
-			invPanel:SetTall( invPanel.IconSize * 6 );
-
-			-- should now have a properly scaled 16x6 grid!
-
+			invPanel.IconSize = fakeW / LocalPlayer():InvW();
+			invPanel:SetTall( invPanel.IconSize * LocalPlayer():InvH() );
+			
 			function invPanel:Paint( w, h )
 
 				surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_GLASS );
@@ -447,7 +446,7 @@ function GM:CreateLoadoutPanel()
 			self.Loadout.Inventory = invPanel;
 			self:ResetLoadoutInventory();
 
-			local p3 = self:CreatePanel( p2, TOP, 0, 200 );
+			local p3 = self:CreatePanel( p2, TOP, 0, 250 * ( ScrH() / 1920 ) );
 				primary = self:CreatePanel( p3, FILL );
 				primary:SetPaintBackground( true );
 				primary:DockMargin( 0, 0, 20, 0 );

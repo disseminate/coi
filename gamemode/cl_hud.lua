@@ -135,7 +135,7 @@ end
 
 function GM:HUDPaintHealth()
 
-	local bw = 400;
+	local bw = ScrW() / 4;
 	local bh = 24;
 	local pad = 2;
 
