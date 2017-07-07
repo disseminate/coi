@@ -32,3 +32,13 @@ function GM:Reset()
 	self:ResetMapTrucks();
 
 end
+
+local function nSendStats( len )
+
+	GAMEMODE.Stats = { };
+	GAMEMODE.Stats.MostBags = net.ReadEntity();
+	GAMEMODE.Stats.MostKills = net.ReadEntity();
+	GAMEMODE.Stats.MostKnockouts = net.ReadEntity();
+
+end
+net.Receive( "nSendStats", nSendStats );

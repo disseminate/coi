@@ -24,13 +24,13 @@ function GM:ScoreboardShow()
 
 			for k, v in pairs( self.Teams ) do
 
-				local title = self:CreateLabel( self.Scoreboard.Players, TOP, "COI Title 30", team.GetName( k ), 7 );
-				title:SetTextColor( team.GetColor( k ) );
+				local title = self:CreateLabel( self.Scoreboard.Players, TOP, "COI Title 30", team.GetName( v ), 7 );
+				title:SetTextColor( team.GetColor( v ) );
 				title:DockMargin( 0, 0, 0, 10 );
 
 				local p3 = self:CreatePanel( self.Scoreboard.Players, TOP, 0, 0 );
 				p3:DockMargin( 0, 0, 0, 20 );
-				p3.Team = k;
+				p3.Team = v;
 
 				function p3:Think()
 

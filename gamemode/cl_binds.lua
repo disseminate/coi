@@ -12,6 +12,65 @@ function GM:PlayerBindPress( ply, bind, down )
 
 		end
 
+		if( bind == "invnext" or bind == "invprev" ) then -- only 2 weps!
+
+			local wep = ply:GetActiveWeapon();
+			if( wep and wep:IsValid() and wep != NULL ) then
+
+				local tab = ply:GetWeapons();
+
+				for k, v in pairs( tab ) do
+
+					if( v != wep ) then
+
+						self.NextWeapon = v;
+
+					end
+
+				end
+
+			end
+
+			return true;
+
+		end
+
+		ply:CheckInventory();
+
+		if( bind == "slot1" ) then
+
+			for _, v in pairs( ply.Inventory ) do
+
+				local item = self.Items[v.ItemClass];
+				if( !item.Secondary and LocalPlayer():HasWeapon( item.SWEP ) ) then
+
+					self.NextWeapon = LocalPlayer():GetWeapon( item.SWEP );
+					break;
+
+				end
+
+			end
+
+			return true;
+
+		elseif( bind == "slot2" ) then
+
+			for _, v in pairs( ply.Inventory ) do
+
+				local item = self.Items[v.ItemClass];
+				if( item.Secondary and LocalPlayer():HasWeapon( item.SWEP ) ) then
+
+					self.NextWeapon = LocalPlayer():GetWeapon( item.SWEP );
+					break;
+
+				end
+
+			end
+
+			return true;
+
+		end
+
 	end
 
 end

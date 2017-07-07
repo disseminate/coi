@@ -22,7 +22,7 @@ function GM:PrePlayerDraw( ply )
 
 		local truck = ply:GetTruck();
 
-		if( truck ) then
+		if( truck and truck:IsValid() ) then
 			
 			local p0 = truck:GetPos();
 
@@ -48,7 +48,9 @@ function GM:PrePlayerDraw( ply )
 				ang:RotateAroundAxis( truck:GetUp(), 90 );
 			end
 
-			ply:SetPos( p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z );
+			local rpos = p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z;
+			ply:SetPos( rpos );
+			ply:SetRenderOrigin( rpos );
 			ply:SetRenderAngles( ang );
 
 		end
@@ -100,12 +102,6 @@ function GM:NetworkEntityCreated( ent )
 		if( ent:IsPlayer() and ent:IsBot() ) then
 
 			ent.Joined = true;
-
-		end
-
-		if( self.Teams and ent:GetClass() == "coi_truck" and #ents.FindByClass( "coi_truck" ) == #self.Teams ) then
-
-			self:ResetMapTrucks();
 
 		end
 
@@ -161,5 +157,25 @@ function GM:ConsciousnessThink()
 		end
 
 	end
+
+end
+
+function GM:CreateMove( cmd )
+
+	if( self.NextWeapon ) then
+
+		if( self.NextWeapon != LocalPlayer():GetActiveWeapon() ) then
+
+			cmd:SelectWeapon( self.NextWeapon );
+
+		else
+
+			self.NextWeapon = nil;
+
+		end
+
+	end
+
+	return self.BaseClass:CreateMove( cmd );
 
 end

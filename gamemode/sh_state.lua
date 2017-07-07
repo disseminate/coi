@@ -86,6 +86,7 @@ function GM:OnStateTransition( state, oldstate )
 		if( state == STATE_POSTGAME ) then
 
 			self:SendStateMoney();
+			self:SendStats();
 
 		end
 
@@ -102,35 +103,75 @@ end
 function GM:ResetMapTrucks()
 
 	local trucks = ents.FindByClass( "coi_truck" );
-
-	if( !self.Teams ) then
-		self.Teams = { };
-	end
+	self.Teams = { };
 	
 	for k, v in pairs( trucks ) do
-		
-		self.Teams[k] = {
-			Truck = v,
-			SpawnPos = v:GetPos() + v:GetForward() * -180
-		};
 
 		if( SERVER ) then
 			v:SetTeam( k );
 		end
+
+		table.insert( self.Teams, k );
 		
 	end
 
 end
 
+local teamNames = {
+	"Lion",
+	"Crocodile",
+	"Bear",
+	"Stallion",
+	"Wasp",
+	"Cobra",
+	"Mosquito",
+	"Scorpion",
+	"Union",
+	"Sexsmith",
+	"Lambda",
+	"Omega",
+	"Hunter",
+	"Blade",
+	"Scar",
+	"Hammer",
+	"Fist",
+	"Razor",
+	"Stab",
+	"Dagger",
+	"Reaper",
+	"Nomad",
+	"Star",
+	"Phantom",
+	"12th Street"
+};
+
+local gangNames = {
+	"Crew",
+	"Team",
+	"Squad",
+	"Family",
+	"Saints",
+	"Kings",
+	"Mafia",
+	"Mob",
+	"Circle",
+	"Nation"
+};
+
 function GM:InitializeTeams()
 
 	self:ResetMapTrucks();
 
+	-- New team name per day.
+	math.randomseed( 1499450893 + tonumber( os.date( "%j", math.floor( os.time() - CurTime() ) ) ) );
+
 	for k, v in pairs( self.Teams ) do
 
-		team.SetUp( k, "Crew #" .. k, HSVToColor( ( k - 1 ) * 70, 0.5, 1 ) );
+		team.SetUp( v, table.Random( teamNames ) .. " " .. table.Random( gangNames ), HSVToColor( ( v - 1 ) * 70, 0.5, 1 ) );
 
 	end
+
+	math.randomseed( os.time() );
 
 	team.SetUp( TEAM_UNJOINED, "Unjoined", Color( 128, 128, 128 ), false );
 

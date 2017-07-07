@@ -9,3 +9,5 @@ STATE_TIMES = {
 };
 
 TEAM_UNJOINED = 999;
+
+NET_MAX_BAG_MONEY = 10; -- max $2^10 in one bag

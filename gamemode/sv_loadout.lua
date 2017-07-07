@@ -2,10 +2,11 @@ local function nSetPrimaryLoadout( len, ply )
 
 	if( GAMEMODE:GetState() != STATE_PREGAME ) then return end
 
-	local item = net.ReadString();
+	local item = net.ReadUInt( 16 );
 
-	if( !table.HasValue( ply.Inventory, item ) ) then return end
-	if( GAMEMODE.Items[item].Secondary ) then return end
+	if( !ply.Inventory[item] ) then return end
+	local i = ply.Inventory[item];
+	if( GAMEMODE.Items[i.ItemClass].Secondary ) then return end
 
 	ply.PrimaryLoadout = item;
 
@@ -17,10 +18,11 @@ local function nSetSecondaryLoadout( len, ply )
 
 	if( GAMEMODE:GetState() != STATE_PREGAME ) then return end
 	
-	local item = net.ReadString();
+	local item = net.ReadUInt( 16 );
 
-	if( !table.HasValue( ply.Inventory, item ) ) then return end
-	if( !GAMEMODE.Items[item].Secondary ) then return end
+	if( !ply.Inventory[item] ) then return end
+	local i = ply.Inventory[item];
+	if( !GAMEMODE.Items[i.ItemClass].Secondary ) then return end
 
 	ply.SecondaryLoadout = item;
 

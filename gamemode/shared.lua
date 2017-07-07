@@ -36,3 +36,33 @@ function Alpha( col, amt )
 	return col;
 
 end
+
+net.OldIncoming = net.OldIncoming or net.Incoming;
+
+function net.Incoming( len, ply )
+
+	local i = net.ReadHeader()
+	local strName = util.NetworkIDToString( i )
+	
+	if ( !strName ) then return end
+	
+	local func = net.Receivers[ strName:lower() ]
+	if ( !func ) then return end
+
+	len = len - 16
+
+	if( SERVER ) then
+
+		MsgC( Color( 100, 100, 255 ), "[SERVER] " );
+		
+	else
+
+		MsgC( Color( 255, 255, 100 ), "[CLIENT] " );
+
+	end
+
+	MsgC( Color( 255, 255, 255 ), strName, Color( 128, 128, 128 ), " (" .. len .. " bits)\n" );
+	
+	func( len, ply )
+
+end

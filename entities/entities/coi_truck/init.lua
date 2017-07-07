@@ -1,4 +1,5 @@
 AddCSLuaFile( "cl_init.lua" );
+AddCSLuaFile( "shared.lua" );
 include( "shared.lua" );
 
 function ENT:Use( ply )
@@ -29,11 +30,15 @@ function ENT:Use( ply )
 			return;
 		end
 
-		local amt = math.random( 200, 500 );
+		local min, max = ply:GetBagMoney();
+
+		local amt = math.random( min, max );
 		team.AddScore( self:GetTeam(), amt );
 
+		ply.Bags = ( ply.Bags or 0 ) + 1;
+
 		net.Start( "nMsgTruckDeposit" );
-			net.WriteUInt( amt, 32 );
+			net.WriteUInt( amt, NET_MAX_BAG_MONEY );
 		net.Send( ply );
 
 		self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );

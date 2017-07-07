@@ -7,6 +7,7 @@ include( "sh_map.lua" );
 include( "sh_money.lua" );
 include( "sh_player.lua" );
 include( "sh_state.lua" );
+include( "sv_ai.lua" );
 include( "sv_loadout.lua" );
 include( "sv_map.lua" );
 include( "sv_money.lua" );

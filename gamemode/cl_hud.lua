@@ -1,5 +1,6 @@
 local HUDElements = {
 	"CHudAmmo",
+	"CHudSecondaryAmmo",
 	"CHudBattery",
 	"CHudHealth",
 	"CHudWeaponSelection"
@@ -62,8 +63,10 @@ function GM:HUDPaint()
 
 		self:HUDPaintMoney();
 		self:HUDPaintPlayers();
+		self:HUDPaintCops();
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
+		self:HUDPaintWeapon();
 		self:HUDPaintDirectionArrow();
 
 		self:HUDPaintUnconsciousness();
@@ -71,6 +74,8 @@ function GM:HUDPaint()
 	end
 
 	self:HUDPaintGameOver();
+
+	self:HUDPaintBlackScreen();
 
 end
 
@@ -96,7 +101,6 @@ end
 function GM:HUDPaintTimer()
 
 	if( #player.GetJoined() == 0 ) then return end
-	--if( self:GetState() == STATE_PREGAME ) then return end -- vgui will do this
 
 	local state = self:GetState();
 	local timeLeft = self:TimeLeftInState();
@@ -118,29 +122,39 @@ function GM:HUDPaintTimer()
 	local w, h = surface.GetTextSize( text );
 
 	surface.SetTextColor( col );
-	surface.SetTextPos( ScrW() / 2 - w / 2, 40 );
-	surface.DrawText( text );
-
+	
 	surface.SetFont( "COI Title 24" );
 
 	local w2, h2 = surface.GetTextSize( text2 );
 
+	local totalW = w + w2 + 4;
+	local padding = 6;
+	surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+	surface.DrawRect( ScrW() / 2 - w / 2 - padding, 40, totalW + padding * 2, 48 + padding * 2 );
+
+	surface.SetFont( "COI Title 48" );
+
+	surface.SetTextPos( ScrW() / 2 - w / 2, 40 + padding );
+	surface.DrawText( text );
+
+	surface.SetFont( "COI Title 24" );
+
 	surface.SetTextColor( self:GetSkin().COLOR_GRAY );
-	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, 40 );
+	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, 40 + padding );
 	surface.DrawText( text2 );
 
 end
 
 function GM:HUDPaintHealth()
 
-	local bw = 400;
+	local bw = ScrW() / 4;
 	local bh = 24;
 	local pad = 2;
 
 	surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
 	surface.DrawRect( 40, ScrH() - 40 - bh, bw, bh );
 
-	local hp = HUDApproach( "health", LocalPlayer():Health(), LocalPlayer():GetMaxHealth() );
+	local hp = HUDApproach( "health", math.max( LocalPlayer():Health(), 0 ), LocalPlayer():GetMaxHealth() );
 
 	if( hp > 0 ) then
 		
@@ -149,13 +163,77 @@ function GM:HUDPaintHealth()
 
 	end
 
-	local hp = LocalPlayer():Health();
+	local hp = math.max( LocalPlayer():Health(), 0 );
 
 	surface.SetFont( "COI 20" );
 	local w, h = surface.GetTextSize( hp );
 	surface.SetTextPos( 40 + bw / 2 - w / 2, ScrH() - 40 - bh + bh / 2 - h / 2 );
 	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 	surface.DrawText( hp );
+
+end
+
+function GM:HUDPaintWeapon()
+
+	local wep = LocalPlayer():GetActiveWeapon();
+
+	if( !wep or !wep:IsValid() or wep == NULL ) then return end
+
+	local clip, ammo;
+
+	if( wep.Primary and wep.Primary.Firearm ) then
+		clip = wep:Clip1();
+	end
+
+	if( wep.Primary and wep.Primary.Ammo and !wep.Primary.InfiniteAmmo ) then
+		ammo = LocalPlayer():GetAmmoCount( wep.Primary.Ammo );
+	end
+
+	if( clip and ammo ) then
+
+		surface.SetFont( "COI Title 30" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = "" .. ammo;
+		local w, h = surface.GetTextSize( t );
+
+		surface.SetFont( "COI Title 64" );
+		local t2 = "" .. clip;
+		local w2, h2 = surface.GetTextSize( t2 );
+
+		local totalW = w + w2 + 10;
+
+		local padding = 6;
+
+		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+		surface.DrawRect( ScrW() - 40 - totalW - padding * 2, ScrH() - 40 - 64 - padding * 2, totalW + padding * 2, 64 + padding * 2 );
+
+		local x = ScrW() - 40 - w - padding;
+		surface.SetFont( "COI Title 30" );
+		surface.SetTextPos( x, ScrH() - 40 - 64 - padding );
+		surface.DrawText( t );
+		
+		surface.SetFont( "COI Title 64" );
+
+		x = x - w2 - 10;
+		surface.SetTextPos( x, ScrH() - 40 - h2 - padding );
+		surface.DrawText( t2 );
+
+	elseif( clip ) then
+
+		surface.SetFont( "COI Title 64" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = "" .. clip;
+		local w, h = surface.GetTextSize( t );
+
+		local padding = 6;
+
+		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+		surface.DrawRect( ScrW() - 40 - w - padding * 2, ScrH() - 40 - 64 - padding * 2, w + padding * 2, 64 + padding * 2 );
+
+		surface.SetTextPos( ScrW() - 40 - w - padding, ScrH() - 40 - h - padding );
+		surface.DrawText( t );
+
+	end
 
 end
 
@@ -275,6 +353,58 @@ function GM:HUDPaintPlayers()
 
 end
 
+function GM:HUDPaintCops()
+
+	for _, v in pairs( ents.FindByClass( "coi_cop" ) ) do
+
+		if( v:Alive() ) then
+			
+			local p = v:GetPos() + Vector( 0, 0, 64 );
+
+			local dist = LocalPlayer():EyePos():Distance( p );
+
+			if( dist < 1000 ) then
+
+				local amul = 1;
+				if( dist >= 700 ) then
+
+					amul = 1 - ( ( dist - 700 ) / 300 );
+
+				end
+
+				local trace = { };
+				trace.start = EyePos();
+				trace.endpos = p + Vector( 0, 0, 32 );
+				trace.filter = { LocalPlayer(), v };
+				local tr = util.TraceLine( trace );
+
+				if( tr.Fraction == 1 ) then
+
+					surface.SetAlphaMultiplier( amul );
+					
+					local eye = v:GetPos() + Vector( 0, 0, 64 + 16 );
+					local pp = eye:ToScreen();
+					pp.y = pp.y - 8;
+					
+					local t = "Cop";
+					surface.SetFont( "COI 20" );
+					surface.SetTextColor( Color( 255, 255, 255 ) );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+					surface.DrawText( t );
+
+					surface.SetAlphaMultiplier( 1 );
+
+				end
+
+			end
+
+		end
+
+	end
+
+end
+
 function GM:HUDPaintDirectionArrow()
 
 	local a;
@@ -282,7 +412,7 @@ function GM:HUDPaintDirectionArrow()
 
 	local truck = LocalPlayer():GetTruck();
 
-	if( truck ) then
+	if( truck and truck:IsValid() ) then
 
 		local tpos = truck:GetPos();
 
@@ -314,12 +444,16 @@ function GM:HUDPaintDirectionArrow()
 				local t = "Put the money in the truck!";
 
 				if( self:InRushPeriod() ) then
-					t = "Get to your truck before you're arrested!";
-					surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+					t = "Get to your truck before it leaves!";
 				end
 
 				local w, h = surface.GetTextSize( t );
-				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h );
+				local padding = 6;
+
+				surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+				surface.DrawRect( ScrW() / 2 - w / 2 - padding, ScrH() - 40 - h - padding * 2, w + padding * 2, h + padding * 2 );
+
+				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h - padding );
 				surface.DrawText( t );
 
 			surface.SetAlphaMultiplier( 1 );
@@ -370,19 +504,11 @@ end
 
 function GM:HUDPaintGameOver()
 
+	if( self:GetState() != STATE_POSTGAME ) then return end
+	
 	local dt = STATE_TIMES[STATE_POSTGAME] - self:TimeLeftInState();
 
-	if( self:GetState() == STATE_POSTGAME ) then
-
-		surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
-
-	elseif( self:GetState() == STATE_PREGAME ) then
-
-		surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), 1 );
-
-	end
-
-	if( self:GetState() != STATE_POSTGAME ) then return end
+	surface.BackgroundBlur( 0, 0, ScrW(), ScrH(), math.Clamp( dt, 0, 4 ) / 4 );
 
 	local a = math.Clamp( dt, 0, 1 );
 
@@ -451,6 +577,20 @@ function GM:HUDPaintGameOver()
 			HUDClear( "gameover_" .. i );
 		end
 
+		local best = 1;
+		local bestAmt = -1;
+		for k, v in pairs( self.Teams ) do
+
+			local s = team.GetScore( v );
+			if( s > bestAmt ) then
+
+				bestAmt = s;
+				best = v;
+
+			end
+
+		end
+
 		surface.SetFont( "COI Title 64" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 		local t = "Best Crew";
@@ -467,8 +607,8 @@ function GM:HUDPaintGameOver()
 		if( dt > 5.7 ) then
 
 			surface.SetFont( "COI Title 128" );
-			surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
-			local t = team.GetName( LocalPlayer():Team() );
+			surface.SetTextColor( team.GetColor( best ) );
+			local t = team.GetName( best );
 			local w, h = surface.GetTextSize( t );
 			if( dt < 9.3 ) then
 				local xm = HUDEase( "gameover_6", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
@@ -537,12 +677,12 @@ function GM:HUDPaintGameOver()
 
 		if( dt > 4 ) then
 
-			local amt = 123546;
+			local amt = team.GetScore( LocalPlayer():Team() );
 
 			if( dt > 6 and dt < 8 ) then
 
 				local perc = 1 - ( dt - 6 ) / 2;
-				amt = math.floor( perc * 123546 );
+				amt = math.floor( perc * amt );
 
 			elseif( dt >= 8 ) then
 
@@ -586,11 +726,11 @@ function GM:HUDPaintGameOver()
 					if( dt > 6 and dt < 8 ) then
 
 						local perc = ( dt - 6 ) / 2;
-						amt = math.floor( perc * 123546 / numTeamSafe );
+						amt = math.floor( perc * team.GetScore( LocalPlayer():Team() ) / numTeamSafe );
 
 					elseif( dt >= 8 ) then
 
-						amt = math.floor( 123546 / numTeamSafe );
+						amt = math.floor( team.GetScore( LocalPlayer():Team() ) / numTeamSafe );
 
 					end
 
@@ -624,7 +764,7 @@ function GM:HUDPaintGameOver()
 
 		local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 );
 
-		local awards = { "Most Bags Collected", "Most Money", "Most Kills", "Most Tases" };
+		local awards = { "Most Bags Collected", "Most Money", "Most Kills", "Most Knockouts" };
 		surface.SetFont( "COI Title 30" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 
@@ -649,15 +789,70 @@ function GM:HUDPaintGameOver()
 
 			local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 ) - 17;
 
-			local players = { LocalPlayer(), LocalPlayer(), LocalPlayer(), LocalPlayer() };
+			local best = 1;
+			local bestAmt = -1;
+			for k, v in pairs( self.Teams ) do
+
+				local s = team.GetScore( v );
+				if( s > bestAmt ) then
+
+					bestAmt = s;
+					best = v;
+
+				end
+
+			end
+
+			local players = { LocalPlayer(), best, LocalPlayer(), LocalPlayer() };
 			surface.SetFont( "COI Title 64" );
+
+			if( self.Stats ) then
+
+				if( self.Stats.MostBags ) then
+
+					players[1] = self.Stats.MostBags;
+
+				end
+
+				if( self.Stats.MostKills ) then
+
+					players[3] = self.Stats.MostKills;
+
+				end
+
+				if( self.Stats.MostKnockouts ) then
+
+					players[4] = self.Stats.MostKnockouts;
+
+				end
+
+			end
 
 			for k, v in pairs( players ) do
 
-				if( v and v:IsValid() ) then
-					
-					surface.SetTextColor( team.GetColor( v:Team() ) );
-					local t = v:Nick();
+				if( type( v ) == "Player" or type( v ) == "Entity" ) then
+
+					if( v and v:IsValid() ) then
+						
+						surface.SetTextColor( team.GetColor( v:Team() ) );
+						local t = v:Nick();
+						local w, h = surface.GetTextSize( t );
+						if( dt < 8 ) then
+							local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
+							surface.SetTextPos( xm, y );
+						else
+							local xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
+							surface.SetTextPos( xm, y );
+						end
+
+						surface.DrawText( t );
+
+					end
+
+				else
+
+					surface.SetTextColor( team.GetColor( v ) );
+					local t = team.GetName( v );
 					local w, h = surface.GetTextSize( t );
 					if( dt < 8 ) then
 						local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
@@ -676,6 +871,51 @@ function GM:HUDPaintGameOver()
 			end
 
 		end
+
+	end
+
+end
+
+function GM:HUDPaintBlackScreen()
+
+	local a = 0;
+
+	if( self:GetState() == STATE_POSTGAME and self:TimeLeftInState() <= 2 ) then
+
+		if( self:TimeLeftInState() > 1 ) then
+
+			a = 1 - ( self:TimeLeftInState() - 1 );
+
+		else
+
+			a = 1;
+
+		end
+
+		self.PreBlack = true;
+
+	elseif( self:GetState() == STATE_PREGAME and STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() <= 1.2 and self.PreBlack ) then
+
+		if( STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() > 0.2 ) then
+
+			a = 1 - ( ( STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() ) - 0.2 );
+
+		else
+
+			a = 1;
+
+		end
+
+	elseif( self.PreBlack ) then
+
+		self.PreBlack = nil;
+
+	end
+
+	if( a > 0 ) then
+
+		surface.SetDrawColor( Color( 0, 0, 0, a * 255 ) );
+		surface.DrawRect( 0, 0, ScrW(), ScrH() );
 
 	end
 

@@ -20,7 +20,7 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 	elseif( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
 		local truck = ply:GetTruck();
-		if( truck ) then
+		if( truck and truck:IsValid() ) then
 
 			local p0 = truck:GetPos();
 

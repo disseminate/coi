@@ -7,4 +7,4 @@ EXPORTS["pistol"].Price = 1000;
 EXPORTS["pistol"].Model = "models/weapons/w_pistol.mdl";
 EXPORTS["pistol"].W = 2;
 EXPORTS["pistol"].H = 2;
-EXPORTS["pistol"].SWEP = "weapon_pistol";
+EXPORTS["pistol"].SWEP = "coi_pistol";

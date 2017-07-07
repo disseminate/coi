@@ -15,8 +15,16 @@ local function nSetInventory( len )
 
 	for i = 1, n do
 
+		local id = net.ReadUInt( 16 );
 		local str = net.ReadString();
-		table.insert( LocalPlayer().Inventory, str );
+		local x = net.ReadUInt( 6 );
+		local y = net.ReadUInt( 6 );
+
+		LocalPlayer().Inventory[id] = {
+			ItemClass = str,
+			X = x,
+			Y = y
+		};
 
 	end
 
@@ -29,11 +37,16 @@ local function nAddInventory( len )
 
 	LocalPlayer():CheckInventory();
 
+	local id = net.ReadUInt( 16 );
 	local item = net.ReadString();
+	local x = net.ReadUInt( 6 );
+	local y = net.ReadUInt( 6 );
 
-	if( table.HasValue( LocalPlayer().Inventory, item ) ) then return end
-
-	table.insert( LocalPlayer().Inventory, item );
+	LocalPlayer().Inventory[id] = {
+		ItemClass = item,
+		X = x,
+		Y = y
+	};
 
 	GAMEMODE:ResetLoadoutInventory();
 

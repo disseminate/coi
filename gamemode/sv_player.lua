@@ -2,7 +2,7 @@ local meta = FindMetaTable( "Player" );
 
 function GM:PlayerLoadout( ply )
 
-	
+	ply:Loadout();
 
 end
 
@@ -65,10 +65,11 @@ function GM:PlayerSpawn( ply )
 	player_manager.OnPlayerSpawn( ply );
 	player_manager.RunClass( ply, "Spawn" );
 	hook.Call( "PlayerSetModel", GAMEMODE, ply );
+	hook.Call( "PlayerLoadout", GAMEMODE, ply );
 
 	ply:SetCustomCollisionCheck( true );
 
-	if( ply:IsBot() ) then
+	if( ply:IsBot() and !ply.Joined ) then
 
 		ply.Joined = true;
 
@@ -78,6 +79,12 @@ function GM:PlayerSpawn( ply )
 		net.Start( "nJoin" );
 			net.WriteEntity( ply );
 		net.Broadcast();
+
+		ply:SpawnAtTruck();
+
+		if( #player.GetJoined() == 1 ) then
+			GAMEMODE:ResetState();
+		end
 
 	end
 
@@ -112,9 +119,9 @@ function meta:SetTeamAuto( noMsg )
 
 	for k, v in pairs( teams ) do
 
-		if( team.NumPlayers( k ) < amt ) then
-			t = k;
-			amt = team.NumPlayers( k );
+		if( team.NumPlayers( v ) < amt ) then
+			t = v;
+			amt = team.NumPlayers( v );
 		end
 
 	end
@@ -145,12 +152,10 @@ end
 
 function meta:SpawnAtTruck()
 
-	if( !GAMEMODE.Teams ) then return end
-	if( !GAMEMODE.Teams[self:Team()] ) then return end
-	if( !GAMEMODE.Teams[self:Team()].SpawnPos ) then return end
-
-	local t = GAMEMODE.Teams[self:Team()].SpawnPos;
-	self:SetPos( t );
+	local pos = self:GetSpawnPos();
+	if( pos ) then
+		self:SetPos( pos );
+	end
 
 end
 
@@ -261,35 +266,46 @@ end
 
 function meta:Loadout()
 
+	self:CheckInventory();
+
 	if( self.PrimaryLoadout ) then
-		local i = GAMEMODE.Items[self.PrimaryLoadout];
+		local item = self.Inventory[self.PrimaryLoadout];
+		local i = GAMEMODE.Items[item.ItemClass];
 		self:Give( i.SWEP );
-		self.PrimaryLoadout = nil;
 	end
 
 	if( self.SecondaryLoadout ) then
-		local i = GAMEMODE.Items[self.SecondaryLoadout];
+		local item = self.Inventory[self.SecondaryLoadout];
+		local i = GAMEMODE.Items[item.ItemClass];
 		self:Give( i.SWEP );
-		self.SecondaryLoadout = nil;
 	end
 
 end
 
 function GM:EntityTakeDamage( ply, dmg )
 
+	local a = dmg:GetAttacker();
+	local i = dmg:GetInflictor();
+
 	if( ply:IsPlayer() ) then
+
+		if( a and a:IsValid() and a:IsPlayer() and a:Team() == ply:Team() ) then
+			return true;
+		end
 
 		if( ply.Unconscious ) then
 			return true;
 		end
 
 		local consc = false;
+		local fattac = nil;
 
-		if( dmg:GetInflictor() and dmg:GetInflictor():IsValid() ) then
+		if( i and i:IsValid() ) then
 			
-			if( dmg:GetInflictor():GetClass() == "coi_money" ) then
+			if( i:GetClass() == "coi_money" ) then
 
 				consc = true;
+				fattac = i.Owner;
 
 			end
 
@@ -308,6 +324,12 @@ function GM:EntityTakeDamage( ply, dmg )
 				ply.Unconscious = true;
 				ply.UnconsciousTime = CurTime();
 				ply.Consciousness = 30;
+
+				if( fattac and fattac:IsValid() ) then
+
+					fattac.Knockouts = ( fattac.Knockouts or 0 ) + 1;
+
+				end
 
 				ply:Freeze( true );
 
@@ -336,6 +358,11 @@ function GM:EntityTakeDamage( ply, dmg )
 			end
 
 			return true;
+
+		elseif( a and a:IsValid() and a:IsPlayer() ) then
+
+			local dmgScale = 1 - math.Clamp( #player.GetJoined() / 20, 0, 1 ) * 0.5;
+			dmg:ScaleDamage( dmgScale );
 
 		end
 
@@ -371,5 +398,27 @@ function GM:ConsciousnessThink()
 		end
 
 	end
+
+end
+
+function GM:PlayerDeath( ply, inflictor, attacker )
+
+	self.BaseClass:PlayerDeath( ply, inflictor, attacker );
+
+	if( attacker and attacker:IsValid() and attacker:IsPlayer() ) then
+
+		attacker.Kills = ( attacker.Kills or 0 ) + 1;
+
+	end
+
+end
+
+function meta:DebugGiveMoney()
+
+	self.HasMoney = true;
+	net.Start( "nSetHasMoney" );
+		net.WriteEntity( self );
+		net.WriteBool( true );
+	net.Broadcast();
 
 end

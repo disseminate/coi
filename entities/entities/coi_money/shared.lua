@@ -12,6 +12,7 @@ function ENT:Initialize()
 	if( SERVER ) then
 
 		self:SetUseType( SIMPLE_USE );
+		self:SetCustomCollisionCheck( true );
 
 		local phys = self:GetPhysicsObject();
 		if( phys and phys:IsValid() ) then

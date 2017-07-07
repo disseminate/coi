@@ -42,9 +42,16 @@ function GM:Reset()
 		v.HasMoney = false;
 		v.Safe = false;
 
+		v.Bags = 0;
+		v.Kills = 0;
+		v.Knockouts = 0;
+
 		v.Unconscious = false;
 		v.UnconsciousTime = nil;
 		v.Consciousness = 100;
+
+		v.PrimaryLoadout = nil;
+		v.SecondaryLoadout = nil;
 
 		v:StripWeapons();
 		v:Spawn();
@@ -53,7 +60,7 @@ function GM:Reset()
 
 	for k, v in pairs( self.Teams ) do
 
-		team.SetScore( k, 0 );
+		team.SetScore( v, 0 );
 
 	end
 
@@ -62,6 +69,7 @@ function GM:Reset()
 	self:ResetMapTrucks();
 
 end
+util.AddNetworkString( "nResetTrucks" );
 
 function GM:DebugAdvanceTime( amt )
 
@@ -72,3 +80,60 @@ function GM:DebugAdvanceTime( amt )
 	net.Broadcast();
 
 end
+
+function GM:SendStats()
+
+	if( #player.GetJoined() == 0 ) then return end
+
+	local bags = player.GetJoined()[1];
+	local bagsMax = 0;
+
+	for _, v in pairs( player.GetJoined() ) do
+
+		if( v.Bags and v.Bags > bagsMax ) then
+
+			bagsMax = v.Bags;
+			bags = v;
+
+		end
+
+	end
+
+	local kills = player.GetJoined()[1];
+	local killsMax = 0;
+
+	for _, v in pairs( player.GetJoined() ) do
+
+		if( v.Kills and v.Kills > killsMax ) then
+
+			killsMax = v.Kills;
+			kills = v;
+
+		end
+
+	end
+
+	local knocks = player.GetJoined()[1];
+	local knocksMax = 0;
+
+	for _, v in pairs( player.GetJoined() ) do
+
+		if( v.Knockouts and v.Knockouts > knocksMax ) then
+
+			knocksMax = v.Knockouts;
+			knocks = v;
+
+		end
+
+	end
+
+	--Knockouts
+	
+	net.Start( "nSendStats" );
+		net.WriteEntity( bags );
+		net.WriteEntity( kills );
+		net.WriteEntity( knocks );
+	net.Broadcast();
+
+end
+util.AddNetworkString( "nSendStats" );
