@@ -50,6 +50,9 @@ function GM:Reset()
 		v.UnconsciousTime = nil;
 		v.Consciousness = 100;
 
+		v.PrimaryLoadout = nil;
+		v.SecondaryLoadout = nil;
+
 		v:StripWeapons();
 		v:Spawn();
 

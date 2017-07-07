@@ -1,5 +1,6 @@
 local HUDElements = {
 	"CHudAmmo",
+	"CHudSecondaryAmmo",
 	"CHudBattery",
 	"CHudHealth",
 	"CHudWeaponSelection"
@@ -65,6 +66,7 @@ function GM:HUDPaint()
 		self:HUDPaintCops();
 		self:HUDPaintTimer();
 		self:HUDPaintHealth();
+		self:HUDPaintWeapon();
 		self:HUDPaintDirectionArrow();
 
 		self:HUDPaintUnconsciousness();
@@ -99,7 +101,6 @@ end
 function GM:HUDPaintTimer()
 
 	if( #player.GetJoined() == 0 ) then return end
-	--if( self:GetState() == STATE_PREGAME ) then return end -- vgui will do this
 
 	local state = self:GetState();
 	local timeLeft = self:TimeLeftInState();
@@ -121,15 +122,25 @@ function GM:HUDPaintTimer()
 	local w, h = surface.GetTextSize( text );
 
 	surface.SetTextColor( col );
-	surface.SetTextPos( ScrW() / 2 - w / 2, 40 );
-	surface.DrawText( text );
-
+	
 	surface.SetFont( "COI Title 24" );
 
 	local w2, h2 = surface.GetTextSize( text2 );
 
+	local totalW = w + w2 + 4;
+	local padding = 6;
+	surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+	surface.DrawRect( ScrW() / 2 - w / 2 - padding, 40, totalW + padding * 2, 48 + padding * 2 );
+
+	surface.SetFont( "COI Title 48" );
+
+	surface.SetTextPos( ScrW() / 2 - w / 2, 40 + padding );
+	surface.DrawText( text );
+
+	surface.SetFont( "COI Title 24" );
+
 	surface.SetTextColor( self:GetSkin().COLOR_GRAY );
-	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, 40 );
+	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, 40 + padding );
 	surface.DrawText( text2 );
 
 end
@@ -159,6 +170,70 @@ function GM:HUDPaintHealth()
 	surface.SetTextPos( 40 + bw / 2 - w / 2, ScrH() - 40 - bh + bh / 2 - h / 2 );
 	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 	surface.DrawText( hp );
+
+end
+
+function GM:HUDPaintWeapon()
+
+	local wep = LocalPlayer():GetActiveWeapon();
+
+	if( !wep or !wep:IsValid() or wep == NULL ) then return end
+
+	local clip, ammo;
+
+	if( wep.Primary and wep.Primary.Firearm ) then
+		clip = wep:Clip1();
+	end
+
+	if( wep.Primary and wep.Primary.Ammo and !wep.Primary.InfiniteAmmo ) then
+		ammo = LocalPlayer():GetAmmoCount( wep.Primary.Ammo );
+	end
+
+	if( clip and ammo ) then
+
+		surface.SetFont( "COI Title 30" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = "" .. ammo;
+		local w, h = surface.GetTextSize( t );
+
+		surface.SetFont( "COI Title 64" );
+		local t2 = "" .. clip;
+		local w2, h2 = surface.GetTextSize( t2 );
+
+		local totalW = w + w2 + 10;
+
+		local padding = 6;
+
+		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+		surface.DrawRect( ScrW() - 40 - totalW - padding * 2, ScrH() - 40 - 64 - padding * 2, totalW + padding * 2, 64 + padding * 2 );
+
+		local x = ScrW() - 40 - w - padding;
+		surface.SetFont( "COI Title 30" );
+		surface.SetTextPos( x, ScrH() - 40 - 64 - padding );
+		surface.DrawText( t );
+		
+		surface.SetFont( "COI Title 64" );
+
+		x = x - w2 - 10;
+		surface.SetTextPos( x, ScrH() - 40 - h2 - padding );
+		surface.DrawText( t2 );
+
+	elseif( clip ) then
+
+		surface.SetFont( "COI Title 64" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = "" .. clip;
+		local w, h = surface.GetTextSize( t );
+
+		local padding = 6;
+
+		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+		surface.DrawRect( ScrW() - 40 - w - padding * 2, ScrH() - 40 - 64 - padding * 2, w + padding * 2, 64 + padding * 2 );
+
+		surface.SetTextPos( ScrW() - 40 - w - padding, ScrH() - 40 - h - padding );
+		surface.DrawText( t );
+
+	end
 
 end
 
@@ -370,11 +445,15 @@ function GM:HUDPaintDirectionArrow()
 
 				if( self:InRushPeriod() ) then
 					t = "Get to your truck before it leaves!";
-					surface.SetTextColor( self:GetSkin().COLOR_WARNING );
 				end
 
 				local w, h = surface.GetTextSize( t );
-				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h );
+				local padding = 6;
+
+				surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+				surface.DrawRect( ScrW() / 2 - w / 2 - padding, ScrH() - 40 - h - padding * 2, w + padding * 2, h + padding * 2 );
+
+				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h - padding );
 				surface.DrawText( t );
 
 			surface.SetAlphaMultiplier( 1 );

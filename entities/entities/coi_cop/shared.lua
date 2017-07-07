@@ -50,9 +50,7 @@ function ENT:MoveToPlayer( ply )
 
 	while( path:IsValid() ) do
 
-		if( !ply or !ply:IsValid() ) then return "invalid ply" end
-		if( !ply:Alive() ) then return "dead ply" end
-		if( ply.Unconscious ) then return "unconscious ply" end
+		if( !self:CanTargetPlayer( ply ) ) then return "invalid ply" end
 
 		path:Chase( self, ply );
 
@@ -94,10 +92,21 @@ function ENT:ShootAt( ply )
 	bull.Spread = Vector( self.Accuracy, self.Accuracy, 0 );
 	bull.Src = start;
 	bull.IgnoreEntity = self;
-	--self:FireBullets( bull );
+	self:FireBullets( bull );
 
 	self:EmitSound( Sound( "Weapon_Pistol.NPC_Single" ) );
 	self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL );
+
+end
+
+function ENT:CanTargetPlayer( ply )
+
+	if( !ply or !ply:IsValid() ) then return false end
+	if( !ply:Alive() ) then return false end
+	if( ply.Safe ) then return false end
+	if( ply.Unconscious ) then return false end
+
+	return true;
 
 end
 
@@ -109,9 +118,7 @@ function ENT:ShootAtPlayer( ply )
 
 		if( GAMEMODE:GetState() != STATE_GAME ) then return "bad state" end
 
-		if( !ply or !ply:IsValid() ) then return "invalid ply" end
-		if( !ply:Alive() ) then return "dead ply" end
-		if( ply.Unconscious ) then return "unconscious ply" end
+		if( !self:CanTargetPlayer( ply ) ) then return "invalid ply" end
 
 		self.loco:FaceTowards( ply:GetPos() );
 
@@ -176,7 +183,7 @@ function ENT:RunBehaviour()
 
 			local ply = self:GetClosestPlayer();
 
-			if( ply and ply:IsValid() and ply:Alive() and !ply.Unconscious ) then
+			if( self:CanTargetPlayer( ply ) ) then
 
 				self:StartActivity( ACT_HL2MP_RUN );
 				self.loco:SetDesiredSpeed( 250 );

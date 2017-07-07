@@ -159,3 +159,23 @@ function GM:ConsciousnessThink()
 	end
 
 end
+
+function GM:CreateMove( cmd )
+
+	if( self.NextWeapon ) then
+
+		if( self.NextWeapon != LocalPlayer():GetActiveWeapon() ) then
+
+			cmd:SelectWeapon( self.NextWeapon );
+
+		else
+
+			self.NextWeapon = nil;
+
+		end
+
+	end
+
+	return self.BaseClass:CreateMove( cmd );
+
+end

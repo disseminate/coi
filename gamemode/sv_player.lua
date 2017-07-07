@@ -2,7 +2,7 @@ local meta = FindMetaTable( "Player" );
 
 function GM:PlayerLoadout( ply )
 
-	
+	ply:Loadout();
 
 end
 
@@ -65,6 +65,7 @@ function GM:PlayerSpawn( ply )
 	player_manager.OnPlayerSpawn( ply );
 	player_manager.RunClass( ply, "Spawn" );
 	hook.Call( "PlayerSetModel", GAMEMODE, ply );
+	hook.Call( "PlayerLoadout", GAMEMODE, ply );
 
 	ply:SetCustomCollisionCheck( true );
 
@@ -271,14 +272,12 @@ function meta:Loadout()
 		local item = self.Inventory[self.PrimaryLoadout];
 		local i = GAMEMODE.Items[item.ItemClass];
 		self:Give( i.SWEP );
-		self.PrimaryLoadout = nil;
 	end
 
 	if( self.SecondaryLoadout ) then
 		local item = self.Inventory[self.SecondaryLoadout];
 		local i = GAMEMODE.Items[item.ItemClass];
 		self:Give( i.SWEP );
-		self.SecondaryLoadout = nil;
 	end
 
 end
