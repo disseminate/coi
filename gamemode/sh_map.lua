@@ -13,22 +13,13 @@ end
 
 function meta:GetBagMoney()
 
-	local noplayers = false;
+	for k, v in pairs( GAMEMODE.Teams ) do
 
-	for k, v in pairs( self.Teams ) do
+		if( team.NumPlayers( k ) == 0 ) then
 
-		if( team.GetCount( k ) == 0 ) then
-
-			noplayers = true;
-			break;
+			return 20, 50;
 
 		end
-
-	end
-
-	if( noplayers ) then -- Low population shouldn't be exploited to farm
-
-		return 20, 50;
 
 	end
 
