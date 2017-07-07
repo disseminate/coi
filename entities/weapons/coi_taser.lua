@@ -1,7 +1,7 @@
 AddCSLuaFile();
 
 SWEP.Base = "coi_base";
-SWEP.PrintName = "Pistol";
+SWEP.PrintName = "Taser";
 SWEP.HoldType = "pistol";
 
 SWEP.ViewModel = "models/weapons/c_pistol.mdl";

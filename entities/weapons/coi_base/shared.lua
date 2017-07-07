@@ -209,3 +209,20 @@ function SWEP:Initialize()
 	self:SetHoldType( self.HoldType or "pistol" )
 
 end
+
+function SWEP:PreDrawViewModel( vm, wep, ply )
+
+	if( self.NoDraw ) then
+
+		vm:SetMaterial( "engine/occlusionproxy" );
+
+	end
+
+end
+
+function SWEP:Holster()
+
+	self.Owner:GetViewModel():SetMaterial( "" );
+	return true;
+
+end

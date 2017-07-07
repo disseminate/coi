@@ -189,6 +189,35 @@ function GM:HUDPaintWeapon()
 		ammo = LocalPlayer():GetAmmoCount( wep.Primary.Ammo );
 	end
 
+	local nw = #LocalPlayer():GetWeapons();
+	local padding = 6;
+	local y = 40;
+
+	for k, v in pairs( LocalPlayer():GetWeapons() ) do
+
+		surface.SetFont( "COI Title 30" );
+		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+		local t = v:GetPrintName();
+		local w, h = surface.GetTextSize( t );
+
+		local bw;
+		if( v == LocalPlayer():GetActiveWeapon() ) then
+			bw = HUDApproach( "weapon" .. k, math.max( 200, w ), w );
+			surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
+		else
+			bw = HUDApproach( "weapon" .. k, w, w );
+			surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+		end
+
+		surface.DrawRect( ScrW() - 40 - bw - padding * 2, y, bw + padding * 2, h + padding * 2 );
+
+		surface.SetTextPos( ScrW() - 40 - w - padding, y + padding );
+		surface.DrawText( t );
+
+		y = y + h + padding * 2 + 10;
+
+	end
+
 	if( clip and ammo ) then
 
 		surface.SetFont( "COI Title 30" );
@@ -337,6 +366,9 @@ function GM:HUDPaintPlayers()
 					local t = v:Nick();
 					surface.SetFont( "COI 20" );
 					surface.SetTextColor( team.GetColor( v:Team() ) );
+					if( v:IsCloaked() ) then
+						surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
+					end
 					local w, h = surface.GetTextSize( t );
 					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
 					surface.DrawText( t );

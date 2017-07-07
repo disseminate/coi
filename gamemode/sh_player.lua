@@ -1,3 +1,5 @@
+local meta = FindMetaTable( "Player" );
+
 function player.GetJoined()
 
 	local tab = { };
@@ -78,5 +80,11 @@ function GM:CanChangeTeam( cur, targ )
 	if( diff > 0 ) then return false end
 
 	return true;
+
+end
+
+function meta:IsCloaked()
+
+	return self:HasWeapon( "coi_voicedisguiser" ) and !self.HasMoney;
 
 end
