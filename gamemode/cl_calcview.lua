@@ -20,19 +20,45 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 	elseif( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
 		local teams = self.Teams;
-		if( !teams ) then return end
-		if( !teams[ply:Team()] ) then return end
-		if( !teams[ply:Team()].Truck or !teams[ply:Team()].Truck:IsValid() ) then return end
+		if( teams and teams[ply:Team()] and teams[ply:Team()].Truck and teams[ply:Team()].Truck:IsValid() ) then
 
-		local truck = teams[ply:Team()].Truck;
-		local p0 = truck:GetPos();
+			local truck = teams[ply:Team()].Truck;
+			local p0 = truck:GetPos();
 
-		local x = 70;
-		local y = 0;
-		local z = 27;
+			local x = 70;
+			local y = 0;
+			local z = 27;
 
-		tab.origin = p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z;
-		tab.angles = ( p0 - tab.origin ):Angle();
+			tab.origin = p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z;
+			tab.angles = ( p0 - tab.origin ):Angle();
+
+		end
+
+	end
+
+	if( self.CamPos ) then
+	
+		if( !ply.Joined ) then
+
+			tab.origin = self.CamPos[1];
+			tab.angles = self.CamPos[2];
+
+			return tab;
+
+		else
+
+			if( !ply.JoinTweenStart ) then
+				ply.JoinTweenStart = CurTime();
+			end
+
+			local d = math.EaseInOut( math.Clamp( CurTime() - ply.JoinTweenStart, 0, 1 ) / 1, 0, 1 );
+
+			tab.origin = LerpVector( d, self.CamPos[1], tab.origin );
+			tab.angles = LerpAngle( d, self.CamPos[2], tab.angles );
+
+			return tab;
+
+		end
 
 	end
 

@@ -39,14 +39,22 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply.Joined = false;
 
-	ply:SendPlayers();
-	ply:SendState();
-
 	ply:SetTeam( TEAM_UNJOINED );
 
 end
 
 function GM:PlayerSpawn( ply )
+
+	if( !ply.Synced ) then
+
+		ply.Synced = true;
+
+		ply:SendPlayers();
+		ply:SendState();
+
+		ply:SyncMapData();
+
+	end
 
 	player_manager.SetPlayerClass( ply, "coi" );
 
