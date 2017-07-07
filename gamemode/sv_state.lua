@@ -42,6 +42,8 @@ function GM:Reset()
 		v.HasMoney = false;
 		v.Safe = false;
 
+		v.Bags = 0;
+
 		v.Unconscious = false;
 		v.UnconsciousTime = nil;
 		v.Consciousness = 100;
@@ -72,3 +74,28 @@ function GM:DebugAdvanceTime( amt )
 	net.Broadcast();
 
 end
+
+function GM:SendStats()
+
+	if( #player.GetJoined() == 0 ) then return end
+
+	local bags = player.GetJoined()[1];
+	local bagsMax = 0;
+
+	for _, v in pairs( player.GetJoined() ) do
+
+		if( v.Bags and v.Bags > bagsMax ) then
+
+			bagsMax = v.Bags;
+			bags = v;
+
+		end
+
+	end
+	
+	net.Start( "nSendStats" );
+		net.WriteEntity( bags );
+	net.Broadcast();
+
+end
+util.AddNetworkString( "nSendStats" );

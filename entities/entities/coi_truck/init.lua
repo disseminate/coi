@@ -32,6 +32,8 @@ function ENT:Use( ply )
 		local amt = math.random( 200, 500 );
 		team.AddScore( self:GetTeam(), amt );
 
+		ply.Bags = ( ply.Bags or 0 ) + 1;
+
 		net.Start( "nMsgTruckDeposit" );
 			net.WriteUInt( amt, 32 );
 		net.Send( ply );

@@ -453,6 +453,20 @@ function GM:HUDPaintGameOver()
 			HUDClear( "gameover_" .. i );
 		end
 
+		local best = 1;
+		local bestAmt = -1;
+		for k, v in pairs( self.Teams ) do
+
+			local s = team.GetScore( k );
+			if( s > bestAmt ) then
+
+				bestAmt = s;
+				best = k;
+
+			end
+
+		end
+
 		surface.SetFont( "COI Title 64" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 		local t = "Best Crew";
@@ -469,8 +483,8 @@ function GM:HUDPaintGameOver()
 		if( dt > 5.7 ) then
 
 			surface.SetFont( "COI Title 128" );
-			surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
-			local t = team.GetName( LocalPlayer():Team() );
+			surface.SetTextColor( team.GetColor( best ) );
+			local t = team.GetName( best );
 			local w, h = surface.GetTextSize( t );
 			if( dt < 9.3 ) then
 				local xm = HUDEase( "gameover_6", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
@@ -539,12 +553,12 @@ function GM:HUDPaintGameOver()
 
 		if( dt > 4 ) then
 
-			local amt = 123546;
+			local amt = team.GetScore( LocalPlayer():Team() );
 
 			if( dt > 6 and dt < 8 ) then
 
 				local perc = 1 - ( dt - 6 ) / 2;
-				amt = math.floor( perc * 123546 );
+				amt = math.floor( perc * amt );
 
 			elseif( dt >= 8 ) then
 
@@ -588,11 +602,11 @@ function GM:HUDPaintGameOver()
 					if( dt > 6 and dt < 8 ) then
 
 						local perc = ( dt - 6 ) / 2;
-						amt = math.floor( perc * 123546 / numTeamSafe );
+						amt = math.floor( perc * team.GetScore( LocalPlayer():Team() ) / numTeamSafe );
 
 					elseif( dt >= 8 ) then
 
-						amt = math.floor( 123546 / numTeamSafe );
+						amt = math.floor( team.GetScore( LocalPlayer():Team() ) / numTeamSafe );
 
 					end
 
@@ -651,15 +665,58 @@ function GM:HUDPaintGameOver()
 
 			local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 ) - 17;
 
-			local players = { LocalPlayer(), LocalPlayer(), LocalPlayer(), LocalPlayer() };
+			local best = 1;
+			local bestAmt = -1;
+			for k, v in pairs( self.Teams ) do
+
+				local s = team.GetScore( k );
+				if( s > bestAmt ) then
+
+					bestAmt = s;
+					best = k;
+
+				end
+
+			end
+
+			local players = { LocalPlayer(), best, LocalPlayer(), LocalPlayer() };
 			surface.SetFont( "COI Title 64" );
+
+			if( self.Stats ) then
+
+				if( self.Stats.MostBags ) then
+
+					players[1] = self.Stats.MostBags;
+
+				end
+
+			end
 
 			for k, v in pairs( players ) do
 
-				if( v and v:IsValid() ) then
-					
-					surface.SetTextColor( team.GetColor( v:Team() ) );
-					local t = v:Nick();
+				if( type( v ) == "Player" or type( v ) == "Entity" ) then
+
+					if( v and v:IsValid() ) then
+						
+						surface.SetTextColor( team.GetColor( v:Team() ) );
+						local t = v:Nick();
+						local w, h = surface.GetTextSize( t );
+						if( dt < 8 ) then
+							local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
+							surface.SetTextPos( xm, y );
+						else
+							local xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
+							surface.SetTextPos( xm, y );
+						end
+
+						surface.DrawText( t );
+
+					end
+
+				else
+
+					surface.SetTextColor( team.GetColor( v ) );
+					local t = team.GetName( v );
 					local w, h = surface.GetTextSize( t );
 					if( dt < 8 ) then
 						local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
@@ -699,7 +756,9 @@ function GM:HUDPaintBlackScreen()
 
 		end
 
-	elseif( self:GetState() == STATE_PREGAME and STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() <= 1.2 ) then
+		self.PreBlack = true;
+
+	elseif( self:GetState() == STATE_PREGAME and STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() <= 1.2 and self.PreBlack ) then
 
 		if( STATE_TIMES[STATE_PREGAME] - self:TimeLeftInState() > 0.2 ) then
 
@@ -710,6 +769,10 @@ function GM:HUDPaintBlackScreen()
 			a = 1;
 
 		end
+
+	elseif( self.PreBlack ) then
+
+		self.PreBlack = nil;
 
 	end
 
