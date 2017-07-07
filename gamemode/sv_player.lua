@@ -79,6 +79,12 @@ function GM:PlayerSpawn( ply )
 			net.WriteEntity( ply );
 		net.Broadcast();
 
+		ply:SpawnAtTruck();
+
+		if( #player.GetJoined() == 1 ) then
+			GAMEMODE:ResetState();
+		end
+
 	end
 
 	ply:SetColorToTeam();
