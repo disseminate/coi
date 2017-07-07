@@ -302,6 +302,44 @@ function GM:CreateModelPanel( p, dock, w, h, model, campos, lookat, fov )
 	end
 	n:SetFOV( fov );
 
+	function n:DrawModel()
+
+		local curparent = self
+		local rightx = self:GetWide()
+		local leftx = 0
+		local topy = 0
+		local bottomy = self:GetTall()
+
+		if( self.PaintingDragging ) then
+			local x, y = self:GetPos();
+			rightx = self:GetWide() + x;
+			leftx = x;
+			topy = y;
+			bottomy = self:GetTall() + y;
+		end
+
+		local previous = curparent
+		while( curparent:GetParent() != nil ) do
+			curparent = curparent:GetParent()
+			local x, y = previous:GetPos()
+			topy = math.Max( y, topy + y )
+			leftx = math.Max( x, leftx + x )
+			bottomy = math.Min( y + previous:GetTall(), bottomy + y )
+			rightx = math.Min( x + previous:GetWide(), rightx + x )
+			previous = curparent
+		end
+		render.SetScissorRect( leftx, topy, rightx, bottomy, true )
+
+		local ret = self:PreDrawModel( self.Entity )
+		if ( ret != false ) then
+			self.Entity:DrawModel()
+			self:PostDrawModel( self.Entity )
+		end
+
+		render.SetScissorRect( 0, 0, 0, 0, false )
+
+	end
+
 	return n;
 
 end

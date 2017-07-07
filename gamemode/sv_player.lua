@@ -261,14 +261,18 @@ end
 
 function meta:Loadout()
 
+	self:CheckInventory();
+
 	if( self.PrimaryLoadout ) then
-		local i = GAMEMODE.Items[self.PrimaryLoadout];
+		local item = self.Inventory[self.PrimaryLoadout];
+		local i = GAMEMODE.Items[item.ItemClass];
 		self:Give( i.SWEP );
 		self.PrimaryLoadout = nil;
 	end
 
 	if( self.SecondaryLoadout ) then
-		local i = GAMEMODE.Items[self.SecondaryLoadout];
+		local item = self.Inventory[self.SecondaryLoadout];
+		local i = GAMEMODE.Items[item.ItemClass];
 		self:Give( i.SWEP );
 		self.SecondaryLoadout = nil;
 	end

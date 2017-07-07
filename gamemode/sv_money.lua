@@ -56,14 +56,26 @@ function meta:AddInventory( item )
 
 	self:CheckInventory();
 
-	if( table.HasValue( self.Inventory, item ) ) then return end
+	local x, y = self:FindInvInsertPos( item );
 
-	table.insert( self.Inventory, item );
-	self:SQLAddItem( item );
+	if( x and y ) then
 
-	net.Start( "nAddInventory" );
-		net.WriteString( item );
-	net.Send( self );
+		local id = self:SQLAddItem( item, x, y );
+
+		self.Inventory[id] = {
+			ItemClass = item,
+			X = x,
+			Y = y
+		};
+
+		net.Start( "nAddInventory" );
+			net.WriteUInt( id, 16 );
+			net.WriteString( item );
+			net.WriteUInt( x, 6 );
+			net.WriteUInt( y, 6 );
+		net.Send( self );
+
+	end
 
 end
 util.AddNetworkString( "nAddInventory" );
@@ -77,7 +89,7 @@ local function nBuyItem( len, ply )
 	ply:CheckInventory();
 
 	if( !GAMEMODE.Items[item] ) then return end
-	if( table.HasValue( ply.Inventory, item ) ) then return end
+	if( ply:HasItem( item ) ) then return end
 
 	local i = GAMEMODE.Items[item];
 
@@ -91,3 +103,24 @@ local function nBuyItem( len, ply )
 end
 net.Receive( "nBuyItem", nBuyItem );
 util.AddNetworkString( "nBuyItem" );
+
+local function nInvMove( len, ply )
+
+	ply:CheckInventory();
+	local id = net.ReadUInt( 16 );
+
+	if( !ply.Inventory[id] ) then return end
+
+	local x = net.ReadUInt( 6 );
+	local y = net.ReadUInt( 6 );
+
+	if( !ply:CanPutItemInSlot( id, x, y ) ) then return end
+
+	ply.Inventory[id].X = x;
+	ply.Inventory[id].Y = y;
+
+	ply:SQLMoveInventory( id, x, y );
+
+end
+net.Receive( "nInvMove", nInvMove );
+util.AddNetworkString( "nInvMove" );
