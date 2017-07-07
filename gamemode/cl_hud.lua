@@ -282,41 +282,45 @@ function GM:HUDPaintCops()
 
 	for _, v in pairs( ents.FindByClass( "coi_cop" ) ) do
 
-		local p = v:GetPos() + Vector( 0, 0, 64 );
+		if( v:Alive() ) then
+			
+			local p = v:GetPos() + Vector( 0, 0, 64 );
 
-		local dist = LocalPlayer():EyePos():Distance( p );
+			local dist = LocalPlayer():EyePos():Distance( p );
 
-		if( dist < 1000 ) then
+			if( dist < 1000 ) then
 
-			local amul = 1;
-			if( dist >= 700 ) then
+				local amul = 1;
+				if( dist >= 700 ) then
 
-				amul = 1 - ( ( dist - 700 ) / 300 );
+					amul = 1 - ( ( dist - 700 ) / 300 );
 
-			end
+				end
 
-			local trace = { };
-			trace.start = EyePos();
-			trace.endpos = p + Vector( 0, 0, 32 );
-			trace.filter = { LocalPlayer(), v };
-			local tr = util.TraceLine( trace );
+				local trace = { };
+				trace.start = EyePos();
+				trace.endpos = p + Vector( 0, 0, 32 );
+				trace.filter = { LocalPlayer(), v };
+				local tr = util.TraceLine( trace );
 
-			if( tr.Fraction == 1 ) then
+				if( tr.Fraction == 1 ) then
 
-				surface.SetAlphaMultiplier( amul );
-				
-				local eye = v:GetPos() + Vector( 0, 0, 64 + 16 );
-				local pp = eye:ToScreen();
-				pp.y = pp.y - 8;
-				
-				local t = "Cop";
-				surface.SetFont( "COI 20" );
-				surface.SetTextColor( Color( 255, 255, 255 ) );
-				local w, h = surface.GetTextSize( t );
-				surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
-				surface.DrawText( t );
+					surface.SetAlphaMultiplier( amul );
+					
+					local eye = v:GetPos() + Vector( 0, 0, 64 + 16 );
+					local pp = eye:ToScreen();
+					pp.y = pp.y - 8;
+					
+					local t = "Cop";
+					surface.SetFont( "COI 20" );
+					surface.SetTextColor( Color( 255, 255, 255 ) );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+					surface.DrawText( t );
 
-				surface.SetAlphaMultiplier( 1 );
+					surface.SetAlphaMultiplier( 1 );
+
+				end
 
 			end
 

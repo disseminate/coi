@@ -7,6 +7,15 @@ function ENT:Initialize()
 	self.AimDist = math.Rand( 500, 700 );
 	self.Accuracy = 0.06;
 
+	if( SERVER ) then
+
+		self:SetCustomCollisionCheck( true );
+		self:SetHealth( math.random( 10, 20 ) );
+
+	end
+
+	--self:PhysicsInitShadow( true, false );
+
 end
 
 function ENT:GetClosestPlayer()
@@ -80,12 +89,12 @@ function ENT:ShootAt( ply )
 
 	local bull = { };
 	bull.Attacker = self;
-	bull.Damage = 5;
+	bull.Damage = 10 * ( 1 - ( math.Clamp( #player.GetJoined() / 20, 0, 1 ) * 0.8 ) );
 	bull.Dir = ( ply:GetPos() + Vector( 0, 0, 44 ) - start ):GetNormal();
 	bull.Spread = Vector( self.Accuracy, self.Accuracy, 0 );
 	bull.Src = start;
 	bull.IgnoreEntity = self;
-	self:FireBullets( bull );
+	--self:FireBullets( bull );
 
 	self:EmitSound( Sound( "Weapon_Pistol.NPC_Single" ) );
 	self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL );
@@ -197,4 +206,25 @@ function ENT:RunBehaviour()
 
 	end
 
+end
+
+function ENT:OnKilled( dmg )
+
+	self:BecomeRagdoll( dmg );
+	self:SetAlive( false );
+
+end
+
+function ENT:SetupDataTables()
+
+	self:NetworkVar( "Bool", 0, "Alive" );
+
+	if( SERVER ) then
+		self:SetAlive( true );
+	end
+
+end
+
+function ENT:Alive()
+	return self:GetAlive();
 end

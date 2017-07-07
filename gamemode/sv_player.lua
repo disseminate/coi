@@ -360,6 +360,11 @@ function GM:EntityTakeDamage( ply, dmg )
 
 			return true;
 
+		elseif( a and a:IsValid() and a:IsPlayer() ) then
+
+			local dmgScale = 1 - math.Clamp( #player.GetJoined() / 20, 0, 1 ) * 0.5;
+			dmg:ScaleDamage( dmgScale );
+
 		end
 
 	end
@@ -406,5 +411,15 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 		attacker.Kills = ( attacker.Kills or 0 ) + 1;
 
 	end
+
+end
+
+function meta:DebugGiveMoney()
+
+	self.HasMoney = true;
+	net.Start( "nSetHasMoney" );
+		net.WriteEntity( self );
+		net.WriteBool( true );
+	net.Broadcast();
 
 end
