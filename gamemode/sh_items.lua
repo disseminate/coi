@@ -1,0 +1,1 @@
+GM.Items = RequireDir( "items" );

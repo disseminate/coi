@@ -1,52 +1,128 @@
-function GM:PreDrawViewModel()
-
-	if( LocalPlayer().HasMoney ) then
+function GM:PreDrawOpaqueRenderables( depth, sky )
+	
+	for _, v in pairs( player.GetAll() ) do
 		
-		if( !self.MoneyViewmodel or !self.MoneyViewmodel:IsValid() ) then
-			self.MoneyViewmodel = ClientsideModel( "models/props_junk/garbage_bag001a.mdl", RENDERGROUP_VIEWMODEL );
-			self.MoneyViewmodel:SetRenderBounds( Vector( -256, -256, -256 ), Vector( 256, 256, 256 ) );
-			self.MoneyViewmodel.m_vecLastFacing = EyePos();
+		if( v.HasMoney ) then
+
+			if( v == LocalPlayer() ) then
+				
+				if( !self.MoneyViewmodel or !self.MoneyViewmodel:IsValid() ) then
+					self.MoneyViewmodel = ClientsideModel( "models/props_junk/garbage_bag001a.mdl", RENDERGROUP_VIEWMODEL );
+					self.MoneyViewmodel:SetRenderBounds( Vector( -256, -256, -256 ), Vector( 256, 256, 256 ) );
+					self.MoneyViewmodel.m_vecLastFacing = EyePos();
+
+					self.MoneyViewmodel.RenderOverride = function()
+
+						if( LocalPlayer().HasMoney ) then
+							self.MoneyViewmodel:DrawModel();
+						end
+
+					end;
+				end
+
+				local f = EyeAngles():Forward();
+				local r = EyeAngles():Right();
+				local u = EyeAngles():Up();
+
+				local pos = EyePos() + f * 20 + r * -8 + u * -15;
+
+				local ang = EyeAngles();
+				ang:RotateAroundAxis( r, -110 );
+				ang:RotateAroundAxis( f, 20 );
+
+				if( !self.MoneyViewmodel.m_vecLastFacing ) then
+					self.MoneyViewmodel.m_vecLastFacing = EyePos();
+				end
+				
+				local vDifference = self.MoneyViewmodel.m_vecLastFacing - f;
+				
+				local flSpeed = 7;
+				
+				local flDiff = vDifference:Length();
+				if( flDiff > 1.5 ) then
+					
+					flSpeed = flSpeed * ( flDiff / 1.5 );
+					
+				end
+				
+				vDifference:Normalize();
+				
+				self.MoneyViewmodel.m_vecLastFacing = self.MoneyViewmodel.m_vecLastFacing + vDifference * flSpeed * FrameTime();
+				self.MoneyViewmodel.m_vecLastFacing:Normalize();
+				local newPos = pos + ( vDifference * -1 ) * 5;
+
+				self.MoneyViewmodel:SetPos( newPos );
+				self.MoneyViewmodel:SetRenderOrigin( newPos );
+				self.MoneyViewmodel:SetRenderAngles( ang );
+				cam.IgnoreZ( true )
+					self.MoneyViewmodel:DrawModel();
+				cam.IgnoreZ( false );
+
+			else
+
+				if( !v.MoneyViewmodel or !v.MoneyViewmodel:IsValid() ) then
+					v.MoneyViewmodel = ClientsideModel( "models/props_junk/garbage_bag001a.mdl", RENDERGROUP_BOTH );
+					v.MoneyViewmodel:SetRenderBounds( Vector( -256, -256, -256 ), Vector( 256, 256, 256 ) );
+
+					v.MoneyViewmodel.RenderOverride = function()
+
+						if( v and v:IsValid() ) then
+							
+							if( v.HasMoney ) then
+								v.MoneyViewmodel:DrawModel();
+							end
+
+						end
+
+					end;
+				end
+
+				local pos = v:EyePos();
+				local ang = Angle();
+
+				local attach = v:LookupAttachment( "anim_attachment_LH" );
+				if( attach > 0 ) then
+
+					local ap = v:GetAttachment( attach );
+
+					pos = ap.Pos + Vector( 0, 0, -8 );
+					ang:RotateAroundAxis( v:GetRight(), -90 );
+					ang:RotateAroundAxis( v:GetUp(), -90 + ap.Ang.y );
+
+				else
+
+					local bone = -1;
+					for i = 1, v:GetBoneCount() do
+
+						if( v:GetBoneName( i - 1 ) == "ValveBiped.Bip01_L_Hand" ) then
+
+							bone = i - 1;
+							break;
+
+						end
+
+					end
+
+					if( bone > -1 ) then
+
+						local p, a = v:GetBonePosition( bone );
+						pos = p + Vector( 0, 0, -10 );
+
+						ang:RotateAroundAxis( v:GetRight(), -90 );
+						ang:RotateAroundAxis( v:GetUp(), -90 + a.y );
+
+					end
+
+				end
+
+				v.MoneyViewmodel:SetPos( pos );
+				v.MoneyViewmodel:SetRenderOrigin( pos );
+				v.MoneyViewmodel:SetRenderAngles( ang );
+				v.MoneyViewmodel:DrawModel();
+
+			end
+
 		end
-
-		local f = EyeAngles():Forward();
-		local r = EyeAngles():Right();
-		local u = EyeAngles():Up();
-
-		local pos = EyePos() + f * 20 + r * 9 + u * -12;
-
-		local ang = EyeAngles();
-		ang:RotateAroundAxis( r, -110 );
-
-		if( !self.MoneyViewmodel.m_vecLastFacing ) then
-			self.MoneyViewmodel.m_vecLastFacing = EyePos();
-		end
-		
-		local vDifference = self.MoneyViewmodel.m_vecLastFacing - f;
-		
-		local flSpeed = 7;
-		
-		local flDiff = vDifference:Length();
-		if( flDiff > 1.5 ) then
-			
-			flSpeed = flSpeed * ( flDiff / 1.5 );
-			
-		end
-		
-		vDifference:Normalize();
-		
-		self.MoneyViewmodel.m_vecLastFacing = self.MoneyViewmodel.m_vecLastFacing + vDifference * flSpeed * FrameTime();
-		self.MoneyViewmodel.m_vecLastFacing:Normalize();
-		local newPos = pos + ( vDifference * -1 ) * 5;
-
-		self.MoneyViewmodel:SetPos( newPos );
-		self.MoneyViewmodel:SetRenderOrigin( newPos );
-		self.MoneyViewmodel:SetRenderAngles( ang );
-			self.MoneyViewmodel:DrawModel();
-
-	elseif( self.MoneyViewmodel ) then
-
-		self.MoneyViewmodel:Remove();
-		self.MoneyViewmodel = nil;
 
 	end
 

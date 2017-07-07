@@ -1,0 +1,6 @@
+UnlitGeneric
+{
+	$basetexture "coi/icons/audio-on"
+	$translucent 1
+	$transparent 1
+}

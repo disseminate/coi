@@ -23,8 +23,24 @@ function GM:StartCommand( ply, cmd )
 		cmd:ClearMovement();
 	end
 
-	if( self:GetState() == STATE_PREGAME and false ) then -- TODO
+	if( self:GetState() == STATE_PREGAME ) then
 		cmd:ClearButtons();
+		cmd:ClearMovement();
+	end
+
+	if( ply.Unconscious ) then
+		cmd:ClearButtons();
+		cmd:ClearMovement();
+	end
+
+	if( ply.Safe ) then
+		local fl = cmd:GetButtons();
+		if( bit.band( fl, IN_USE ) == IN_USE ) then
+			cmd:SetButtons( IN_USE );
+		else
+			cmd:ClearButtons();
+		end
+
 		cmd:ClearMovement();
 	end
 
@@ -33,6 +49,10 @@ end
 function GM:ShouldCollide( e1, e2 )
 
 	if( e1:IsPlayer() and e2:IsPlayer() ) then return false end
+	
+	if( e1:IsPlayer() and e1.Unconscious ) then return false end
+	if( e2:IsPlayer() and e2.Unconscious ) then return false end
+
 	return self.BaseClass:ShouldCollide( e1, e2 );
 
 end
@@ -45,8 +65,8 @@ end
 
 function GM:CanChangeTeam( cur, targ )
 
-	if( !self.Trucks ) then return false end
-	if( !self.Trucks[targ] ) then return false end -- No changing to unconnected/etc teams
+	if( !self.Teams ) then return false end
+	if( !self.Teams[targ] ) then return false end -- No changing to unconnected/etc teams
 
 	if( self:GetState() == STATE_GAME ) then return false end
 	if( cur == targ ) then return false end

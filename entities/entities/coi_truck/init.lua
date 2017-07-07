@@ -2,30 +2,52 @@ AddCSLuaFile( "cl_init.lua" );
 include( "shared.lua" );
 
 function ENT:Use( ply )
+	
+	if( GAMEMODE:InRushPeriod() ) then
 
-	if( !ply.HasMoney ) then return end
-	if( ply:Team() != self:GetTeam() ) then
-		net.Start( "nMsgWrongTruck" );
-		net.Send( ply );
-		return;
+		if( !ply.Safe ) then
+
+			if( ( ply.LastUnsafe and CurTime() - ply.LastUnsafe >= 0.1 ) or !ply.LastUnsafe ) then
+				
+				ply.Safe = true;
+				net.Start( "nSetSafe" );
+					net.WriteEntity( ply );
+					net.WriteBool( true );
+				net.Broadcast();
+
+			end
+
+		end
+
 	end
 
-	local amt = math.random( 200, 500 );
-	self:SetMoney( self:GetMoney() + amt );
+	if( ply.HasMoney ) then
 
-	net.Start( "nMsgTruckDeposit" );
-		net.WriteUInt( amt, 32 );
-	net.Send( ply );
+		if( ply:Team() != self:GetTeam() ) then
+			net.Start( "nMsgWrongTruck" );
+			net.Send( ply );
+			return;
+		end
 
-	self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );
+		local amt = math.random( 200, 500 );
+		team.AddScore( self:GetTeam(), amt );
 
-	ply.HasMoney = false;
-	net.Start( "nSetMoney" );
-		net.WriteEntity( ply );
-		net.WriteBool( false );
-	net.Broadcast();
+		net.Start( "nMsgTruckDeposit" );
+			net.WriteUInt( amt, 32 );
+		net.Send( ply );
+
+		self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );
+
+		ply.HasMoney = false;
+		net.Start( "nSetHasMoney" );
+			net.WriteEntity( ply );
+			net.WriteBool( false );
+		net.Broadcast();
+
+	end
 
 end
 
 util.AddNetworkString( "nMsgWrongTruck" );
 util.AddNetworkString( "nMsgTruckDeposit" );
+util.AddNetworkString( "nSetSafe" );

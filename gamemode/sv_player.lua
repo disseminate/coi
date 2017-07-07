@@ -21,6 +21,8 @@ local function nJoin( len, ply )
 
 		ply:SpawnAtTruck();
 
+		ply:InitializeSQL();
+
 		if( #player.GetJoined() == 1 ) then
 			GAMEMODE:ResetState();
 		end
@@ -37,15 +39,22 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply.Joined = false;
 
-	ply:SendPlayers();
-	ply:SendState();
-	ply:SetCustomCollisionCheck( true );
-
 	ply:SetTeam( TEAM_UNJOINED );
 
 end
 
 function GM:PlayerSpawn( ply )
+
+	if( !ply.Synced ) then
+
+		ply.Synced = true;
+
+		ply:SendPlayers();
+		ply:SendState();
+
+		ply:SyncMapData();
+
+	end
 
 	player_manager.SetPlayerClass( ply, "coi" );
 
@@ -56,6 +65,8 @@ function GM:PlayerSpawn( ply )
 	player_manager.OnPlayerSpawn( ply );
 	player_manager.RunClass( ply, "Spawn" );
 	hook.Call( "PlayerSetModel", GAMEMODE, ply );
+
+	ply:SetCustomCollisionCheck( true );
 
 	if( ply:IsBot() ) then
 
@@ -84,6 +95,7 @@ function meta:SendPlayers()
 			net.WriteEntity( v );
 			net.WriteBool( v.Joined );
 			net.WriteBool( v.HasMoney );
+			net.WriteBool( v.Safe );
 
 		end
 	net.Send( self );
@@ -93,12 +105,12 @@ util.AddNetworkString( "nPlayers" );
 
 function meta:SetTeamAuto( noMsg )
 
-	local trucks = GAMEMODE.Trucks;
+	local teams = GAMEMODE.Teams;
 
 	local amt = math.huge;
 	local t = -1;
 
-	for k, v in pairs( trucks ) do
+	for k, v in pairs( teams ) do
 
 		if( team.NumPlayers( k ) < amt ) then
 			t = k;
@@ -133,11 +145,12 @@ end
 
 function meta:SpawnAtTruck()
 
-	if( !GAMEMODE.Trucks ) then return end
-	if( !GAMEMODE.Trucks[self:Team()] ) then return end
+	if( !GAMEMODE.Teams ) then return end
+	if( !GAMEMODE.Teams[self:Team()] ) then return end
+	if( !GAMEMODE.Teams[self:Team()].SpawnPos ) then return end
 
-	local t = GAMEMODE.Trucks[self:Team()];
-	self:SetPos( t:GetPos() + t:GetForward() * -180 );
+	local t = GAMEMODE.Teams[self:Team()].SpawnPos;
+	self:SetPos( t );
 
 end
 
@@ -182,7 +195,7 @@ function GM:PlayerTakeMoney( ply, ent )
 	if( !ply.HasMoney ) then
 		
 		ply.HasMoney = true;
-		net.Start( "nSetMoney" );
+		net.Start( "nSetHasMoney" );
 			net.WriteEntity( ply );
 			net.WriteBool( true );
 		net.Broadcast();
@@ -190,35 +203,173 @@ function GM:PlayerTakeMoney( ply, ent )
 	end
 
 end
-util.AddNetworkString( "nSetMoney" );
+util.AddNetworkString( "nSetHasMoney" );
 
 function GM:KeyPress( ply, key )
 
-	if( ply.HasMoney and key == IN_ATTACK2 ) then
+	if( ply.HasMoney and key == IN_ATTACK2 and self:GetState() == STATE_GAME ) then
 
 		ply:DropMoney( true );
 
 	end
 
+	if( ply.Safe and key == IN_USE and self:InRushPeriod() ) then
+		
+		ply.Safe = false;
+		ply.LastUnsafe = CurTime();
+		net.Start( "nSetSafe" );
+			net.WriteEntity( ply );
+			net.WriteBool( false );
+		net.Broadcast();
+
+	end
+
 end
 
-function meta:DropMoney( thrown )
+function meta:DropMoney( thrown, ao )
 
 	self.HasMoney = false;
-	net.Start( "nSetMoney" );
+	net.Start( "nSetHasMoney" );
 		net.WriteEntity( self );
 		net.WriteBool( false );
 	net.Broadcast();
 	
 	self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
 
+	ao = ao or self:GetAimVector();
+
 	local bag = ents.Create( "coi_money" );
-	bag:SetPos( self:GetShootPos() + self:GetAimVector() * 32 );
+	bag:SetPos( self:GetShootPos() + ao * 32 );
 	bag:SetAngles( Angle( math.Rand( -180, 180 ), math.Rand( -180, 180 ), math.Rand( -180, 180 ) ) );
 	bag.Owner = self;
 	bag:SetDropped( true );
 	bag:SetThrown( thrown );
 	bag:Spawn();
 	bag:Activate();
+	
+end
+
+function GM:Loadout()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		v:Loadout();
+
+	end
+
+end
+
+function meta:Loadout()
+
+	if( self.PrimaryLoadout ) then
+		local i = GAMEMODE.Items[self.PrimaryLoadout];
+		self:Give( i.SWEP );
+		self.PrimaryLoadout = nil;
+	end
+
+	if( self.SecondaryLoadout ) then
+		local i = GAMEMODE.Items[self.SecondaryLoadout];
+		self:Give( i.SWEP );
+		self.SecondaryLoadout = nil;
+	end
+
+end
+
+function GM:EntityTakeDamage( ply, dmg )
+
+	if( ply:IsPlayer() ) then
+
+		if( ply.Unconscious ) then
+			return true;
+		end
+
+		local consc = false;
+
+		if( dmg:GetInflictor() and dmg:GetInflictor():IsValid() ) then
+			
+			if( dmg:GetInflictor():GetClass() == "coi_money" ) then
+
+				consc = true;
+
+			end
+
+		end
+
+		if( consc ) then
+
+			if( !ply.Consciousness ) then
+				ply.Consciousness = 100;
+			end
+
+			ply.Consciousness = math.Clamp( ply.Consciousness - dmg:GetDamage(), 0, 100 );
+
+			if( ply.Consciousness <= 0 ) then
+
+				ply.Unconscious = true;
+				ply.UnconsciousTime = CurTime();
+				ply.Consciousness = 30;
+
+				ply:Freeze( true );
+
+				ply:CollisionRulesChanged();
+
+				net.Start( "nUnconscious" );
+					net.WriteEntity( ply );
+				net.Broadcast();
+
+				if( ply.HasMoney ) then
+
+					local ang = ply:GetAngles();
+					ang.p = 20;
+					ang.r = 0;
+
+					ply:DropMoney( true, ang:Forward() );
+
+				end
+
+			else
+
+				net.Start( "nSetConsciousness" );
+					net.WriteUInt( ply.Consciousness, 7 );
+				net.Send( ply );
+
+			end
+
+			return true;
+
+		end
+
+	end
+
+end
+util.AddNetworkString( "nUnconscious" );
+util.AddNetworkString( "nSetConsciousness" );
+
+function GM:ConsciousnessThink()
+
+	for _, v in pairs( player.GetAll() ) do
+
+		if( !v.NextConsciousRecover ) then
+			v.NextConsciousRecover = CurTime();
+		end
+
+		if( !v.Consciousness ) then
+			v.Consciousness = 100;
+		end
+
+		if( CurTime() >= v.NextConsciousRecover ) then
+
+			v.NextConsciousRecover = CurTime() + 1;
+			v.Consciousness = math.Clamp( v.Consciousness + 5, 0, 100 );
+
+		end
+
+		if( v.Unconscious and CurTime() >= v.UnconsciousTime + 5 ) then
+			v.Unconscious = false;
+			v:Freeze( false );
+			v:CollisionRulesChanged();
+		end
+
+	end
 
 end

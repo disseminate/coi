@@ -14,11 +14,21 @@ end
 net.Receive( "nJoin", nJoin );
 
 function GM:Reset()
-
+	
 	for _, v in pairs( player.GetAll() ) do
 
 		v.HasMoney = false;
+		v.Safe = false;
+
+		v.Unconscious = false;
+		v.UnconsciousTime = nil;
+
+		v:Freeze( false );
 
 	end
+
+	LocalPlayer().Consciousness = 100;
+
+	self:ResetMapTrucks();
 
 end

@@ -16,7 +16,7 @@ PLAYER.StartHealth			= 100		-- How much health we start with
 PLAYER.StartArmor			= 0			-- How much armour we start with
 PLAYER.DropWeaponOnDie		= false		-- Do we drop our weapon when we die
 PLAYER.TeammateNoCollide	= true		-- Do we collide with teammates or run straight through them
-PLAYER.AvoidPlayers			= true		-- Automatically swerves around other players
+PLAYER.AvoidPlayers			= false		-- Automatically swerves around other players
 PLAYER.UseVMHands			= true		-- Uses viewmodel hands
 
 --

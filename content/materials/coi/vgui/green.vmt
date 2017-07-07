@@ -1,0 +1,14 @@
+UnlitGeneric {
+	$basetexture "coi/vgui/green"
+	$translucent 1
+	$alpha 1
+
+	Proxies {
+		Sine {
+			sineperiod	2
+			sinemin 0
+			sinemax 0.1
+			resultVar $alpha
+		}
+	}
+}

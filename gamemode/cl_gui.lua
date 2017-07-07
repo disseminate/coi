@@ -13,10 +13,10 @@ function surface.BackgroundBlur( x, y, w, h, a )
 	surface.SetMaterial( matBlurScreen );
 	surface.SetDrawColor( 255, 255, 255, 255 * ( a or 1 ) );
 
-	for i=0.33, 1, 0.33 do
-		matBlurScreen:SetFloat( "$blur", 5 * i );
+	for i=0, 1, 0.33 do
+		matBlurScreen:SetFloat( "$blur", 7 * i );
 		matBlurScreen:Recompute();
-		if( render ) then render.UpdateScreenEffectTexture() end -- Todo: Make this available to menu Lua
+		if( render ) then render.UpdateScreenEffectTexture() end
 		surface.DrawTexturedRect( x * -1, y * -1, w, h );
 	end
 
@@ -92,14 +92,13 @@ function meta:BindInput( f )
 
 		if( self:GetText() != fm ) then
 			self:SetText( fm );
-			surface.SetFont( self:GetFont() );
-
-			local w, h = surface.GetTextSize( fm );
-			local mw, mh = self:GetSize();
-			if( mw != w or mh != h ) then
-				self:SetSize( mw, mh );
+			local d = self:GetDock();
+			if( d == NODOCK or d == TOP or d == BOTTOM ) then
+				self:SizeToContentsX();
 			end
-
+			if( d == NODOCK or d == LEFT or d == RIGHT ) then
+				self:SizeToContentsY();
+			end
 			self:InvalidateLayout();
 		end
 
@@ -270,7 +269,14 @@ function GM:CreateLabel( p, dock, font, text, align )
 	n:Dock( dock );
 	n:SetFont( font );
 	n:SetText( text );
-	n:SizeToContents();
+
+	if( dock == NODOCK or dock == LEFT or dock == RIGHT ) then
+		n:SizeToContentsX();
+	end
+	if( dock == NODOCK or dock == TOP or dock == BOTTOM ) then
+		n:SizeToContentsY();
+	end
+
 	if( align ) then
 		n:SetContentAlignment( align );
 	end
@@ -289,7 +295,11 @@ function GM:CreateModelPanel( p, dock, w, h, model, campos, lookat, fov )
 	end
 	n:SetModel( model );
 	n:SetCamPos( campos );
-	n:SetLookAt( lookat );
+	local a, b = n.Entity:GetModelBounds();
+	n:SetLookAt( ( a + b ) / 2 );
+	if( lookat ) then
+		n:SetLookAt( lookat );
+	end
 	n:SetFOV( fov );
 
 	return n;
@@ -315,5 +325,41 @@ function GM:CreateButton( p, dock, w, h, text, click )
 	end
 
 	return n;
+
+end
+
+function GM:CreateAvatarImage( p, dock, w, h, ply )
+
+	local av = vgui.Create( "AvatarImage", p );
+	av:Dock( dock );
+	if( w and h ) then
+		av:SetSize( w, h );
+	end
+
+	local sizes = { 16, 32, 64, 84, 128, 184 };
+	local s;
+	for _, v in pairs( sizes ) do
+		if( v >= w ) then
+			s = v;
+			break;
+		end
+	end
+	
+	av:SetPlayer( ply, s );
+
+	if( !ply:IsBot() ) then
+		
+		local b = GAMEMODE:CreateButton( av, FILL, 0, 0, "", function()
+
+			if( ply and ply:IsValid() ) then
+				gui.OpenURL( "http://steamcommunity.com/profiles/" .. ply:SteamID64() );
+			end
+
+		end );
+		b.Paint = function() end
+
+	end
+
+	return av;
 
 end
