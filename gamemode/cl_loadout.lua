@@ -5,12 +5,14 @@ function GM:CreateLoadoutPanel()
 	end
 
 	self.Loadout = self:CreatePanel( nil, NODOCK, ScrW(), ScrH() );
+	self.Loadout:SetPos( 0, 0 );
 	self.Loadout:SetPaintBackground( true );
 	self.Loadout:SetBackgroundBlur( true );
 	self.Loadout:DockPadding( 40, 40, 40, 40 );
 	self.Loadout:MakePopup();
 	self.Loadout:FadeIn();
 	self.Loadout:SetKeyboardInputEnabled( false );
+	self.Loadout:MoveToBack();
 
 	local p1 = self:CreatePanel( self.Loadout, TOP, 0, 64 );
 	p1:DockMargin( 0, 0, 0, 20 );
@@ -24,7 +26,7 @@ function GM:CreateLoadoutPanel()
 
 	local p1 = self:CreatePanel( self.Loadout, BOTTOM, 0, 68 );
 
-		local p2 = self:CreatePanel( p1, RIGHT, 200, 0 );
+		local p2 = self:CreatePanel( p1, RIGHT, 500, 0 );
 
 		self:CreateLabel( p2, TOP, "COI 20", "Robbing bank in", 9 );
 	 	self:CreateLabel( p2, FILL, "COI Title 48", "00:43", 9 ):BindInput( function()
@@ -369,6 +371,17 @@ function GM:CreateLoadoutPanel()
 					surface.DrawLine( 0, j * self.IconSize, w, j * self.IconSize );
 				end
 				
+				LocalPlayer():CheckInventory();
+
+				if( #LocalPlayer().Inventory == 0 ) then
+					surface.SetFont( "COI 18" );
+					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+					local t = "You don't have anything in your inventory.";
+					local tw, th = surface.GetTextSize( t );
+					surface.SetTextPos( w / 2 - tw / 2, h / 2 - th / 2 );
+					surface.DrawText( t );
+				end
+				
 			end
 
 			local primary, secondary;
@@ -407,8 +420,6 @@ function GM:CreateLoadoutPanel()
 
 						local xSlot = math.Round( ( x - pan:GetWide() / 2 + 1 ) / self.IconSize ) + 1;
 						local ySlot = math.Round( ( y - pan:GetTall() / 2 + 1 ) / self.IconSize ) + 1;
-						
-						MsgN( xSlot .. ", " .. ySlot );
 
 						if( LocalPlayer():CanPutItemInSlot( pan.Item, xSlot, ySlot ) ) then
 
@@ -422,6 +433,8 @@ function GM:CreateLoadoutPanel()
 								net.WriteUInt( xSlot, 6 );
 								net.WriteUInt( ySlot, 6 );
 							net.SendToServer();
+
+							surface.PlaySound( Sound( "coi/equip.wav" ) );
 
 						end
 
