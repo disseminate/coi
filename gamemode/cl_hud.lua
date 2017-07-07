@@ -280,52 +280,51 @@ function GM:HUDPaintDirectionArrow()
 	local a;
 	local pos = LocalPlayer():GetPos();
 
-	local teams = self.Teams;
-	if( !teams ) then return end
-	if( !teams[LocalPlayer():Team()] ) then return end
-	if( !teams[LocalPlayer():Team()].Truck or !teams[LocalPlayer():Team()].Truck:IsValid() ) then return end
+	local truck = LocalPlayer():GetTruck();
 
-	local truck = teams[LocalPlayer():Team()].Truck;
+	if( truck ) then
 
-	local tpos = truck:GetPos();
+		local tpos = truck:GetPos();
 
-	if( math.abs( tpos.z - pos.z ) < 100 and ( LocalPlayer().HasMoney or self:InRushPeriod() ) and !LocalPlayer().Safe ) then
+		if( math.abs( tpos.z - pos.z ) < 100 and ( LocalPlayer().HasMoney or self:InRushPeriod() ) and !LocalPlayer().Safe ) then
 
-		a = HUDApproach( "arrow", 1, 0 );
+			a = HUDApproach( "arrow", 1, 0 );
 
-	else
+		else
 
-		a = HUDApproach( "arrow", 0, 0 );
+			a = HUDApproach( "arrow", 0, 0 );
 
-	end
+		end
 
-	if( a > 0 ) then
+		if( a > 0 ) then
 
-		local aim = LocalPlayer():GetAimVector():Angle();
-		local d = math.AngleDifference( aim.y, ( tpos - pos ):Angle().y );
+			local aim = LocalPlayer():GetAimVector():Angle();
+			local d = math.AngleDifference( aim.y, ( tpos - pos ):Angle().y );
 
-		self:GetSkin().ICON_ARROW:SetFloat( "$alpha", a );
+			self:GetSkin().ICON_ARROW:SetFloat( "$alpha", a );
 
-		surface.SetDrawColor( self:GetSkin().COLOR_WHITE );
-		surface.SetMaterial( self:GetSkin().ICON_ARROW );
-		surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 40 - 100, 64, 64, 90 - d );
+			surface.SetDrawColor( self:GetSkin().COLOR_WHITE );
+			surface.SetMaterial( self:GetSkin().ICON_ARROW );
+			surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 40 - 100, 64, 64, 90 - d );
 
-		surface.SetAlphaMultiplier( a );
+			surface.SetAlphaMultiplier( a );
 
-			surface.SetFont( "COI Title 30" );
-			surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-			local t = "Put the money in the truck!";
+				surface.SetFont( "COI Title 30" );
+				surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+				local t = "Put the money in the truck!";
 
-			if( self:InRushPeriod() ) then
-				t = "Get to your truck before you're arrested!";
-				surface.SetTextColor( self:GetSkin().COLOR_WARNING );
-			end
+				if( self:InRushPeriod() ) then
+					t = "Get to your truck before you're arrested!";
+					surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+				end
 
-			local w, h = surface.GetTextSize( t );
-			surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h );
-			surface.DrawText( t );
+				local w, h = surface.GetTextSize( t );
+				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h );
+				surface.DrawText( t );
 
-		surface.SetAlphaMultiplier( 1 );
+			surface.SetAlphaMultiplier( 1 );
+
+		end
 
 	end
 

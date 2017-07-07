@@ -19,10 +19,9 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 
 	elseif( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
-		local teams = self.Teams;
-		if( teams and teams[ply:Team()] and teams[ply:Team()].Truck and teams[ply:Team()].Truck:IsValid() ) then
+		local truck = ply:GetTruck();
+		if( truck ) then
 
-			local truck = teams[ply:Team()].Truck;
 			local p0 = truck:GetPos();
 
 			local x = 70;

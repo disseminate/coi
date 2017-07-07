@@ -20,38 +20,38 @@ function GM:PrePlayerDraw( ply )
 
 	if( ply.Safe or self:GetState() == STATE_PREGAME ) then
 
-		local teams = self.Teams;
-		if( !teams ) then return end
-		if( !teams[ply:Team()] ) then return end
-		if( !teams[ply:Team()].Truck or !teams[ply:Team()].Truck:IsValid() ) then return end
+		local truck = ply:GetTruck();
 
-		local truck = teams[ply:Team()].Truck;
-		local p0 = truck:GetPos();
+		if( truck ) then
+			
+			local p0 = truck:GetPos();
 
-		local n = 1;
-		for k, v in pairs( team.GetPlayers( ply:Team() ) ) do
-			if( v == ply ) then
-				n = k;
-				break;
+			local n = 1;
+			for k, v in pairs( team.GetPlayers( ply:Team() ) ) do
+				if( v == ply ) then
+					n = k;
+					break;
+				end
 			end
-		end
 
-		local x = 20 - ( ( n - 1 ) % 5 ) * 16;
-		local y = 24;
-		if( n % 11 >= 6 ) then
-			y = -24;
-		end
-		local z = -5;
+			local x = 20 - ( ( n - 1 ) % 5 ) * 16;
+			local y = 24;
+			if( n % 11 >= 6 ) then
+				y = -24;
+			end
+			local z = -5;
 
-		local ang = truck:GetAngles();
-		if( n % 11 >= 6 ) then
-			ang:RotateAroundAxis( truck:GetUp(), -90 );
-		else
-			ang:RotateAroundAxis( truck:GetUp(), 90 );
-		end
+			local ang = truck:GetAngles();
+			if( n % 11 >= 6 ) then
+				ang:RotateAroundAxis( truck:GetUp(), -90 );
+			else
+				ang:RotateAroundAxis( truck:GetUp(), 90 );
+			end
 
-		ply:SetPos( p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z );
-		ply:SetRenderAngles( ang );
+			ply:SetPos( p0 + truck:GetForward() * x + truck:GetRight() * y + truck:GetUp() * z );
+			ply:SetRenderAngles( ang );
+
+		end
 
 	end
 
