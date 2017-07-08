@@ -63,6 +63,26 @@ function ENT:GetClosestPlayer()
 
 end
 
+function ENT:OnStuck()
+
+	local trace = { };
+	trace.start = self:GetPos() + Vector( 0, 0, 64 );
+	trace.endpos = trace.start + self:GetForward() * 16;
+	trace.filter = self;
+	trace.mins = Vector( -32, -32, 32 );
+	trace.maxs = Vector( 32, 32, 32 );
+	local tr = util.TraceHull( trace );
+
+	MsgN( tr.Entity );
+
+	if( tr.Entity and tr.Entity:IsValid() and tr.Entity:GetClass() == "prop_door_rotating" ) then
+
+		tr.Entity:Input( "Use", self, self );
+
+	end
+
+end
+
 function ENT:MoveToPlayer( ply )
 
 	if( !ply or !ply:IsValid() ) then return "invalid ply" end
