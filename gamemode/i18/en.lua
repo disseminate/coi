@@ -13,6 +13,8 @@ EXPORTS["en"] = {
 	["most_kills"] = "Most Kills",
 	["most_knockouts"] = "Most Knockouts",
 
+	["select_loadout"] = "Select Your Loadout",
+	["robbing_bank_in"] = "Robbing bank in",
 	["store"] = "Store",
 	["buy"] = "Buy",
 	["you"] = "You",
@@ -20,6 +22,11 @@ EXPORTS["en"] = {
 	["primary"] = "Primary",
 	["secondary"] = "Secondary",
 	["you_have"] = "You have",
+	["join"] = "Join",
+	["members"] = "members",
+	["your_team"] = "Your Team",
+	["other_teams"] = "Other Teams",
+	["a_moment"] = "a moment",
 
 	["team_rebalance_1"] = "Teams have been rebalanced. You have joined the",
 	["team"] = "team",

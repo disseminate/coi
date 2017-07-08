@@ -4,7 +4,7 @@ Please make a pull request on a new branch. Branches should be named in the mann
 
 `include`s must be in alphabetical order, unless they conflict. `AddCSLuaFile`s must be in alphabetical order.
 
-All strings that the player sees must be internationalized (see [I18](#I18)).
+All strings that the player sees must be internationalized (see [I18](#i18)).
 
 ## Mapping
 
