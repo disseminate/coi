@@ -15,6 +15,7 @@ include( "sv_player.lua" );
 include( "sv_sql.lua" );
 include( "sv_state.lua" );
 include( "sv_think.lua" );
+include( "sv_workshop.lua" );
 
 AddCSLuaFile( "cl_binds.lua" );
 AddCSLuaFile( "cl_calcview.lua" );
