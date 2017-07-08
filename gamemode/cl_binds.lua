@@ -21,7 +21,7 @@ function GM:PlayerBindPress( ply, bind, down )
 
 				for k, v in pairs( tab ) do
 
-					if( v != wep ) then
+					if( v != wep and !v.NoDraw ) then
 
 						self.NextWeapon = v;
 
@@ -44,8 +44,13 @@ function GM:PlayerBindPress( ply, bind, down )
 				local item = self.Items[v.ItemClass];
 				if( !item.Secondary and LocalPlayer():HasWeapon( item.SWEP ) ) then
 
-					self.NextWeapon = LocalPlayer():GetWeapon( item.SWEP );
-					break;
+					local wep = LocalPlayer():GetWeapon( item.SWEP );
+					if( !wep.NoDraw ) then
+						
+						self.NextWeapon = wep;
+						break;
+
+					end
 
 				end
 
@@ -60,8 +65,13 @@ function GM:PlayerBindPress( ply, bind, down )
 				local item = self.Items[v.ItemClass];
 				if( item.Secondary and LocalPlayer():HasWeapon( item.SWEP ) ) then
 
-					self.NextWeapon = LocalPlayer():GetWeapon( item.SWEP );
-					break;
+					local wep = LocalPlayer():GetWeapon( item.SWEP );
+					if( !wep.NoDraw ) then
+						
+						self.NextWeapon = wep;
+						break;
+
+					end
 
 				end
 

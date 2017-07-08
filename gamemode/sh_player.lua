@@ -1,3 +1,5 @@
+local meta = FindMetaTable( "Player" );
+
 function player.GetJoined()
 
 	local tab = { };
@@ -48,7 +50,7 @@ end
 
 function GM:ShouldCollide( e1, e2 )
 
-	if( e1:IsPlayer() and e2:IsPlayer() ) then return false end
+	if( e1:IsPlayer() and e2:IsPlayer() and e1:Team() == e2:Team() ) then return false end
 	
 	if( e1:IsPlayer() and e1.Unconscious ) then return false end
 	if( e2:IsPlayer() and e2.Unconscious ) then return false end
@@ -78,5 +80,11 @@ function GM:CanChangeTeam( cur, targ )
 	if( diff > 0 ) then return false end
 
 	return true;
+
+end
+
+function meta:IsCloaked()
+
+	return self:HasWeapon( "coi_voicedisguiser" ) and !self.HasMoney;
 
 end

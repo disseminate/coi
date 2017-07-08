@@ -3,6 +3,8 @@ AddCSLuaFile( "shared.lua" );
 include( "shared.lua" );
 
 function ENT:Use( ply )
+
+	ply:Loadout();
 	
 	if( GAMEMODE:InRushPeriod() ) then
 

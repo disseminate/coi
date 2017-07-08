@@ -7,4 +7,4 @@ EXPORTS["voicedisguiser"].Price = 2000;
 EXPORTS["voicedisguiser"].Model = "models/Items/battery.mdl";
 EXPORTS["voicedisguiser"].W = 3;
 EXPORTS["voicedisguiser"].H = 3;
-EXPORTS["voicedisguiser"].SWEP = "weapon_pistol";
+EXPORTS["voicedisguiser"].SWEP = "coi_voicedisguiser";

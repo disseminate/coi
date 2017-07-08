@@ -101,6 +101,7 @@ end
 
 function ENT:CanTargetPlayer( ply )
 
+	if( !self:Alive() ) then return false end
 	if( !ply or !ply:IsValid() ) then return false end
 	if( !ply:Alive() ) then return false end
 	if( ply.Safe ) then return false end
@@ -114,21 +115,23 @@ function ENT:ShootAtPlayer( ply )
 
 	if( !ply or !ply:IsValid() ) then return "invalid ply" end
 
+	local targ = ply;
+
 	while( true ) do
 
 		if( GAMEMODE:GetState() != STATE_GAME ) then return "bad state" end
 
-		if( !self:CanTargetPlayer( ply ) ) then return "invalid ply" end
+		if( !self:CanTargetPlayer( targ ) ) then return "invalid ply" end
 
-		self.loco:FaceTowards( ply:GetPos() );
+		self.loco:FaceTowards( targ:GetPos() );
 
 		local trace = { };
 		trace.start = self:EyePos();
-		trace.endpos = ply:EyePos();
+		trace.endpos = targ:EyePos();
 		trace.filter = { self };
 		local tr = util.TraceLine( trace );
 
-		if( tr.Fraction < 1.0 and ( !tr.Entity or !tr.Entity:IsValid() or tr.Entity != ply ) ) then
+		if( tr.Fraction < 1.0 and ( !tr.Entity or !tr.Entity:IsValid() or tr.Entity != targ ) ) then
 
 			return "lost player LOS";
 
@@ -149,7 +152,14 @@ function ENT:ShootAtPlayer( ply )
 		if( CurTime() >= self.NextShot ) then
 
 			self.NextShot = CurTime() + math.Rand( 0.4, 0.8 );
-			self:ShootAt( ply );
+			self:ShootAt( targ );
+
+			local closest = self:GetClosestPlayer();
+			if( closest != targ ) then
+
+				targ = closest;
+
+			end
 
 		end
 

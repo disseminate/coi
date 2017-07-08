@@ -62,7 +62,7 @@ end
 local function nSetTeamAuto( len )
 
 	local t = net.ReadUInt( 16 );
-	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, "You have joined the ", team.GetColor( t ), team.GetName( t ), GAMEMODE:GetSkin().COLOR_WHITE, " team." );
+	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, I18( "joined_team" ) .. " ", team.GetColor( t ), team.GetName( t ), GAMEMODE:GetSkin().COLOR_WHITE, " " .. I18( "team" ) .. "." );
 
 end
 net.Receive( "nSetTeamAuto", nSetTeamAuto );
@@ -70,7 +70,7 @@ net.Receive( "nSetTeamAuto", nSetTeamAuto );
 local function nSetTeamAutoRebalance( len )
 
 	local t = net.ReadUInt( 16 );
-	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, "Teams have been rebalanced. You have joined the ", team.GetColor( t ), team.GetName( t ), GAMEMODE:GetSkin().COLOR_WHITE, " team." );
+	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, I18( "team_rebalance_1" ) .. " ", team.GetColor( t ), team.GetName( t ), GAMEMODE:GetSkin().COLOR_WHITE, " " .. I18( "team" ) .. "." );
 
 end
 net.Receive( "nSetTeamAutoRebalance", nSetTeamAutoRebalance );

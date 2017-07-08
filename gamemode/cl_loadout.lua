@@ -239,7 +239,7 @@ function GM:CreateLoadoutPanel()
 	
 	local p1 = self:CreatePanel( self.Loadout, LEFT, ScrW() * 0.2, 0 );
 		p1:DockMargin( 0, 0, 20, 0 );
-		local l = self:CreateLabel( p1, TOP, "COI Title 30", "Store", 7 );
+		local l = self:CreateLabel( p1, TOP, "COI Title 30", I18( "store" ), 7 );
 		l:DockMargin( 0, 0, 0, 20 );
 
 		local p2 = self:CreatePanel( p1, TOP, 0, 400 );
@@ -312,7 +312,7 @@ function GM:CreateLoadoutPanel()
 					updateItem( 1 );
 				end );
 				right:DockMargin( 10, 0, 0, 0 );
-				local buy = self:CreateButton( p3, FILL, 0, 0, "Buy", function()
+				local buy = self:CreateButton( p3, FILL, 0, 0, I18( "buy" ), function()
 				
 					net.Start( "nBuyItem" );
 						net.WriteString( item );
@@ -344,7 +344,7 @@ function GM:CreateLoadoutPanel()
 				buy:SetTextColor( self:GetSkin().COLOR_MONEY );
 
 	local p1 = self:CreatePanel( self.Loadout, FILL );
-		local l = self:CreateLabel( p1, TOP, "COI Title 30", "You", 7 );
+		local l = self:CreateLabel( p1, TOP, "COI Title 30", I18( "you" ), 7 );
 		l:DockMargin( 0, 0, 0, 20 );
 
 		local p2 = self:CreatePanel( p1, FILL );
@@ -375,7 +375,7 @@ function GM:CreateLoadoutPanel()
 				if( #LocalPlayer().Inventory == 0 ) then
 					surface.SetFont( "COI 18" );
 					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-					local t = "You don't have anything in your inventory.";
+					local t = I18( "empty_inv" );
 					local tw, th = surface.GetTextSize( t );
 					surface.SetTextPos( w / 2 - tw / 2, h / 2 - th / 2 );
 					surface.DrawText( t );
@@ -450,7 +450,7 @@ function GM:CreateLoadoutPanel()
 				primary = self:CreatePanel( p3, FILL );
 				primary:SetPaintBackground( true );
 				primary:DockMargin( 0, 0, 20, 0 );
-				self:CreateLabel( primary, FILL, "COI 20", "Primary", 7 ):DockMargin( 10, 10, 0, 0 );
+				self:CreateLabel( primary, FILL, "COI 20", I18( "primary" ), 7 ):DockMargin( 10, 10, 0, 0 );
 				primary:Receiver( "item", function( self, tab, dropped, idx, x, y )
 
 					local pan = tab[1];
@@ -490,7 +490,7 @@ function GM:CreateLoadoutPanel()
 
 				secondary = self:CreatePanel( p3, RIGHT, ScrW() * 0.17, 0 );
 				secondary:SetPaintBackground( true );
-				self:CreateLabel( secondary, FILL, "COI 20", "Secondary", 7 ):DockMargin( 10, 10, 0, 0 );
+				self:CreateLabel( secondary, FILL, "COI 20", I18( "secondary" ), 7 ):DockMargin( 10, 10, 0, 0 );
 				secondary:Receiver( "item", function( self, tab, dropped, idx, x, y )
 
 					local pan = tab[1];
@@ -530,7 +530,7 @@ function GM:CreateLoadoutPanel()
 
 			p3:DockMargin( 0, 0, 0, 20 );
 			
-			local l = self:CreateLabel( p2, TOP, "COI 24", "You have", 9 );
+			local l = self:CreateLabel( p2, TOP, "COI 24", I18( "you_have" ), 9 );
 			local l2 = self:CreateLabel( p2, TOP, "COI Title 48", "$" .. string.Comma( 0 ), 9 ):BindInput( function()
 				return "$" .. string.Comma( LocalPlayer().Money or 0 );
 			end );

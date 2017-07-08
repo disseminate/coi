@@ -1,6 +1,20 @@
 SWEP.Base = "weapon_base";
 SWEP.PrintName = "COI Base";
 
+function SWEP:Attack()
+
+	local bull = { };
+	bull.Attacker = self.Owner;
+	bull.Damage = 5;
+	bull.Dir = self.Owner:GetAimVector();
+	bull.Spread = Vector( self.Primary.Spread, self.Primary.Spread, 0 );
+	bull.Src = self.Owner:GetShootPos();
+	bull.Num = self.Primary.Num or 1;
+	bull.Force = self.Primary.Force or 1;
+	self:FireBullets( bull );
+
+end
+
 function SWEP:PrimaryAttack()
 
 	if( self.Primary.Firearm ) then
@@ -9,19 +23,16 @@ function SWEP:PrimaryAttack()
 			
 			self:SetClip1( self:Clip1() - 1 );
 
-			if( SERVER ) then
+			if( SERVER and self.Primary.Sound ) then
 				self.Owner:EmitSound( self.Primary.Sound );
 			end
 
-			local bull = { };
-			bull.Attacker = self.Owner;
-			bull.Damage = 5;
-			bull.Dir = self.Owner:GetAimVector();
-			bull.Spread = Vector( self.Primary.Spread, self.Primary.Spread, 0 );
-			bull.Src = self.Owner:GetShootPos();
-			bull.Num = self.Primary.Num or 1;
-			bull.Force = self.Primary.Force or 1;
-			self:FireBullets( bull );
+			self:Attack();
+
+			if( self.RemoveOnUse ) then
+				self.Owner:StripWeapon( self:GetClass() );
+				return;
+			end
 
 			self:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 			self.Owner:MuzzleFlash();
@@ -201,5 +212,22 @@ end
 function SWEP:Initialize()
 
 	self:SetHoldType( self.HoldType or "pistol" )
+
+end
+
+function SWEP:PreDrawViewModel( vm, wep, ply )
+
+	if( self.NoDraw ) then
+
+		vm:SetMaterial( "engine/occlusionproxy" );
+
+	end
+
+end
+
+function SWEP:Holster()
+
+	self.Owner:GetViewModel():SetMaterial( "" );
+	return true;
 
 end

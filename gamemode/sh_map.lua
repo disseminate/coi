@@ -37,7 +37,7 @@ function meta:GetBagMoney()
 
 	end
 
-	local count = team.GetCount( self:Team() );
+	local count = team.NumPlayers( self:Team() );
 
 	-- More players on my team means more hands
 	local min = math.floor( 200 / count );
@@ -46,9 +46,9 @@ function meta:GetBagMoney()
 	-- More players in total means more difficulty though
 	-- Scale to team disparities by comparing team size to all players
 	local c = #player.GetJoined();
-	min = min * ( c / #self.Teams );
-	max = max * ( c / #self.Teams );
+	min = min * ( c / #GAMEMODE.Teams );
+	max = max * ( c / #GAMEMODE.Teams );
 
-	return min, max;
+	return math.floor( min ), math.floor( max );
 
 end
