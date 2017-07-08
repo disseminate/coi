@@ -33,6 +33,11 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 
 		end
 
+	else
+
+		local vel = ply:GetVelocity():Dot( ply:GetRight() ) / ply:GetRunSpeed();
+		tab.angles.r = vel * 2.5;
+
 	end
 
 	if( self.CamPos ) then
