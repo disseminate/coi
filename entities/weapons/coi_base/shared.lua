@@ -23,11 +23,16 @@ function SWEP:PrimaryAttack()
 			
 			self:SetClip1( self:Clip1() - 1 );
 
-			if( SERVER ) then
+			if( SERVER and self.Primary.Sound ) then
 				self.Owner:EmitSound( self.Primary.Sound );
 			end
 
 			self:Attack();
+
+			if( self.RemoveOnUse ) then
+				self.Owner:StripWeapon( self:GetClass() );
+				return;
+			end
 
 			self:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 			self.Owner:MuzzleFlash();

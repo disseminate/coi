@@ -41,6 +41,7 @@ SKIN.ICON_AUDIO_ON = Material( "coi/icons/audio-on" );
 SKIN.ICON_ARROW = Material( "coi/icons/arrow" );
 
 SKIN.MAT_GREEN = Material( "coi/vgui/green" );
+SKIN.MAT_REDLASER = Material( "coi/sprites/redlaser" );
 
 function SKIN:PaintFrame( panel, w, h )
 
