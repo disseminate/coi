@@ -128,6 +128,51 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 
 end
 
+function GM:PostDraw2DSkyBox()
+
+	if( false ) then --= disabled until I can get sounds working
+		if( !self.SkyboxHelicopter ) then
+			self.SkyboxHelicopter = ClientsideModel( "models/Combine_Helicopter.mdl", RENDERGROUP_BOTH );
+		end
+
+		if( self:GetState() == STATE_POSTGAME or ( self:GetState() == STATE_GAME and self:TimeLeftInState() < 3 * 60 ) ) then
+
+			render.OverrideDepthEnable( true, false );
+
+			cam.Start3D();
+
+				if( !self.NextHelicopter ) then
+					self.NextHelicopter = 0;
+				end
+				if( CurTime() >= self.NextHelicopter ) then
+
+					local timeSince = math.Clamp( CurTime() - self.NextHelicopter, 0, 12 ) / 12;
+
+					if( timeSince >= 1 ) then
+						self.NextHelicopter = CurTime() + math.random( 30, 60 );
+					else
+
+						local pos = Vector( -3000 + 10000 * timeSince, -540, 1000 );
+
+						self.SkyboxHelicopter:SetAngles( Vector( 1, 0, 0 ):Angle() );
+						
+						self.SkyboxHelicopter:SetPos( pos );
+						self.SkyboxHelicopter:FrameAdvance();
+						self.SkyboxHelicopter:DrawModel();
+
+					end
+
+				end
+
+			cam.End3D();
+
+			render.OverrideDepthEnable( false, false );
+
+		end
+	end
+
+end
+
 matproxy.Add( {
 	name = "PlayerColor",
 
@@ -162,4 +207,5 @@ matproxy.Add( {
 			mat:SetVector( self.ResultTo, Vector( 62 / 255, 88 / 255, 106 / 255 ) )
 		end
 	end
-} )
+} );
+

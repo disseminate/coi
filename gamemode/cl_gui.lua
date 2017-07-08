@@ -93,13 +93,14 @@ function meta:BindInput( f )
 		if( self:GetText() != fm ) then
 			self:SetText( fm );
 			local d = self:GetDock();
-			if( d == NODOCK or d == TOP or d == BOTTOM ) then
+			if( d == NODOCK or d == RIGHT or d == LEFT ) then
 				self:SizeToContentsX();
 			end
-			if( d == NODOCK or d == LEFT or d == RIGHT ) then
+			if( d == NODOCK or d == TOP or d == BOTTOM ) then
 				self:SizeToContentsY();
 			end
 			self:InvalidateLayout();
+			self:InvalidateParent();
 		end
 
 	end

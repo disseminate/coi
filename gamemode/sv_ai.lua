@@ -48,7 +48,7 @@ end
 function GM:AIThink()
 
 	if( self:GetState() != STATE_GAME ) then return end
-	if( #self:GetCops() >= math.Clamp( #player.GetJoined() * 3, 0, 20 ) ) then return end
+	if( #self:GetCops() >= math.Clamp( #player.GetJoined() * 2, 0, 10 ) ) then return end
 
 	local t = STATE_TIMES[STATE_GAME] - self:TimeLeftInState();
 

@@ -72,13 +72,15 @@ function ENT:MoveToPlayer( ply )
 	path:SetGoalTolerance( 200 );
 	path:Compute( self, ply:GetPos() );
 
+	local targ = ply;
+
 	if( !path:IsValid() ) then return "failed" end
 
 	while( path:IsValid() ) do
 
-		if( !self:CanTargetPlayer( ply ) ) then return "invalid ply" end
+		if( !self:CanTargetPlayer( targ ) ) then return "invalid ply" end
 
-		path:Chase( self, ply );
+		path:Chase( self, targ );
 
 		if( self.loco:IsStuck() ) then
 			self:HandleStuck();
@@ -86,15 +88,22 @@ function ENT:MoveToPlayer( ply )
 		end
 
 		if( path:GetAge() > 0.3 ) then
-			path:Compute( self, ply:GetPos() );
+			local closest = self:GetClosestPlayer();
+			if( closest != targ ) then
+
+				targ = closest;
+
+			end
+
+			path:Compute( self, targ:GetPos() );
 
 			local trace = { };
 			trace.start = self:EyePos();
-			trace.endpos = ply:EyePos();
+			trace.endpos = targ:EyePos();
 			trace.filter = { self };
 			local tr = util.TraceLine( trace );
 			
-			if( tr.Entity and tr.Entity:IsValid() and tr.Entity == ply and ( tr.HitPos - tr.StartPos ):Length() < self.AimDist ) then
+			if( tr.Entity and tr.Entity:IsValid() and tr.Entity == targ and ( tr.HitPos - tr.StartPos ):Length() < self.AimDist ) then
 				return "got player LOS"
 			end
 		end

@@ -296,29 +296,33 @@ function GM:HUDPaintMoney()
 					surface.SetAlphaMultiplier( amul );
 					
 					local pp = p:ToScreen();
-					local rad = 50;
+					if( pp.visible ) then
+						
+						local rad = 50;
 
-					local p = math.Clamp( ( v:GetDieTime() - CurTime() ) / 15, 0, 1 );
-					
-					surface.DrawProgressCircle( pp.x, pp.y, p, rad );
+						local perc = math.Clamp( ( v:GetDieTime() - CurTime() ) / 15, 0, 1 );
+						
+						surface.DrawProgressCircle( pp.x, pp.y, perc, rad );
 
-					local t = "" .. math.abs( math.ceil( v:GetDieTime() - CurTime() ) );
+						local t = "" .. math.abs( math.ceil( v:GetDieTime() - CurTime() ) );
 
-					surface.SetFont( "COI Title 48" );
-					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-					local w, h = surface.GetTextSize( t );
-					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
-					surface.DrawText( t );
+						surface.SetFont( "COI Title 48" );
+						surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+						local w, h = surface.GetTextSize( t );
+						surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+						surface.DrawText( t );
 
-					local t = "Money";
+						local t = "Money";
 
-					surface.SetFont( "COI Title 24" );
-					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-					local w, h = surface.GetTextSize( t );
-					surface.SetTextPos( pp.x - w / 2, pp.y + ( rad * 1.3 ) );
-					surface.DrawText( t );
+						surface.SetFont( "COI Title 24" );
+						surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+						local w, h = surface.GetTextSize( t );
+						surface.SetTextPos( pp.x - w / 2, pp.y + ( rad * 1.3 ) );
+						surface.DrawText( t );
 
-					surface.SetAlphaMultiplier( 1 );
+						surface.SetAlphaMultiplier( 1 );
+
+					end
 
 				end
 

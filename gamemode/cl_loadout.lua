@@ -583,18 +583,18 @@ function GM:ResetLoadoutInventory()
 			function mdl:Paint( w, h )
 
 				if( !self.HoverPerc ) then
-					self.HoverPerc = 0;
+					self.HoverPerc = 0.7;
 				end
 
 				if( self:IsHovered() ) then
 					self.HoverPerc = math.Approach( self.HoverPerc, 1, ( 1 - self.HoverPerc ) * ( 1 / 45 ) );
 				else
-					self.HoverPerc = math.Approach( self.HoverPerc, 0, ( self.HoverPerc ) * ( 1 / 45 ) );
+					self.HoverPerc = math.Approach( self.HoverPerc, 0.7, ( self.HoverPerc ) * ( 1 / 45 ) );
 				end
 
 				if( self.HoverPerc > 0 ) then
 
-					local col = Alpha( self:GetSkin().COLOR_GLASS_LIGHT, self.HoverPerc );
+					local col = Alpha( self:GetSkin().COLOR_GLASS, self.HoverPerc );
 					surface.SetDrawColor( col );
 					surface.DrawRect( 0, 0, w, h );
 
