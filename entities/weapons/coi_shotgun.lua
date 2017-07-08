@@ -19,6 +19,7 @@ SWEP.Primary.Spread = 0.08716;
 SWEP.Primary.InfiniteAmmo = true;
 SWEP.Primary.Num = 8;
 SWEP.Primary.Force = 3;
+SWEP.Primary.Damage = 20;
 
 SWEP.ShotgunReload = true;
 SWEP.ReloadSound = Sound( "Weapon_Shotgun.Reload" );

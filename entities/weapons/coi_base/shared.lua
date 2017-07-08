@@ -5,7 +5,7 @@ function SWEP:Attack()
 
 	local bull = { };
 	bull.Attacker = self.Owner;
-	bull.Damage = 5;
+	bull.Damage = self.Primary.Damage or 10;
 	bull.Dir = self.Owner:GetAimVector();
 	bull.Spread = Vector( self.Primary.Spread, self.Primary.Spread, 0 );
 	bull.Src = self.Owner:GetShootPos();

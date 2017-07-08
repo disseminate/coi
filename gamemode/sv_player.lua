@@ -469,3 +469,9 @@ local function nWipePlayer( len, ply )
 end
 net.Receive( "nWipePlayer", nWipePlayer );
 util.AddNetworkString( "nWipePlayer" );
+
+function GM:ScalePlayerDamage( ply, hg, dmg )
+
+	self.BaseClass:ScalePlayerDamage( ply, hg, dmg );
+
+end
