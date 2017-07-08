@@ -1,6 +1,8 @@
 SWEP.Base = "weapon_base";
 SWEP.PrintName = "COI Base";
 
+SWEP.SwayScale = 0;
+
 function SWEP:Attack()
 
 	local bull = { };
@@ -229,5 +231,42 @@ function SWEP:Holster()
 
 	self.Owner:GetViewModel():SetMaterial( "" );
 	return true;
+
+end
+
+function SWEP:GetViewModelPosition( pos, ang )
+
+	-- HL2 sway code here
+	local vOriginalOrigin = pos;
+	local vOriginalAngles = ang;
+
+	if( !self.m_vecLastFacing ) then
+		
+		self.m_vecLastFacing = vOriginalOrigin;
+		
+	end
+	
+	local forward = vOriginalAngles:Forward();
+	local right = vOriginalAngles:Right();
+	local up = vOriginalAngles:Up();
+	
+	local vDifference = self.m_vecLastFacing - forward;
+	
+	local flSpeed = 7;
+	
+	local flDiff = vDifference:Length();
+	if( flDiff > 1.5 ) then
+		
+		flSpeed = flSpeed * ( flDiff / 1.5 );
+		
+	end
+	
+	vDifference:Normalize();
+	
+	self.m_vecLastFacing = self.m_vecLastFacing + vDifference * flSpeed * FrameTime();
+	self.m_vecLastFacing:Normalize();
+	pos = pos + ( vDifference * -1 ) * 5;
+
+	return pos - forward * 5, ang;
 
 end
