@@ -28,14 +28,28 @@ function GM:CreateLoadoutPanel()
 
 		local p2 = self:CreatePanel( p1, RIGHT, 500, 0 );
 
-		self:CreateLabel( p2, TOP, "COI 20", I18( "robbing_bank_in" ), 9 );
-	 	self:CreateLabel( p2, FILL, "COI Title 48", "00:43", 9 ):BindInput( function()
-		 	if( GAMEMODE:GetState() == STATE_PREGAME ) then
-				local timeLeft = GAMEMODE:TimeLeftInState();
-				return string.ToMinutesSeconds( math.floor( timeLeft ) + 1 );
-			end
-			return I18( "a_moment" ) .. "...";
-		end );
+			self:CreateLabel( p2, TOP, "COI 20", I18( "robbing_bank_in" ), 9 );
+			self:CreateLabel( p2, FILL, "COI Title 48", "00:43", 9 ):BindInput( function()
+				if( GAMEMODE:GetState() == STATE_PREGAME ) then
+					local timeLeft = GAMEMODE:TimeLeftInState();
+					return string.ToMinutesSeconds( math.floor( timeLeft ) + 1 );
+				end
+				return I18( "a_moment" ) .. "...";
+			end );
+
+		local p2 = self:CreatePanel( p1, FILL );
+			p2:DockPadding( 10, 10, 10, 10 );
+				self:CreateIconButton( p2, LEFT, 48, 48, self:GetSkin().ICON_TRASH, function()
+					self:CreateConfirm( "Are you sure you want to delete your progress? This will reset your money and remove all of your items.", function()
+						net.Start( "nWipePlayer" );
+						net.SendToServer();
+
+						LocalPlayer().Money = 0;
+						LocalPlayer().Inventory = { };
+
+						self:ResetLoadoutInventory();
+					end );
+				end );
 
 	local p1 = self:CreatePanel( self.Loadout, LEFT, ScrW() * 0.3, 0 );
 		p1:DockMargin( 0, 0, 20, 0 );

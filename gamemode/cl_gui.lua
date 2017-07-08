@@ -401,3 +401,24 @@ function GM:CreateAvatarImage( p, dock, w, h, ply )
 	return av;
 
 end
+
+function GM:CreateConfirm( text, cb )
+
+	local n = self:CreateFrame( "Confirm", 300, 180 );
+	n:SetBackgroundBlur( true );
+	local l = self:CreateLabel( n, FILL, "COI 18", text, 7 );
+	l:SetWrap( true );
+	l:DockMargin( 10, 10, 10, 10 );
+
+	local p = self:CreatePanel( n, BOTTOM, 0, 60 );
+	p:DockPadding( 10, 10, 10, 10 );
+	local bCancel = self:CreateButton( p, LEFT, 200, 0, "Cancel", function()
+		n:FadeOut();
+	end );
+	bCancel:DockMargin( 0, 0, 10, 0 );
+	local bOK = self:CreateButton( p, FILL, 0, 0, "OK", function()
+		cb();
+		n:FadeOut();
+	end );
+
+end

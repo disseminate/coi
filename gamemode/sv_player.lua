@@ -458,3 +458,14 @@ function meta:DebugGiveMoney()
 	net.Broadcast();
 
 end
+
+local function nWipePlayer( len, ply )
+
+	ply.Money = 0;
+	ply.Inventory = { };
+
+	ply:WipeSQL();
+	
+end
+net.Receive( "nWipePlayer", nWipePlayer );
+util.AddNetworkString( "nWipePlayer" );
