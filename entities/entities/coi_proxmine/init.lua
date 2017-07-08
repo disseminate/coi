@@ -23,27 +23,14 @@ function ENT:Think()
 
 	if( self.StartExpl and CurTime() >= self.StartExpl and self:GetTripmineOn() ) then
 
-		local trace = { };
-		trace.start = self:GetPos() + self:GetUp();
-		trace.endpos = self:GetUp() * 32768;
-		trace.filter = self;
-		local tr = util.TraceLine( trace );
-
 		local expl = false;
 
-		if( self.TraceNormalHit and self.TraceNormalHit:IsValid() ) then
-			
-			if( tr.Entity != self.TraceNormalHit ) then
+		for _, v in pairs( player.GetAll() ) do
+
+			if( v:GetPos():Distance( self:GetPos() ) < 170 ) then
 
 				expl = true;
-
-			end
-
-		else
-
-			if( tr.Entity and tr.Entity:IsValid() ) then
-
-				expl = true;
+				break;
 
 			end
 
@@ -58,26 +45,6 @@ function ENT:Think()
 		self:NextThink( CurTime() );
 		return true;
 
-	end
-
-end
-
-function ENT:Explode()
-
-	local ed = EffectData();
-	ed:SetOrigin( self:GetPos() );
-	util.Effect( "Explosion", ed );
-
-	util.BlastDamage( self, self:GetPlayer(), self:GetPos(), 256, 200 );
-
-	self:Remove();
-
-end
-
-function ENT:OnTakeDamage( dmg )
-
-	if( dmg:IsBulletDamage() ) then
-		self:Explode();
 	end
 
 end

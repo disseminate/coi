@@ -42,6 +42,7 @@ SKIN.ICON_ARROW = Material( "coi/icons/arrow" );
 
 SKIN.MAT_GREEN = Material( "coi/vgui/green" );
 SKIN.MAT_REDLASER = Material( "coi/sprites/redlaser" );
+SKIN.MAT_GLOW = Material( "coi/sprites/glow01" );
 
 function SKIN:PaintFrame( panel, w, h )
 

@@ -1,0 +1,6 @@
+UnlitGeneric {
+	$basetexture "coi/sprites/glow01"
+	$vertexalpha 1
+	$vertexcolor 1
+	$additive 1
+}
