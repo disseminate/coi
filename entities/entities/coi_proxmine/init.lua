@@ -29,8 +29,12 @@ function ENT:Think()
 
 			if( v:GetPos():Distance( self:GetPos() ) < 170 ) then
 
-				expl = true;
-				break;
+				if( !self:GetPlayer() or !self:GetPlayer():IsValid() or self:GetPlayer():Team() != v:Team() ) then
+
+					expl = true;
+					break;
+
+				end
 
 			end
 
