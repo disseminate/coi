@@ -91,7 +91,7 @@ function GM:HUDPaintJoining()
 	surface.DrawText( t );
 
 	surface.SetFont( "COI Title 30" );
-	local t = "Press Space";
+	local t = I18( "press_space" );
 	local w2, h2 = surface.GetTextSize( t );
 	surface.SetTextPos( ScrW() / 2 - w2 / 2, ScrH() / 2 + h / 2 + 10 );
 	surface.DrawText( t );
@@ -418,7 +418,7 @@ function GM:HUDPaintCops()
 					local pp = eye:ToScreen();
 					pp.y = pp.y - 8;
 					
-					local t = "Cop";
+					local t = I18( "cop" );
 					surface.SetFont( "COI 20" );
 					surface.SetTextColor( Color( 255, 255, 255 ) );
 					local w, h = surface.GetTextSize( t );
@@ -473,10 +473,10 @@ function GM:HUDPaintDirectionArrow()
 
 				surface.SetFont( "COI Title 30" );
 				surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-				local t = "Put the money in the truck!";
+				local t = I18( "money_to_truck" );
 
 				if( self:InRushPeriod() ) then
-					t = "Get to your truck before it leaves!";
+					t = I18( "get_to_truck" );
 				end
 
 				local w, h = surface.GetTextSize( t );
@@ -551,7 +551,7 @@ function GM:HUDPaintGameOver()
 
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 		surface.SetFont( "COI 18" );		
-		local t = "Next round begins in";
+		local t = I18( "next_round_begins" );
 		local w, h = surface.GetTextSize( t );
 		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 30 - 40 - 10 - h );
 		surface.DrawText( t );
@@ -568,7 +568,7 @@ function GM:HUDPaintGameOver()
 
 		surface.SetFont( "COI Title 64" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-		local t = "Heist";
+		local t = I18( "heist" );
 		local w, h = surface.GetTextSize( t );
 		if( dt < 4 ) then
 			local ym = HUDEase( "gameover_1", 1, -ScrH() * 0.2, ScrH() / 2 - 100, 0, 1 );
@@ -582,13 +582,13 @@ function GM:HUDPaintGameOver()
 		if( dt > 0.7 ) then
 
 			surface.SetFont( "COI Title 128" );
-			local t = "Successful";
+			local t = I18( "successful" );
 
 			if( LocalPlayer().Safe ) then
 				surface.SetTextColor( self:GetSkin().COLOR_SUCCESS );
 			else
 				surface.SetTextColor( self:GetSkin().COLOR_FAIL );
-				t = "Failed";
+				t = I18( "failed" );
 			end
 
 			local w, h = surface.GetTextSize( t );
@@ -625,7 +625,7 @@ function GM:HUDPaintGameOver()
 
 		surface.SetFont( "COI Title 64" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-		local t = "Best Crew";
+		local t = I18( "best_crew" );
 		local w, h = surface.GetTextSize( t );
 		if( dt < 9 ) then
 			local xm = HUDEase( "gameover_5", 1, ScrW(), ScrW() / 2 - w / 2, 0, 1 );
@@ -796,7 +796,7 @@ function GM:HUDPaintGameOver()
 
 		local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 );
 
-		local awards = { "Most Bags Collected", "Most Money", "Most Kills", "Most Knockouts" };
+		local awards = { I18( "most_bags_collected" ), I18( "most_money" ), I18( "most_kills" ), I18( "most_knockouts" ) };
 		surface.SetFont( "COI Title 30" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 

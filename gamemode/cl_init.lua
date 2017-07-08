@@ -2,6 +2,7 @@ include( "sh_enum.lua" );
 include( "shared.lua" );
 include( "sh_anim.lua" );
 include( "sh_class.lua" );
+include( "sh_i18.lua" );
 include( "sh_items.lua" );
 include( "sh_map.lua" );
 include( "sh_money.lua" );
