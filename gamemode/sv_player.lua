@@ -326,6 +326,7 @@ function GM:EntityTakeDamage( ply, dmg )
 			if( i:GetClass() == "coi_money" ) then
 
 				consc = true;
+				dmg:SetDamage( 100 );
 				fattac = i.Owner;
 
 			elseif( i:GetClass() == "coi_taser" ) then
@@ -473,5 +474,11 @@ util.AddNetworkString( "nWipePlayer" );
 function GM:ScalePlayerDamage( ply, hg, dmg )
 
 	self.BaseClass:ScalePlayerDamage( ply, hg, dmg );
+
+end
+
+function GM:GetFallDamage( ply, speed )
+
+	return 0;
 
 end

@@ -58,7 +58,6 @@ function GM:PrePlayerDraw( ply )
 
 				ply.RenderOverride = function()
 					hook.Call( "PlayerRender", GAMEMODE, ply );
-					GAMEMODE:PlayerRender( ply );
 				end;
 			end
 
@@ -192,5 +191,17 @@ function GM:CreateMove( cmd )
 	end
 
 	return self.BaseClass:CreateMove( cmd );
+
+end
+
+function GM:Move( ply, mv )
+
+	if( ply:GetRunSpeed() != 200 ) then
+		ply:SetRunSpeed( 200 );
+	end
+	if( ply:GetWalkSpeed() != 400 ) then
+		ply:SetWalkSpeed( 400 );
+	end
+	return self.BaseClass:Move( ply, mv );
 
 end
