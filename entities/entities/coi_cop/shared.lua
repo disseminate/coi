@@ -1,8 +1,18 @@
 ENT.Base = "base_nextbot";
 
-function ENT:Initialize()
+ENT.CopModels = {
+	"models/player/nypd/cop_01.mdl",
+	"models/player/nypd/cop_02.mdl",
+	"models/player/nypd/cop_03.mdl",
+	"models/player/nypd/cop_04.mdl",
+	"models/player/nypd/cop_05.mdl",
+	"models/player/nypd/cop_06.mdl",
+	"models/player/nypd/cop_07.mdl",
+	"models/player/nypd/cop_08.mdl",
+	"models/player/nypd/cop_09.mdl",
+};
 
-	self:SetModel( "models/player/swat.mdl" );
+function ENT:Initialize()
 
 	self.AimDist = math.Rand( 500, 700 );
 	self.Accuracy = 0.06;
@@ -12,9 +22,17 @@ function ENT:Initialize()
 		self:SetCustomCollisionCheck( true );
 		self:SetHealth( math.random( 10, 20 ) );
 
-	end
+		if( GAMEMODE:TimeLeftInState() < 150 ) then
 
-	--self:PhysicsInitShadow( true, false );
+			self:SetModel( "models/player/swat.mdl" );
+
+		else
+
+			self:SetModel( table.Random( self.CopModels ) );
+
+		end
+
+	end
 
 end
 

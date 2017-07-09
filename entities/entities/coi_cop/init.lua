@@ -2,7 +2,6 @@ AddCSLuaFile( "cl_init.lua" );
 AddCSLuaFile( "shared.lua" );
 include( "shared.lua" );
 
-
 function ENT:RunBehaviour()
 
 	while( true ) do
@@ -72,8 +71,6 @@ function ENT:OnStuck()
 	trace.mins = Vector( -32, -32, 32 );
 	trace.maxs = Vector( 32, 32, 32 );
 	local tr = util.TraceHull( trace );
-
-	MsgN( tr.Entity );
 
 	if( tr.Entity and tr.Entity:IsValid() and tr.Entity:GetClass() == "prop_door_rotating" ) then
 
