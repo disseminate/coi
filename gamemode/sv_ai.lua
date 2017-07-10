@@ -48,7 +48,7 @@ end
 function GM:AIThink()
 
 	if( self:GetState() != STATE_GAME ) then return end
-	if( #self:GetCops() >= math.Clamp( #player.GetJoined() * 3, 0, 20 ) ) then return end
+	if( #self:GetCops() >= math.Clamp( #player.GetJoined() * 2, 0, 10 ) ) then return end
 
 	local t = STATE_TIMES[STATE_GAME] - self:TimeLeftInState();
 
@@ -62,8 +62,8 @@ function GM:AIThink()
 
 	if( CurTime() >= self.NextAISpawn ) then
 
-		local minRate = #player.GetJoined() * ( 20 / 3 );
-		local maxRate = #player.GetJoined() * 2;
+		local minRate = ( 1 / #player.GetJoined() ) * ( 20 / 3 );
+		local maxRate = ( 1 / #player.GetJoined() ) * 2;
 		local mul = ( t - 60 * timeNPCsStart ) / ( STATE_TIMES[STATE_GAME] - 60 * timeNPCsStart );
 
 		self.NextAISpawn = CurTime() + Lerp( mul, minRate, maxRate );

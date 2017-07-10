@@ -1,0 +1,6 @@
+UnlitGeneric
+{
+	$basetexture "coi/icons/trash"
+	$translucent 1
+	$transparent 1
+}

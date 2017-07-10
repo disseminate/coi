@@ -1,11 +1,13 @@
 SWEP.Base = "weapon_base";
 SWEP.PrintName = "COI Base";
 
+SWEP.SwayScale = 0;
+
 function SWEP:Attack()
 
 	local bull = { };
 	bull.Attacker = self.Owner;
-	bull.Damage = 5;
+	bull.Damage = self.Primary.Damage or 10;
 	bull.Dir = self.Owner:GetAimVector();
 	bull.Spread = Vector( self.Primary.Spread, self.Primary.Spread, 0 );
 	bull.Src = self.Owner:GetShootPos();
@@ -37,6 +39,10 @@ function SWEP:PrimaryAttack()
 			self:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 			self.Owner:MuzzleFlash();
 			self.Owner:SetAnimation( PLAYER_ATTACK1 );
+
+			if( self.Primary.ViewPunch ) then
+				self.Owner:ViewPunch( self.Primary.ViewPunch );
+			end
 
 			self:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 
@@ -229,5 +235,42 @@ function SWEP:Holster()
 
 	self.Owner:GetViewModel():SetMaterial( "" );
 	return true;
+
+end
+
+function SWEP:GetViewModelPosition( pos, ang )
+
+	-- HL2 sway code here
+	local vOriginalOrigin = pos;
+	local vOriginalAngles = ang;
+
+	if( !self.m_vecLastFacing ) then
+		
+		self.m_vecLastFacing = vOriginalOrigin;
+		
+	end
+	
+	local forward = vOriginalAngles:Forward();
+	local right = vOriginalAngles:Right();
+	local up = vOriginalAngles:Up();
+	
+	local vDifference = self.m_vecLastFacing - forward;
+	
+	local flSpeed = 7;
+	
+	local flDiff = vDifference:Length();
+	if( flDiff > 1.5 ) then
+		
+		flSpeed = flSpeed * ( flDiff / 1.5 );
+		
+	end
+	
+	vDifference:Normalize();
+	
+	self.m_vecLastFacing = self.m_vecLastFacing + vDifference * flSpeed * FrameTime();
+	self.m_vecLastFacing:Normalize();
+	pos = pos + ( vDifference * -1 ) * 5;
+
+	return pos - forward * 5, ang;
 
 end

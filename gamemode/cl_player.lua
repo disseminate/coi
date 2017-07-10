@@ -17,11 +17,11 @@ net.Receive( "nPlayers", nPlayers );
 function GM:PrePlayerDraw( ply )
 	
 	if( !ply.Joined ) then return true end
-
-	if( ply.Safe or self:GetState() == STATE_PREGAME ) then
+	
+	if( ply:ShouldRenderInTruck() ) then
 
 		local truck = ply:GetTruck();
-
+		
 		if( truck and truck:IsValid() ) then
 			
 			local p0 = truck:GetPos();
@@ -53,9 +53,23 @@ function GM:PrePlayerDraw( ply )
 			ply:SetRenderOrigin( rpos );
 			ply:SetRenderAngles( ang );
 
+			if( !ply.InstalledRenderFunction ) then
+				ply.InstalledRenderFunction = true;
+
+				ply.RenderOverride = function()
+					hook.Call( "PlayerRender", GAMEMODE, ply );
+				end;
+			end
+
 		end
 
 	end
+
+end
+
+function GM:PlayerRender( ply )
+
+	ply:DrawModel();
 
 end
 
@@ -177,5 +191,17 @@ function GM:CreateMove( cmd )
 	end
 
 	return self.BaseClass:CreateMove( cmd );
+
+end
+
+function GM:Move( ply, mv )
+
+	if( ply:GetRunSpeed() != 200 ) then
+		ply:SetRunSpeed( 200 );
+	end
+	if( ply:GetWalkSpeed() != 400 ) then
+		ply:SetWalkSpeed( 400 );
+	end
+	return self.BaseClass:Move( ply, mv );
 
 end

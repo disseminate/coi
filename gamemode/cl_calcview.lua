@@ -17,7 +17,7 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 		tab.origin = pos;
 		tab.angles = ( opos - pos ):Angle();
 
-	elseif( ply.Safe or self:GetState() == STATE_PREGAME ) then
+	elseif( ply:ShouldRenderInTruck() ) then
 
 		local truck = ply:GetTruck();
 		if( truck and truck:IsValid() ) then
@@ -32,6 +32,11 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 			tab.angles = ( p0 - tab.origin ):Angle();
 
 		end
+
+	else
+
+		local vel = ply:GetVelocity():Dot( ply:GetRight() ) / ply:GetRunSpeed();
+		tab.angles.r = vel * 2.5;
 
 	end
 

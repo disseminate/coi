@@ -6,7 +6,7 @@ function GM:CalcMainActivity( ply, vel )
 
 		return -1, ply:LookupSequence( "zombie_slump_idle_01" );
 
-	elseif( ply.Safe or self:GetState() == STATE_PREGAME ) then
+	elseif( ply:ShouldRenderInTruck() ) then
 
 		return ACT_HL2MP_SIT, -1;
 

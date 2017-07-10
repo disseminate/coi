@@ -326,6 +326,7 @@ function GM:EntityTakeDamage( ply, dmg )
 			if( i:GetClass() == "coi_money" ) then
 
 				consc = true;
+				dmg:SetDamage( 100 );
 				fattac = i.Owner;
 
 			elseif( i:GetClass() == "coi_taser" ) then
@@ -456,5 +457,28 @@ function meta:DebugGiveMoney()
 		net.WriteEntity( self );
 		net.WriteBool( true );
 	net.Broadcast();
+
+end
+
+local function nWipePlayer( len, ply )
+
+	ply.Money = 0;
+	ply.Inventory = { };
+
+	ply:WipeSQL();
+	
+end
+net.Receive( "nWipePlayer", nWipePlayer );
+util.AddNetworkString( "nWipePlayer" );
+
+function GM:ScalePlayerDamage( ply, hg, dmg )
+
+	self.BaseClass:ScalePlayerDamage( ply, hg, dmg );
+
+end
+
+function GM:GetFallDamage( ply, speed )
+
+	return 0;
 
 end

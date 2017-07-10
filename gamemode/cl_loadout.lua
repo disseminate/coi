@@ -16,7 +16,7 @@ function GM:CreateLoadoutPanel()
 
 	local p1 = self:CreatePanel( self.Loadout, TOP, 0, 64 );
 	p1:DockMargin( 0, 0, 0, 20 );
-		local l = self:CreateLabel( p1, LEFT, "COI Title 64", "Select Your Loadout", 7 );
+		local l = self:CreateLabel( p1, LEFT, "COI Title 64", I18( "select_loadout" ), 7 );
 		local p2 = self:CreatePanel( p1, RIGHT, 200, 0 );
 		p2:DockPadding( 0, 17, 0, 17 );
 			local l = self:CreateLabel( p2, TOP, "COI 16", "Conflict of Interest β", 9 );
@@ -28,19 +28,33 @@ function GM:CreateLoadoutPanel()
 
 		local p2 = self:CreatePanel( p1, RIGHT, 500, 0 );
 
-		self:CreateLabel( p2, TOP, "COI 20", "Robbing bank in", 9 );
-	 	self:CreateLabel( p2, FILL, "COI Title 48", "00:43", 9 ):BindInput( function()
-		 	if( GAMEMODE:GetState() == STATE_PREGAME ) then
-				local timeLeft = GAMEMODE:TimeLeftInState();
-				return string.ToMinutesSeconds( math.floor( timeLeft ) + 1 );
-			end
-			return "a moment...";
-		end );
+			self:CreateLabel( p2, TOP, "COI 20", I18( "robbing_bank_in" ), 9 );
+			self:CreateLabel( p2, FILL, "COI Title 48", "00:43", 9 ):BindInput( function()
+				if( GAMEMODE:GetState() == STATE_PREGAME ) then
+					local timeLeft = GAMEMODE:TimeLeftInState();
+					return string.ToMinutesSeconds( math.floor( timeLeft ) + 1 );
+				end
+				return I18( "a_moment" ) .. "...";
+			end );
+
+		local p2 = self:CreatePanel( p1, FILL );
+			p2:DockPadding( 10, 10, 10, 10 );
+				self:CreateIconButton( p2, LEFT, 48, 48, self:GetSkin().ICON_TRASH, function()
+					self:CreateConfirm( "Are you sure you want to delete your progress? This will reset your money and remove all of your items.", function()
+						net.Start( "nWipePlayer" );
+						net.SendToServer();
+
+						LocalPlayer().Money = 0;
+						LocalPlayer().Inventory = { };
+
+						self:ResetLoadoutInventory();
+					end );
+				end );
 
 	local p1 = self:CreatePanel( self.Loadout, LEFT, ScrW() * 0.3, 0 );
 		p1:DockMargin( 0, 0, 20, 0 );
 		local p2 = self:CreatePanel( p1, TOP, 0, 30 );
-			self:CreateLabel( p2, LEFT, "COI Title 30", "Your Team", 7 ):DockMargin( 0, 0, 10, 0 );
+			self:CreateLabel( p2, LEFT, "COI Title 30", I18( "your_team" ), 7 ):DockMargin( 0, 0, 10, 0 );
 			local l = self:CreateLabel( p2, FILL, "COI Title 24", "Team Green", 4 ):BindInput( function( panel )
 				panel:SetTextColor( team.GetColor( LocalPlayer():Team() ) );
 				return team.GetName( LocalPlayer():Team() );
@@ -111,7 +125,7 @@ function GM:CreateLoadoutPanel()
 		end
 		p2.Invalidated = true;
 		
-		local l = self:CreateLabel( p1, TOP, "COI Title 30", "Other Teams", 7 );
+		local l = self:CreateLabel( p1, TOP, "COI Title 30", I18( "other_teams" ), 7 );
 		l:DockMargin( 0, 0, 0, 20 );
 		local p2 = self:CreateScrollPanel( p1, FILL );
 		p2:DockMargin( 0, 0, 0, 20 );
@@ -158,10 +172,10 @@ function GM:CreateLoadoutPanel()
 							local l = GAMEMODE:CreateLabel( p4, TOP, "COI Title 24", team.GetName( k ), 7 );
 							l:SetTextColor( team.GetColor( k ) );
 							local l = GAMEMODE:CreateLabel( p4, TOP, "COI 20", "99 members", 7 ):BindInput( function()
-								return team.NumPlayers( k ) .. " members";
+								return team.NumPlayers( k ) .. " " .. I18( "members" );
 							end );
 							l:DockMargin( 0, 0, 0, 10 );
-							local b = GAMEMODE:CreateButton( p4, TOP, 80, 26, "Join", function()
+							local b = GAMEMODE:CreateButton( p4, TOP, 80, 26, I18( "join" ), function()
 								net.Start( "nJoinTeam" );
 									net.WriteUInt( k, 16 );
 								net.SendToServer();
@@ -569,18 +583,18 @@ function GM:ResetLoadoutInventory()
 			function mdl:Paint( w, h )
 
 				if( !self.HoverPerc ) then
-					self.HoverPerc = 0;
+					self.HoverPerc = 0.7;
 				end
 
 				if( self:IsHovered() ) then
 					self.HoverPerc = math.Approach( self.HoverPerc, 1, ( 1 - self.HoverPerc ) * ( 1 / 45 ) );
 				else
-					self.HoverPerc = math.Approach( self.HoverPerc, 0, ( self.HoverPerc ) * ( 1 / 45 ) );
+					self.HoverPerc = math.Approach( self.HoverPerc, 0.7, ( self.HoverPerc ) * ( 1 / 45 ) );
 				end
 
 				if( self.HoverPerc > 0 ) then
 
-					local col = Alpha( self:GetSkin().COLOR_GLASS_LIGHT, self.HoverPerc );
+					local col = Alpha( self:GetSkin().COLOR_GLASS, self.HoverPerc );
 					surface.SetDrawColor( col );
 					surface.DrawRect( 0, 0, w, h );
 

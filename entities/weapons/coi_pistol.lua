@@ -16,6 +16,7 @@ SWEP.Primary.Automatic = false;
 SWEP.Primary.Sound = Sound( "Weapon_Pistol.Single" );
 SWEP.Primary.Delay = 0.1;
 SWEP.Primary.Spread = 0.02;
+SWEP.Primary.ViewPunch = Angle( -2, 0, 0 );
 SWEP.Primary.InfiniteAmmo = true;
 
 SWEP.ReloadSound = Sound( "Weapon_Pistol.Reload" );

@@ -1,7 +1,9 @@
 local meta = FindMetaTable( "Player" );
 
+sql.Begin();
 sql.Query( "CREATE TABLE IF NOT EXISTS coi_players ( ID INTEGER PRIMARY KEY, SteamID TEXT, Money INTEGER )" );
 sql.Query( "CREATE TABLE IF NOT EXISTS coi_inventory ( ID INTEGER PRIMARY KEY, PlayerID INTEGER, ItemClass TEXT, X INTEGER, Y INTEGER )" );
+sql.Commit();
 
 function meta:InitializeSQL()
 
@@ -80,5 +82,14 @@ end
 function meta:SQLMoveInventory( id, x, y )
 
 	sql.Query( "UPDATE coi_inventory SET X = " .. x .. ", Y = " .. y .. " WHERE ID = " .. id .. ";" );
+
+end
+
+function meta:WipeSQL()
+
+	sql.Begin();
+		sql.Query( "DELETE FROM coi_inventory WHERE PlayerID = " .. self.ID .. ";" );
+		sql.Query( "UPDATE coi_players SET Money = 0 WHERE ID = " .. self.ID .. ";" );
+	sql.Commit();
 
 end

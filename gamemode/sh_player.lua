@@ -88,3 +88,9 @@ function meta:IsCloaked()
 	return self:HasWeapon( "coi_voicedisguiser" ) and !self.HasMoney;
 
 end
+
+function meta:ShouldRenderInTruck()
+
+	return GAMEMODE:GetState() == STATE_PREGAME or self.Safe;
+
+end

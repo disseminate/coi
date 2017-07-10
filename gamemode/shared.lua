@@ -1,5 +1,8 @@
 DeriveGamemode( "base" );
 
+GM.Name = "Conflict of Interest";
+GM.Author = "disseminate";
+
 function RequireDir( dir )
 
 	local files = file.Find( GM.Folder .. "/gamemode/" .. dir .. "/*.lua", "GAME" );

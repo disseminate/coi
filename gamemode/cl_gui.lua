@@ -93,13 +93,14 @@ function meta:BindInput( f )
 		if( self:GetText() != fm ) then
 			self:SetText( fm );
 			local d = self:GetDock();
-			if( d == NODOCK or d == TOP or d == BOTTOM ) then
+			if( d == NODOCK or d == RIGHT or d == LEFT ) then
 				self:SizeToContentsX();
 			end
-			if( d == NODOCK or d == LEFT or d == RIGHT ) then
+			if( d == NODOCK or d == TOP or d == BOTTOM ) then
 				self:SizeToContentsY();
 			end
 			self:InvalidateLayout();
+			self:InvalidateParent();
 		end
 
 	end
@@ -399,5 +400,26 @@ function GM:CreateAvatarImage( p, dock, w, h, ply )
 	end
 
 	return av;
+
+end
+
+function GM:CreateConfirm( text, cb )
+
+	local n = self:CreateFrame( "Confirm", 300, 180 );
+	n:SetBackgroundBlur( true );
+	local l = self:CreateLabel( n, FILL, "COI 18", text, 7 );
+	l:SetWrap( true );
+	l:DockMargin( 10, 10, 10, 10 );
+
+	local p = self:CreatePanel( n, BOTTOM, 0, 60 );
+	p:DockPadding( 10, 10, 10, 10 );
+	local bCancel = self:CreateButton( p, LEFT, 200, 0, "Cancel", function()
+		n:FadeOut();
+	end );
+	bCancel:DockMargin( 0, 0, 10, 0 );
+	local bOK = self:CreateButton( p, FILL, 0, 0, "OK", function()
+		cb();
+		n:FadeOut();
+	end );
 
 end
