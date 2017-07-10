@@ -18,6 +18,7 @@ SWEP.Primary.Delay = 0.75;
 SWEP.Primary.Spread = 0.05;
 SWEP.Primary.Damage = 60;
 SWEP.Primary.Force = 20;
+SWEP.Primary.ViewPunch = Angle( -8, 0, 0 );
 SWEP.Primary.InfiniteAmmo = true;
 
 SWEP.ReloadSound = Sound( "Weapon_357.Reload" );

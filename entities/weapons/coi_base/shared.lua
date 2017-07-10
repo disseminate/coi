@@ -40,6 +40,10 @@ function SWEP:PrimaryAttack()
 			self.Owner:MuzzleFlash();
 			self.Owner:SetAnimation( PLAYER_ATTACK1 );
 
+			if( self.Primary.ViewPunch ) then
+				self.Owner:ViewPunch( self.Primary.ViewPunch );
+			end
+
 			self:SetNextPrimaryFire( CurTime() + self.Primary.Delay );
 
 			if( self.ShotgunReload ) then
