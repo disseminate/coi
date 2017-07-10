@@ -39,6 +39,7 @@ local function nSendStats( len )
 	GAMEMODE.Stats.MostBags = net.ReadEntity();
 	GAMEMODE.Stats.MostKills = net.ReadEntity();
 	GAMEMODE.Stats.MostKnockouts = net.ReadEntity();
+	GAMEMODE.Stats.MostCops = net.ReadEntity();
 
 end
 net.Receive( "nSendStats", nSendStats );

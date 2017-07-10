@@ -54,6 +54,14 @@ function ENT:OnKilled( dmg )
 
 	self:BecomeRagdoll( dmg );
 	self:SetAlive( false );
+	
+	local a = dmg:GetAttacker();
+
+	if( a and a:IsValid() and a:IsPlayer() ) then
+
+		a.Cops = ( a.Cops or 0 ) + 1;
+
+	end
 
 end
 

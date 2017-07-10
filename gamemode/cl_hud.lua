@@ -561,7 +561,7 @@ end
 
 function GM:HUDResetGameOver()
 
-	for i = 1, 30 do
+	for i = 1, 32 do
 		HUDClear( "gameover_" .. i );
 	end
 
@@ -841,7 +841,7 @@ function GM:HUDPaintGameOver()
 
 		local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 );
 
-		local awards = { I18( "most_bags_collected" ), I18( "most_money" ), I18( "most_kills" ), I18( "most_knockouts" ) };
+		local awards = { I18( "most_bags_collected" ), I18( "most_money" ), I18( "most_kills" ), I18( "most_knockouts" ), I18( "most_cops" ) };
 		surface.SetFont( "COI Title 30" );
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 
@@ -880,7 +880,7 @@ function GM:HUDPaintGameOver()
 
 			end
 
-			local players = { LocalPlayer(), best, LocalPlayer(), LocalPlayer() };
+			local players = { LocalPlayer(), best, LocalPlayer(), LocalPlayer(), LocalPlayer() };
 			surface.SetFont( "COI Title 64" );
 
 			if( self.Stats ) then
@@ -900,6 +900,12 @@ function GM:HUDPaintGameOver()
 				if( self.Stats.MostKnockouts ) then
 
 					players[4] = self.Stats.MostKnockouts;
+
+				end
+
+				if( self.Stats.MostCops ) then
+
+					players[5] = self.Stats.MostCops;
 
 				end
 

@@ -12,6 +12,7 @@ EXPORTS["en"] = {
 	["most_money"] = "Most Money",
 	["most_kills"] = "Most Kills",
 	["most_knockouts"] = "Most Knockouts",
+	["most_cops"] = "Most Cop Kills",
 
 	["select_loadout"] = "Select Your Loadout",
 	["robbing_bank_in"] = "Robbing bank in",
