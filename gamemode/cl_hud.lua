@@ -68,6 +68,7 @@ function GM:HUDPaint()
 		self:HUDPaintHealth();
 		self:HUDPaintWeapon();
 		self:HUDPaintDirectionArrow();
+		self:HUDPaintGetToTruck();
 
 		self:HUDPaintUnconsciousness();
 
@@ -441,6 +442,57 @@ function GM:HUDPaintCops()
 
 end
 
+function surface.PaintDirectionArrow( x, y, tpos, a )
+
+	local pos = LocalPlayer():GetPos();
+	local aim = LocalPlayer():GetAimVector():Angle();
+	local d = math.AngleDifference( aim.y, ( tpos - pos ):Angle().y );
+
+	GAMEMODE:GetSkin().ICON_ARROW:SetFloat( "$alpha", a );
+
+	surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_WHITE );
+	surface.SetMaterial( GAMEMODE:GetSkin().ICON_ARROW );
+	surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 40 - 100, 64, 64, 90 - d );
+
+end
+
+function GM:HUDPaintGetToTruck()
+
+	local a;
+
+	if( self:InRushPeriod() and !LocalPlayer().Safe ) then
+
+		a = HUDApproach( "tarrow", 1, 0 );
+
+	else
+
+		a = HUDApproach( "tarrow", 0, 0 );
+
+	end
+
+	if( a > 0 ) then
+
+		surface.SetAlphaMultiplier( a );
+
+			surface.SetFont( "COI Title 30" );
+			surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+			local t = I18( "get_to_truck" );
+
+			local w, h = surface.GetTextSize( t );
+			local padding = 6;
+
+			surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+			surface.DrawRect( ScrW() / 2 - w / 2 - padding, ScrH() * ( 1 / 4 ) - padding * 2, w + padding * 2, h + padding * 2 );
+
+			surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() * ( 1 / 4 ) - padding );
+			surface.DrawText( t );
+
+		surface.SetAlphaMultiplier( 1 );
+
+	end
+
+end
+
 function GM:HUDPaintDirectionArrow()
 
 	local a;
@@ -452,7 +504,7 @@ function GM:HUDPaintDirectionArrow()
 
 		local tpos = truck:GetPos();
 
-		if( math.abs( tpos.z - pos.z ) < 100 and ( LocalPlayer().HasMoney or self:InRushPeriod() ) and !LocalPlayer().Safe ) then
+		if( math.abs( tpos.z - pos.z ) < 100 and LocalPlayer().HasMoney ) then
 
 			a = HUDApproach( "arrow", 1, 0 );
 
@@ -464,24 +516,13 @@ function GM:HUDPaintDirectionArrow()
 
 		if( a > 0 ) then
 
-			local aim = LocalPlayer():GetAimVector():Angle();
-			local d = math.AngleDifference( aim.y, ( tpos - pos ):Angle().y );
-
-			self:GetSkin().ICON_ARROW:SetFloat( "$alpha", a );
-
-			surface.SetDrawColor( self:GetSkin().COLOR_WHITE );
-			surface.SetMaterial( self:GetSkin().ICON_ARROW );
-			surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 40 - 100, 64, 64, 90 - d );
+			surface.PaintDirectionArrow( ScrW() / 2, ScrH() - 40 - 100, tpos, a );
 
 			surface.SetAlphaMultiplier( a );
 
 				surface.SetFont( "COI Title 30" );
 				surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 				local t = I18( "money_to_truck" );
-
-				if( self:InRushPeriod() ) then
-					t = I18( "get_to_truck" );
-				end
 
 				local w, h = surface.GetTextSize( t );
 				local padding = 6;
