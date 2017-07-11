@@ -15,7 +15,11 @@ function ENT:RunBehaviour()
 				self:StartActivity( ACT_HL2MP_RUN );
 				self.loco:SetDesiredSpeed( 250 );
 				local ret = self:MoveToPlayer( ply );
-				self:StartActivity( ACT_HL2MP_IDLE_REVOLVER );
+				if( self.SMG ) then
+					self:StartActivity( ACT_HL2MP_IDLE_SMG1 );
+				else
+					self:StartActivity( ACT_HL2MP_IDLE_REVOLVER );
+				end
 
 				if( ply and ply:IsValid() ) then
 					local ret = self:ShootAtPlayer( ply );
@@ -137,17 +141,31 @@ function ENT:ShootAt( ply )
 
 	local start = self:GetPos() + Vector( 0, 0, 60 );
 
+	local d = 10;
+	if( self.SMG ) then
+		d = 5;
+	end
+
 	local bull = { };
 	bull.Attacker = self;
-	bull.Damage = 10 * ( 1 - ( math.Clamp( #player.GetJoined() / 20, 0, 1 ) * 0.8 ) );
+	bull.Damage = d * ( 1 - ( math.Clamp( #player.GetJoined() / 20, 0, 1 ) * 0.8 ) );
 	bull.Dir = ( ply:GetPos() + Vector( 0, 0, 44 ) - start ):GetNormal();
 	bull.Spread = Vector( self.Accuracy, self.Accuracy, 0 );
 	bull.Src = start;
 	bull.IgnoreEntity = self;
 	self:FireBullets( bull );
 
-	self:EmitSound( Sound( "Weapon_Pistol.NPC_Single" ) );
-	self:RestartGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL );
+	if( self.SMG ) then
+
+		self:EmitSound( Sound( "Weapon_SMG1.NPC_Single" ) );
+		self:RestartGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SMG1 );
+
+	else
+
+		self:EmitSound( Sound( "Weapon_Pistol.NPC_Single" ) );
+		self:RestartGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL );
+
+	end
 
 end
 
@@ -205,6 +223,18 @@ function ENT:ShootAtPlayer( ply )
 
 			self.NextShot = CurTime() + math.Rand( 0.4, 0.8 );
 			self:ShootAt( targ );
+			
+			if( self.SMG ) then
+				coroutine.wait( 0.075 );
+				self:ShootAt( targ );
+				coroutine.wait( 0.075 );
+				self:ShootAt( targ );
+
+				if( math.random( 1, 2 ) == 1 ) then
+					coroutine.wait( 0.075 );
+					self:ShootAt( targ );
+				end
+			end
 
 			local closest = self:GetClosestPlayer();
 			if( closest != targ ) then
