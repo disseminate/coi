@@ -28,6 +28,7 @@ EXPORTS["en"] = {
 	["your_team"] = "Your Team",
 	["other_teams"] = "Other Teams",
 	["a_moment"] = "a moment",
+	["item_delete_warning"] = "Are you sure you want to trash this? You'll need to buy it again if you want it back.",
 
 	["team_rebalance_1"] = "Teams have been rebalanced. You have joined the",
 	["team"] = "team",
