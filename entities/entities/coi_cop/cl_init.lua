@@ -20,7 +20,7 @@ function ENT:Draw()
 
 		end
 
-	else
+	elseif( self.Gun and self.Gun:IsValid() ) then
 
 		self.Gun:SetPos( self:GetPos() );
 		self.Gun:DrawModel();
