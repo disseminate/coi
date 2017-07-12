@@ -10,6 +10,8 @@ function ENT:Initialize()
 	self:SetSolid( SOLID_VPHYSICS );
 	self:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER );
 
+	self:UseTriggerBounds( true, 24 );
+
 	if( SERVER ) then
 
 		self.TripmineOnTime = CurTime() + 1;

@@ -21,7 +21,7 @@ function SWEP:PrimaryAttack()
 	trace.filter = self.Owner;
 	local tr = util.TraceLine( trace );
 
-	if( tr.HitWorld ) then
+	if( tr.Hit ) then
 
 		--self:SetNextPrimaryFire( math.huge );
 		self:SetNextPrimaryFire( CurTime() + 1 );
@@ -32,6 +32,7 @@ function SWEP:PrimaryAttack()
 
 		self.StickPos = tr.HitPos;
 		self.StickNormal = tr.HitNormal;
+		self.StickEnt = tr.Entity;
 		self.RemoveTime = CurTime() + self:SequenceDuration();
 
 	end
@@ -45,7 +46,7 @@ function SWEP:Deploy()
 
 end
 
-function SWEP:PlaceMine( pos, norm )
+function SWEP:PlaceMine( pos, norm, e )
 
 	local ang = norm:Angle();
 	ang:RotateAroundAxis( ang:Right(), -90 );
@@ -55,6 +56,9 @@ function SWEP:PlaceMine( pos, norm )
 	ent:SetPos( pos );
 	ent:SetAngles( ang );
 	ent:SetPlayer( self.Owner );
+	if( e and e:IsValid() ) then
+		ent:SetParent( e );
+	end
 	ent:Spawn();
 	ent:Activate();
 
@@ -64,7 +68,7 @@ function SWEP:Think()
 
 	if( self.RemoveTime and CurTime() >= self.RemoveTime and SERVER ) then
 		
-		self:PlaceMine( self.StickPos, self.StickNormal );
+		self:PlaceMine( self.StickPos, self.StickNormal, self.StickEnt );
 
 		self.Owner:StripWeapon( self:GetClass() );
 		self.RemoveTime = nil;

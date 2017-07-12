@@ -4,7 +4,7 @@ SWEP.Base = "coi_tripwire";
 SWEP.PrintName = "Proximity Mine";
 SWEP.HoldType = "slam";
 
-function SWEP:PlaceMine( pos, norm )
+function SWEP:PlaceMine( pos, norm, e )
 
 	local ang = norm:Angle();
 	ang:RotateAroundAxis( ang:Right(), -90 );
@@ -14,6 +14,11 @@ function SWEP:PlaceMine( pos, norm )
 	ent:SetPos( pos );
 	ent:SetAngles( ang );
 	ent:SetPlayer( self.Owner );
+
+	if( e and e:IsValid() ) then
+		ent:SetParent( e );
+	end
+
 	ent:Spawn();
 	ent:Activate();
 
