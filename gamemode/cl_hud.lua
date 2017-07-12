@@ -931,10 +931,10 @@ function GM:HUDPaintGameOver()
 						local w, h = surface.GetTextSize( t );
 						local xm;
 						if( dt < 8 ) then
-							xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
+							xm = HUDEase( "gameover_" .. ( 14 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
 							surface.SetTextPos( xm, y );
 						else
-							xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
+							xm = HUDEase( "gameover_" .. ( 15 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
 							surface.SetTextPos( xm, y );
 						end
 
@@ -945,7 +945,7 @@ function GM:HUDPaintGameOver()
 							surface.SetFont( "COI Title 30" );
 
 							surface.SetTextColor( self:GetSkin().COLOR_WHITE );
-							local t = "...with " .. data[k];
+							local t = "with " .. data[k];
 							surface.SetTextPos( xm + w + 20, y + 34 );
 
 							surface.DrawText( t );
@@ -961,10 +961,10 @@ function GM:HUDPaintGameOver()
 					local t = team.GetName( v );
 					local w, h = surface.GetTextSize( t );
 					if( dt < 8 ) then
-						local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
+						local xm = HUDEase( "gameover_" .. ( 14 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
 						surface.SetTextPos( xm, y );
 					else
-						local xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
+						local xm = HUDEase( "gameover_" .. ( 15 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
 						surface.SetTextPos( xm, y );
 					end
 

@@ -42,6 +42,32 @@ function GM:StateThink()
 	if( CLIENT and !LocalPlayer().Joined ) then return end
 
 	local s = self:GetState();
+
+	if( CLIENT ) then
+		
+		if( s == STATE_PREGAME ) then
+
+			if( self:TimeLeftInState() <= 29.8 and !self.PlayedIntroSong ) then -- delay because game.CleanUpMap() resets it
+				self.PlayedIntroSong = true;
+				surface.PlaySound( Sound( "coi/music/intro.wav" ) );
+			end
+
+		elseif( s == STATE_POSTGAME ) then
+
+			if( !self.PlayedEndingSong ) then
+				self.PlayedEndingSong = true;
+				surface.PlaySound( Sound( "coi/music/ending.wav" ) );
+			end
+
+		else
+
+			self.PlayedIntroSong = nil;
+			self.PlayedEndingSong = nil;
+
+		end
+
+	end
+
 	if( s == self.CacheState ) then
 		return;
 	end
@@ -67,9 +93,7 @@ function GM:OnStateTransition( state, oldstate )
 			
 			self:CreateLoadoutPanel();
 
-		end
-
-		if( state == STATE_POSTGAME ) then
+		elseif( state == STATE_POSTGAME ) then
 
 			self:HUDResetGameOver();
 
