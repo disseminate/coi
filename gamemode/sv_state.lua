@@ -54,6 +54,8 @@ function GM:Reset()
 		v.PrimaryLoadout = nil;
 		v.SecondaryLoadout = nil;
 
+		v.Cloaked = nil;
+
 		v:StripWeapons();
 		v:Spawn();
 

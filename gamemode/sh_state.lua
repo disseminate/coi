@@ -79,7 +79,7 @@ function GM:OnStateTransition( state, oldstate )
 
 		if( state == STATE_GAME and oldstate == STATE_PREGAME ) then
 
-			self:Loadout();
+			self:Loadout( true );
 
 		end
 

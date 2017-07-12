@@ -7,4 +7,27 @@ EXPORTS["voicedisguiser"].Price = 14000;
 EXPORTS["voicedisguiser"].Model = "models/Items/battery.mdl";
 EXPORTS["voicedisguiser"].W = 3;
 EXPORTS["voicedisguiser"].H = 3;
-EXPORTS["voicedisguiser"].SWEP = "coi_voicedisguiser";
+EXPORTS["voicedisguiser"].OnGive = function( ply )
+
+	ply.Cloaked = true;
+
+	net.Start( "nCloak" );
+		net.WriteEntity( ply );
+	net.Broadcast();
+
+end
+
+if( CLIENT ) then
+
+	net.Receive( "nCloak", function( len )
+
+		local ply = net.ReadEntity();
+		ply.Cloaked = true;
+
+	end );
+	
+else
+
+	util.AddNetworkString( "nCloak" );
+
+end

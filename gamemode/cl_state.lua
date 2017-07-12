@@ -23,6 +23,8 @@ function GM:Reset()
 		v.Unconscious = false;
 		v.UnconsciousTime = nil;
 
+		v.Cloaked = nil;
+
 		v:Freeze( false );
 
 	end

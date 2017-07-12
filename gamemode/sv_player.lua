@@ -92,6 +92,11 @@ function GM:PlayerSpawn( ply )
 	ply:SetColorToTeam();
 	ply:SpawnAtTruck();
 
+	ply.Consciousness = 100;
+	net.Start( "nSetConsciousness" );
+		net.WriteUInt( 100, 7 );
+	net.Send( ply );
+
 end
 
 function meta:SendPlayers()
@@ -107,6 +112,18 @@ function meta:SendPlayers()
 
 		end
 	net.Send( self );
+
+	for _, v in pairs( player.GetAll() ) do
+
+		if( v.Cloaked ) then
+
+			net.Start( "nCloak" );
+				net.WriteEntity( v );
+			net.Send( self );
+
+		end
+
+	end
 
 end
 util.AddNetworkString( "nPlayers" );
@@ -257,30 +274,40 @@ function meta:DropMoney( thrown, ao )
 	
 end
 
-function GM:Loadout()
+function GM:Loadout( b )
 
 	for _, v in pairs( player.GetAll() ) do
 
-		v:Loadout();
+		v:Loadout( b );
 
 	end
 
 end
 
-function meta:Loadout()
+function meta:Loadout( first )
 
 	self:CheckInventory();
 
 	if( self.PrimaryLoadout ) then
 		local item = self.Inventory[self.PrimaryLoadout];
 		local i = GAMEMODE.Items[item.ItemClass];
-		self:Give( i.SWEP );
+		if( i.SWEP ) then
+			self:Give( i.SWEP );
+		end
+		if( i.OnGive and first ) then
+			i.OnGive( self );
+		end
 	end
 
 	if( self.SecondaryLoadout ) then
 		local item = self.Inventory[self.SecondaryLoadout];
 		local i = GAMEMODE.Items[item.ItemClass];
-		self:Give( i.SWEP );
+		if( i.SWEP ) then
+			self:Give( i.SWEP );
+		end
+		if( i.OnGive and first ) then
+			i.OnGive( self );
+		end
 	end
 
 	local w = self:GetActiveWeapon();

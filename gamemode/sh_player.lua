@@ -85,7 +85,7 @@ end
 
 function meta:IsCloaked()
 
-	return self:HasWeapon( "coi_voicedisguiser" ) and !self.HasMoney;
+	return self.Cloaked and !self.HasMoney;
 
 end
 
