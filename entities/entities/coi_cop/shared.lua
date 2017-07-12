@@ -19,7 +19,6 @@ function ENT:Initialize()
 
 	if( SERVER ) then
 
-		self:SetCustomCollisionCheck( true );
 		self:SetHealth( math.random( 10, 20 ) );
 
 		if( GAMEMODE:TimeLeftInState() < 150 ) then
