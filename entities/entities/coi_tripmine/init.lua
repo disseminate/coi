@@ -68,7 +68,12 @@ function ENT:Explode()
 	ed:SetOrigin( self:GetPos() );
 	util.Effect( "Explosion", ed );
 
-	util.BlastDamage( self, self:GetPlayer(), self:GetPos(), 256, 200 );
+	local ply = self:GetPlayer();
+	if( !ply or !ply:IsValid() ) then
+		ply = self;
+	end
+
+	util.BlastDamage( self, ply, self:GetPos(), 256, 200 );
 
 	self:Remove();
 

@@ -881,32 +881,40 @@ function GM:HUDPaintGameOver()
 			end
 
 			local players = { LocalPlayer(), best, LocalPlayer(), LocalPlayer(), LocalPlayer() };
-			surface.SetFont( "COI Title 64" );
+			local data = { 0, 0, 0, 0, 0 };
 
 			if( self.Stats ) then
 
 				if( self.Stats.MostBags ) then
-
 					players[1] = self.Stats.MostBags;
+				end
 
+				if( self.Stats.Bags ) then
+					data[1] = self.Stats.Bags;
 				end
 
 				if( self.Stats.MostKills ) then
-
 					players[3] = self.Stats.MostKills;
+				end
 
+				if( self.Stats.Kills ) then
+					data[3] = self.Stats.Kills;
 				end
 
 				if( self.Stats.MostKnockouts ) then
-
 					players[4] = self.Stats.MostKnockouts;
+				end
 
+				if( self.Stats.Knockouts ) then
+					data[4] = self.Stats.Knockouts;
 				end
 
 				if( self.Stats.MostCops ) then
-
 					players[5] = self.Stats.MostCops;
+				end
 
+				if( self.Stats.Cops ) then
+					data[5] = self.Stats.Cops;
 				end
 
 			end
@@ -917,23 +925,38 @@ function GM:HUDPaintGameOver()
 
 					if( v and v:IsValid() ) then
 						
+						surface.SetFont( "COI Title 64" );
 						surface.SetTextColor( team.GetColor( v:Team() ) );
 						local t = v:Nick();
 						local w, h = surface.GetTextSize( t );
+						local xm;
 						if( dt < 8 ) then
-							local xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
+							xm = HUDEase( "gameover_" .. ( 12 + k * 2 ), 1 + 0.2 * k, ScrW() * 1.2, ScrW() / 2 + 40, 0, 1 );
 							surface.SetTextPos( xm, y );
 						else
-							local xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
+							xm = HUDEase( "gameover_" .. ( 13 + k * 2 ), 1 + 0.2 * k, ScrW() / 2 + 40, ScrW() * 1.2, 1, 0 );
 							surface.SetTextPos( xm, y );
 						end
 
 						surface.DrawText( t );
 
+						if( data[k] and data[k] >= 0 ) then
+
+							surface.SetFont( "COI Title 30" );
+
+							surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+							local t = "...with " .. data[k];
+							surface.SetTextPos( xm + w + 20, y + 34 );
+
+							surface.DrawText( t );
+
+						end
+
 					end
 
 				else
 
+					surface.SetFont( "COI Title 64" );
 					surface.SetTextColor( team.GetColor( v ) );
 					local t = team.GetName( v );
 					local w, h = surface.GetTextSize( t );

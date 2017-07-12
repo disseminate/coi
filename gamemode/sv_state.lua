@@ -151,6 +151,10 @@ function GM:SendStats()
 		net.WriteEntity( kills );
 		net.WriteEntity( knocks );
 		net.WriteEntity( cops );
+		net.WriteUInt( bagsMax, 16 );
+		net.WriteUInt( killsMax, 16 );
+		net.WriteUInt( knocksMax, 16 );
+		net.WriteUInt( copsMax, 16 );
 	net.Broadcast();
 
 end

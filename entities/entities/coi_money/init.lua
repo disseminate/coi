@@ -44,6 +44,8 @@ function ENT:Think()
 				dmg:SetInflictor( self );
 				tr.Entity:TakeDamageInfo( dmg );
 
+				self:EmitSound( Sound( "coi/kaching2.wav" ) );
+
 			end
 
 			self:NextThink( CurTime() );
