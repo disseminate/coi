@@ -49,14 +49,18 @@ function GM:StateThink()
 
 			if( self:TimeLeftInState() <= 29.8 and !self.PlayedIntroSong ) then -- delay because game.CleanUpMap() resets it
 				self.PlayedIntroSong = true;
-				surface.PlaySound( Sound( "coi/music/intro.wav" ) );
+				if( self:GetSetting( "music", 1 ) == 1 ) then
+					surface.PlaySound( Sound( "coi/music/intro.wav" ) );
+				end
 			end
 
 		elseif( s == STATE_POSTGAME ) then
 
 			if( !self.PlayedEndingSong ) then
 				self.PlayedEndingSong = true;
-				surface.PlaySound( Sound( "coi/music/ending.wav" ) );
+				if( self:GetSetting( "music", 1 ) == 1 ) then
+					surface.PlaySound( Sound( "coi/music/ending.wav" ) );
+				end
 			end
 
 		else

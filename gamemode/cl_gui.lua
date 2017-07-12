@@ -409,6 +409,20 @@ function GM:CreateButton( p, dock, w, h, text, click )
 
 end
 
+function GM:CreateCheckbox( p, dock, w, h, change )
+
+	local n = vgui.Create( "DCheckBox", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+	n.OnChange = change;
+	n:DockMargin( 0, 0, 10, 0 );
+
+	return n;
+
+end
+
 function GM:CreateAvatarImage( p, dock, w, h, ply )
 
 	local av = vgui.Create( "AvatarImage", p );

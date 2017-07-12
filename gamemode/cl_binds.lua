@@ -12,6 +12,13 @@ function GM:PlayerBindPress( ply, bind, down )
 
 		end
 
+		if( bind == "gm_showhelp" ) then
+
+			self:ShowHelp();
+			return true;
+
+		end
+
 		if( bind == "invnext" or bind == "invprev" ) then -- only 2 weps!
 
 			local add = 1;

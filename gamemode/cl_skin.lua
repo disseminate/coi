@@ -40,6 +40,7 @@ SKIN.ICON_AUDIO_OFF = Material( "coi/icons/audio-off" );
 SKIN.ICON_AUDIO_ON = Material( "coi/icons/audio-on" );
 SKIN.ICON_ARROW = Material( "coi/icons/arrow" );
 SKIN.ICON_TRASH = Material( "coi/icons/trash" );
+SKIN.ICON_GEAR = Material( "coi/icons/gear" );
 
 SKIN.MAT_GREEN = Material( "coi/vgui/green" );
 SKIN.MAT_REDLASER = Material( "coi/sprites/redlaser" );
@@ -105,6 +106,19 @@ function SKIN:PaintButton( panel, w, h )
 	surface.DrawRect( 0, 0, w, h );
 	surface.SetDrawColor( self.COLOR_GLASS_OUTLINE );
 	surface.DrawOutlinedRect( 0, 0, w, h );
+
+end
+
+function SKIN:PaintCheckBox( panel, w, h )
+
+	self:PaintButton( panel, w, h );
+
+	if( panel:GetChecked() ) then
+
+		surface.SetDrawColor( self.COLOR_WHITE );
+		surface.DrawRect( w / 3, h / 3, w * ( 1 / 3 ), h * ( 1 / 3 ) );
+
+	end
 
 end
 

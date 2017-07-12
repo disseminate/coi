@@ -49,7 +49,18 @@ function GM:CreateLoadoutPanel()
 
 						self:ResetLoadoutInventory();
 					end );
-				end );
+				end ):DockMargin( 0, 0, 20, 0 );
+				self:CreateIconButton( p2, LEFT, 48, 48, self:GetSkin().ICON_GEAR, function()
+					local f = self:CreateFrame( "Settings", 300, 300 );
+
+					local p1 = self:CreatePanel( f, TOP, 0, 24 );
+					p1:DockMargin( 10, 10, 10, 10 );
+						local c = self:CreateCheckbox( p1, LEFT, 24, 0, function( self, checked )
+							GAMEMODE:SetSetting( "music", self:GetChecked() and 1 or 0 );
+						end );
+						c:SetChecked( self:GetSetting( "music", 1 ) == 1 );
+						self:CreateLabel( p1, FILL, "COI 18", I18( "setting_play_music" ), 4 );
+				end ):DockMargin( 0, 0, 20, 0 );
 
 	local p1 = self:CreatePanel( self.Loadout, LEFT, ScrW() * 0.3, 0 );
 		p1:DockMargin( 0, 0, 20, 0 );
