@@ -28,8 +28,13 @@ EXPORTS["en"] = {
 	["your_team"] = "Your Team",
 	["other_teams"] = "Other Teams",
 	["a_moment"] = "a moment",
+	["item_delete_warning"] = "Are you sure you want to trash this? You'll need to buy it again if you want it back.",
 
 	["team_rebalance_1"] = "Teams have been rebalanced. You have joined the",
 	["team"] = "team",
 	["joined_team"] = "You have joined the",
+
+	["setting_play_music"] = "Play Music",
+
+	["help_text"] = "It's finally the day. You and your crew have been planning meticulously for months. You're going to rob the Urbanopolis National Bank, and you're all going to be rich. There's only one problem:\n\nEvery other gang in the city had the same idea. For the same bank, on the same day, at the same time.\n\nSelect your loadout in the planning stage. During gameplay, find bags of money and take them back up to your getaway car. Press E on the car to place money in it, and right click to throw money. Take out your rival gang members and steal their moneybags before they make it back. Near the end of the countdown, get to your car and use it - or you're stuck with the cops!"
 };

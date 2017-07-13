@@ -49,7 +49,18 @@ function GM:CreateLoadoutPanel()
 
 						self:ResetLoadoutInventory();
 					end );
-				end );
+				end ):DockMargin( 0, 0, 20, 0 );
+				self:CreateIconButton( p2, LEFT, 48, 48, self:GetSkin().ICON_GEAR, function()
+					local f = self:CreateFrame( "Settings", 300, 300 );
+
+					local p1 = self:CreatePanel( f, TOP, 0, 24 );
+					p1:DockMargin( 10, 10, 10, 10 );
+						local c = self:CreateCheckbox( p1, LEFT, 24, 0, function( self, checked )
+							GAMEMODE:SetSetting( "music", self:GetChecked() and 1 or 0 );
+						end );
+						c:SetChecked( self:GetSetting( "music", 1 ) == 1 );
+						self:CreateLabel( p1, FILL, "COI 18", I18( "setting_play_music" ), 4 );
+				end ):DockMargin( 0, 0, 20, 0 );
 
 	local p1 = self:CreatePanel( self.Loadout, LEFT, ScrW() * 0.3, 0 );
 		p1:DockMargin( 0, 0, 20, 0 );
@@ -502,6 +513,54 @@ function GM:CreateLoadoutPanel()
 
 				end );
 
+				local trash = self:CreatePanel( p3, RIGHT, 200 * ( ScrH() / 1920 ), 0 );
+				trash:SetPaintBackground( true );
+				trash:DockMargin( 20, 0, 0, 0 );
+				self:CreateIconPanel( trash, FILL, 0, 0, self:GetSkin().ICON_TRASH );
+				trash:Receiver( "item", function( self, tab, dropped, idx, x, y )
+
+					local pan = tab[1];
+					local v = pan.Item;
+					local item = GAMEMODE.Items[LocalPlayer().Inventory[v].ItemClass];
+
+					if( dropped ) then
+
+						GAMEMODE:CreateConfirm( I18( "item_delete_warning" ), function()
+
+							net.Start( "nDeleteItem" );
+								net.WriteUInt( v, 16 );
+							net.SendToServer();
+
+							pan:Remove();
+
+							LocalPlayer().Inventory[v] = nil;
+
+							if( primary.SelectedItem == v ) then
+
+								primary.SelectedItem = nil;
+
+								net.Start( "nClearPrimaryLoadout" );
+								net.SendToServer();
+
+							end
+
+							if( secondary.SelectedItem == v ) then
+
+								secondary.SelectedItem = nil;
+								
+								net.Start( "nClearSecondaryLoadout" );
+								net.SendToServer();
+
+							end
+
+							GAMEMODE:ResetLoadoutInventory();
+
+						end );
+
+					end
+
+				end );
+
 				secondary = self:CreatePanel( p3, RIGHT, ScrW() * 0.17, 0 );
 				secondary:SetPaintBackground( true );
 				self:CreateLabel( secondary, FILL, "COI 20", I18( "secondary" ), 7 ):DockMargin( 10, 10, 0, 0 );
@@ -541,6 +600,8 @@ function GM:CreateLoadoutPanel()
 					end
 
 				end );
+
+				
 
 			p3:DockMargin( 0, 0, 0, 20 );
 			

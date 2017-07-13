@@ -23,6 +23,34 @@ function ENT:Think()
 
 			self:Remove();
 
+		else
+
+			local trace = { };
+			trace.start = self:GetPos();
+			trace.endpos = self:GetPos();
+			trace.mins = Vector( -12, -12, -12 );
+			trace.maxs = Vector( 12, 12, 12 );
+			trace.filter = self;
+			local tr = util.TraceLine( trace );
+
+			if( tr.Entity and tr.Entity:IsValid() and tr.Entity:GetClass() == "coi_cop" ) then
+
+				local dmg = DamageInfo();
+				dmg:SetDamage( 100 );
+				dmg:SetDamageForce( self:GetVelocity() * 30 );
+				dmg:SetDamagePosition( tr.HitPos );
+				dmg:SetDamageType( DMG_CLUB );
+				dmg:SetAttacker( self.Owner );
+				dmg:SetInflictor( self );
+				tr.Entity:TakeDamageInfo( dmg );
+
+				self:EmitSound( Sound( "coi/kaching2.wav" ) );
+
+			end
+
+			self:NextThink( CurTime() );
+			return true;
+
 		end
 
 	end

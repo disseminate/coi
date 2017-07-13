@@ -79,6 +79,12 @@ function meta:SQLAddItem( item, x, y )
 
 end
 
+function meta:SQLDeleteItem( item )
+
+	sql.Query( "DELETE FROM coi_inventory WHERE PlayerID = " .. self.ID .. " AND ID = " .. item .. ";" )
+
+end
+
 function meta:SQLMoveInventory( id, x, y )
 
 	sql.Query( "UPDATE coi_inventory SET X = " .. x .. ", Y = " .. y .. " WHERE ID = " .. id .. ";" );

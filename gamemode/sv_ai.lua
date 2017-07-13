@@ -52,7 +52,7 @@ function GM:AIThink()
 
 	local t = STATE_TIMES[STATE_GAME] - self:TimeLeftInState();
 
-	local timeNPCsStart = 4;
+	local timeNPCsStart = 3;
 
 	if( t < 60 * timeNPCsStart ) then return end
 

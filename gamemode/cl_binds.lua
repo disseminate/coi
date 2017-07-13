@@ -12,20 +12,54 @@ function GM:PlayerBindPress( ply, bind, down )
 
 		end
 
+		if( bind == "gm_showhelp" ) then
+
+			self:ShowHelp();
+			return true;
+
+		end
+
 		if( bind == "invnext" or bind == "invprev" ) then -- only 2 weps!
 
+			local add = 1;
+			if( bind == "invprev" ) then
+				add = -1;
+			end
+
+			local tab = ply:GetWeapons();
 			local wep = ply:GetActiveWeapon();
 			if( wep and wep:IsValid() and wep != NULL ) then
 
-				local tab = ply:GetWeapons();
-
+				local cur;
 				for k, v in pairs( tab ) do
 
-					if( v != wep and !v.NoDraw ) then
+					if( v == wep ) then
 
-						self.NextWeapon = v;
+						cur = k;
+						break;
 
 					end
+
+				end
+
+				if( cur ) then
+
+					local slot = cur + add;
+					if( slot < 1 ) then
+						self.NextWeapon = tab[#tab];
+					elseif( slot > #tab ) then
+						self.NextWeapon = tab[1];
+					else
+						self.NextWeapon = tab[slot];
+					end
+
+				end
+
+			else
+
+				if( #tab > 0 ) then
+
+					self.NextWeapon = tab[1];
 
 				end
 
@@ -37,47 +71,16 @@ function GM:PlayerBindPress( ply, bind, down )
 
 		ply:CheckInventory();
 
-		if( bind == "slot1" ) then
+		local p, l = string.find( bind, "slot" );
+		if( p == 1 ) then
 
-			for _, v in pairs( ply.Inventory ) do
+			local slotNum = tonumber( string.sub( bind, p + l ) );
+			local sweps = ply:GetWeapons();
 
-				local item = self.Items[v.ItemClass];
-				if( !item.Secondary and LocalPlayer():HasWeapon( item.SWEP ) ) then
-
-					local wep = LocalPlayer():GetWeapon( item.SWEP );
-					if( !wep.NoDraw ) then
-						
-						self.NextWeapon = wep;
-						break;
-
-					end
-
-				end
-
+			if( sweps[slotNum] ) then
+				self.NextWeapon = sweps[slotNum];
+				return true;
 			end
-
-			return true;
-
-		elseif( bind == "slot2" ) then
-
-			for _, v in pairs( ply.Inventory ) do
-
-				local item = self.Items[v.ItemClass];
-				if( item.Secondary and LocalPlayer():HasWeapon( item.SWEP ) ) then
-
-					local wep = LocalPlayer():GetWeapon( item.SWEP );
-					if( !wep.NoDraw ) then
-						
-						self.NextWeapon = wep;
-						break;
-
-					end
-
-				end
-
-			end
-
-			return true;
 
 		end
 

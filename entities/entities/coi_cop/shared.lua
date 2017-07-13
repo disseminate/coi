@@ -19,12 +19,12 @@ function ENT:Initialize()
 
 	if( SERVER ) then
 
-		self:SetCustomCollisionCheck( true );
 		self:SetHealth( math.random( 10, 20 ) );
 
 		if( GAMEMODE:TimeLeftInState() < 150 ) then
 
 			self:SetModel( "models/player/swat.mdl" );
+			self.SMG = math.random( 1, 3 ) == 1;
 
 		else
 

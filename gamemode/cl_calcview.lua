@@ -36,7 +36,7 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 	else
 
 		local vel = ply:GetVelocity():Dot( ply:GetRight() ) / ply:GetRunSpeed();
-		tab.angles.r = vel * 2.5;
+		tab.angles.r = vel * 1.5;
 
 	end
 

@@ -104,6 +104,23 @@ end
 net.Receive( "nBuyItem", nBuyItem );
 util.AddNetworkString( "nBuyItem" );
 
+local function nDeleteItem( len, ply )
+
+	if( GAMEMODE:GetState() != STATE_PREGAME ) then return end
+
+	local item = net.ReadUInt( 16 );
+
+	ply:CheckInventory();
+
+	if( !ply.Inventory[item] ) then return end
+
+	ply.Inventory[item] = nil;
+	ply:SQLDeleteItem( item );
+
+end
+net.Receive( "nDeleteItem", nDeleteItem );
+util.AddNetworkString( "nDeleteItem" );
+
 local function nInvMove( len, ply )
 
 	ply:CheckInventory();

@@ -23,6 +23,8 @@ function GM:Reset()
 		v.Unconscious = false;
 		v.UnconsciousTime = nil;
 
+		v.Cloaked = nil;
+
 		v:Freeze( false );
 
 	end
@@ -40,6 +42,10 @@ local function nSendStats( len )
 	GAMEMODE.Stats.MostKills = net.ReadEntity();
 	GAMEMODE.Stats.MostKnockouts = net.ReadEntity();
 	GAMEMODE.Stats.MostCops = net.ReadEntity();
+	GAMEMODE.Stats.Bags = net.ReadUInt( 16 );
+	GAMEMODE.Stats.Kills = net.ReadUInt( 16 );
+	GAMEMODE.Stats.Knockouts = net.ReadUInt( 16 );
+	GAMEMODE.Stats.Cops = net.ReadUInt( 16 );
 
 end
 net.Receive( "nSendStats", nSendStats );

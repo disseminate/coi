@@ -194,6 +194,48 @@ function GM:CreateIconButton( p, dock, w, h, icon, click )
 
 end
 
+function GM:CreateIconPanel( p, dock, w, h, icon )
+
+	local n = vgui.Create( "DPanel", p );
+	n:Dock( dock );
+	n:SetSize( w, h );
+	n.Icon = icon;
+	n.IconPadding = 0;
+
+	function n:SetIcon( icon )
+
+		self.Icon = icon;
+
+	end
+
+	function n:Paint( w, h )
+
+		local dim = 24;
+		local x = ( w - dim ) / 2;
+		local y = ( h - dim ) / 2;
+
+		surface.SetMaterial( self.Icon );
+		surface.SetDrawColor( self.IconColor or self:GetSkin().COLOR_WHITE );
+		surface.DrawTexturedRect( x + self.IconPadding, y + self.IconPadding, dim - self.IconPadding * 2, dim - self.IconPadding * 2 );
+
+	end
+
+	function n:SetIconColor( col )
+
+		self.IconColor = col;
+
+	end
+
+	function n:SetIconPadding( pad )
+
+		self.IconPadding = pad;
+
+	end
+
+	return n;
+
+end
+
 function GM:CreatePanel( p, dock, w, h )
 
 	local n = vgui.Create( "EditablePanel", p );
@@ -362,6 +404,20 @@ function GM:CreateButton( p, dock, w, h, text, click )
 		self.ButtonColor = col;
 
 	end
+
+	return n;
+
+end
+
+function GM:CreateCheckbox( p, dock, w, h, change )
+
+	local n = vgui.Create( "DCheckBox", p );
+	n:Dock( dock );
+	if( w and h ) then
+		n:SetSize( w, h );
+	end
+	n.OnChange = change;
+	n:DockMargin( 0, 0, 10, 0 );
 
 	return n;
 

@@ -12,12 +12,15 @@ function ENT:Think()
 		self.StartExpl = CurTime() + 0.2; -- some delay for sound
 
 		local trace = { };
-		trace.start = self:GetPos() + self:GetForward() * 8;
-		trace.endpos = self:GetForward() * 32768;
+		trace.start = self:GetPos() + self:GetUp();
+		trace.endpos = self:GetUp() * 32768;
 		trace.filter = self;
 		local tr = util.TraceLine( trace );
 
 		self.TraceNormalHit = tr.Entity;
+
+		self.OnPos = self:GetPos();
+		self.OnAng = self:GetAngles();
 
 	end
 
@@ -49,6 +52,12 @@ function ENT:Think()
 
 		end
 
+		if( self.OnPos:Distance( self:GetPos() ) >= 1 or math.AngleDifference( self.OnAng.y, self:GetAngles().y ) >= 1 ) then
+			
+			expl = true;
+
+		end
+
 		if( expl ) then
 
 			self:Explode();
@@ -68,7 +77,12 @@ function ENT:Explode()
 	ed:SetOrigin( self:GetPos() );
 	util.Effect( "Explosion", ed );
 
-	util.BlastDamage( self, self:GetPlayer(), self:GetPos(), 256, 200 );
+	local ply = self:GetPlayer();
+	if( !ply or !ply:IsValid() ) then
+		ply = self;
+	end
+
+	util.BlastDamage( self, ply, self:GetPos(), 256, 300 );
 
 	self:Remove();
 
