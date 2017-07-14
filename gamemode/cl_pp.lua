@@ -209,3 +209,45 @@ matproxy.Add( {
 	end
 } );
 
+function GM:PreDrawPlayerHands( hands, vm, ply, wep )
+
+	if( ply.HasMoney ) then
+		
+		for i = 1, vm:GetBoneCount() do
+
+			local name = vm:GetBoneName( i - 1 );
+			if( string.find( name, "ValveBiped.Bip01_L_" ) ) then
+				
+				local pos, ang = vm:GetBonePosition( i - 1 );
+
+				local matrix = Matrix();
+				matrix:Scale( Vector( 0.01, 0.01, 0.01 ) );
+
+				vm:SetBoneMatrix( i - 1, matrix );
+
+			end
+
+		end
+
+	end
+
+end
+
+function GM:PostDrawPlayerHands( hands, vm, ply, wep )
+	
+	for i = 1, vm:GetBoneCount() do
+
+		local name = vm:GetBoneName( i - 1 );
+		if( name == "ValveBiped.Bip01_L_UpperArm" ) then
+
+			local matrix = Matrix();
+			matrix:Scale( Vector( 1, 1, 1 ) );
+
+			vm:SetBoneMatrix( i - 1, matrix );
+			break;
+
+		end
+
+	end
+
+end
