@@ -1,6 +1,6 @@
 EXPORTS["grenade"] = { };
 
-EXPORTS["grenade"].Name = "Proximity Mine";
+EXPORTS["grenade"].Name = "Grenade";
 EXPORTS["grenade"].Desc = "Throw this at people to blow them up.\n\nOnce used, you can get more at your truck.";
 EXPORTS["grenade"].Secondary = true;
 EXPORTS["grenade"].Price = 3200;
