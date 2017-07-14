@@ -233,7 +233,9 @@ end
 
 function SWEP:Holster()
 
-	self.Owner:GetViewModel():SetMaterial( "" );
+	if( self.Owner:GetViewModel() and self.Owner:GetViewModel():IsValid() ) then
+		self.Owner:GetViewModel():SetMaterial( "" );
+	end
 	return true;
 
 end
