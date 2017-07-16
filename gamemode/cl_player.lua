@@ -53,23 +53,9 @@ function GM:PrePlayerDraw( ply )
 			ply:SetRenderOrigin( rpos );
 			ply:SetRenderAngles( ang );
 
-			if( !ply.InstalledRenderFunction ) then
-				ply.InstalledRenderFunction = true;
-
-				ply.RenderOverride = function()
-					hook.Call( "PlayerRender", GAMEMODE, ply );
-				end;
-			end
-
 		end
 
 	end
-
-end
-
-function GM:PlayerRender( ply )
-
-	ply:DrawModel();
 
 end
 
