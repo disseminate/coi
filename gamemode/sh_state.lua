@@ -37,6 +37,15 @@ function GM:TimeLeftInState()
 
 end
 
+function GM:PostCleanupMap()
+
+	if( CLIENT and self:GetSetting( "music", 1 ) == 1 ) then
+		surface.PlaySound( Sound( "coi/music/intro.wav" ) );
+		self.PlayedIntroSong = true; -- disable the initial play
+	end
+
+end
+
 function GM:StateThink()
 	
 	if( CLIENT and !LocalPlayer().Joined ) then return end
@@ -47,7 +56,7 @@ function GM:StateThink()
 		
 		if( s == STATE_PREGAME ) then
 
-			if( self:TimeLeftInState() <= 29.8 and !self.PlayedIntroSong ) then -- delay because game.CleanUpMap() resets it
+			if( !self.PlayedIntroSong ) then
 				self.PlayedIntroSong = true;
 				if( self:GetSetting( "music", 1 ) == 1 ) then
 					surface.PlaySound( Sound( "coi/music/intro.wav" ) );
@@ -65,7 +74,6 @@ function GM:StateThink()
 
 		else
 
-			self.PlayedIntroSong = nil;
 			self.PlayedEndingSong = nil;
 
 		end

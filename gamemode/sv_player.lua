@@ -135,7 +135,7 @@ function meta:SetTeamAuto( noMsg )
 	local amt = math.huge;
 	local t = -1;
 
-	for k, v in pairs( teams ) do
+	for k, v in RandomPairs( teams ) do
 
 		if( team.NumPlayers( v ) < amt ) then
 			t = v;
