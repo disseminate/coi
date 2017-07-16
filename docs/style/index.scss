@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css?family=Arvo|Open+Sans');
+
+$color1: #01CFFF;
+$color2: #DD7B00;
+$color-green: #14B94C;
+$color-grey: #222;
+$color-footer: #111;
+
+$text: #444;
+$text-neg: #EEE;
+
+$small: 425px;
+$med: 1024px;
+
+html, body {
+	margin: 0;
+	padding: 0;
+
+	font-family: "Open Sans", sans-serif;
+	background: #FFF;
+}
+
+#header-1 {
+	width: 100%;
+	height: 60vh;
+	@media only screen and (max-width: $small) {
+		height: 80vh;
+	}
+	@media only screen and (max-height: $small) {
+		height: 100vh;
+	}
+
+	.background-image {
+		background-image: url("../media/title.jpg");
+		position: absolute;
+		left: 0;
+		right: 0;
+		z-index: -1;
+		display: block;
+
+		filter: brightness(30%);
+
+		width: 100%;
+		height: 60vh;
+		@media only screen and (max-width: $small) {
+			height: 80vh;
+		}
+		@media only screen and (max-height: $small) {
+			height: 100vh;
+		}
+		overflow: hidden;
+	}
+
+	padding: 0;
+
+	font-family: "Arvo", serif;
+
+	padding-bottom: 0;
+
+	color: $text-neg;
+
+	font-size: 16px;
+
+	position: relative;
+	//background-color: $color-grey;
+	z-index: 1;
+	overflow: hidden;
+
+	.center {
+		padding: 80px;
+		@media only screen and (max-width: $small) {
+			padding: 30px;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+		
+		position: relative;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+			
+		h1, h2 {
+			text-align: center;
+			margin: 0;
+			font-weight: 400;
+		}
+
+		h1 {
+			font-size: 7.0em;
+			@media only screen and (max-width: $small) {
+				font-size: 5em;
+			}
+			@media only screen and (max-height: $small) {
+				font-size: 4em;
+			}
+		}
+		h2 {
+			font-size: 1.6em;
+			@media only screen and (max-width: $small) {
+				font-size: 1.3em;
+			}
+			@media only screen and (max-height: $small) {
+				font-size: 1.3em;
+			}
+			font-weight: normal;
+			margin-top: 50px;
+		}
+	}
+
+	.hbar {
+		background: $text-neg;
+		@media only screen and (max-width: $small) {
+			display: none;
+		}
+	}
+
+	box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.2);
+
+	@media only screen and (min-width: $small + 1) {
+		margin-bottom: 80px;
+	}
+}
+
+.hbar {
+	display: inline-block;
+	width: 100px;
+	height: 1px;
+	background: #FFF;
+	vertical-align: middle;
+
+	margin: 0 30px;
+}
+
+section {
+	padding: 80px;
+	background: #FFF;
+	color: $text;
+	padding-top: 0;
+
+	@media only screen and (max-width: $small) {
+		padding: 30px;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+	
+	font-size: 20px;
+
+	box-sizing: border-box;
+}
+
+.container {
+	max-width: 70%;
+	margin: auto;
+
+	@media only screen and (max-width: $small) {
+		max-width: 100%;
+	}
+	@media only screen and (max-width: $med) and (min-width: $small + 1) {
+		max-width: 85%;
+	}
+}
+
+p {
+	margin: 0;
+	&:not(:last-child) {
+		margin-bottom: 20px;
+	}
+	padding: 0;
+}
+
+footer {
+	display: block;
+	background: $color-footer;
+	color: $text-neg;
+	box-sizing: border-box;
+	padding: 30px;
+	font-size: 14px;
+
+	text-align: center;
+
+	@media only screen and (max-width: $small) {
+		padding: 50px;
+	}
+}
+
+a {
+	color: $color1;
+	text-decoration: none;
+	transition: color 0.2s;
+	&:hover {
+		color: lighten( $color1, 10% );
+	}
+}
+
+.button {
+	display: inline-block;
+	padding: 14px;
+	color: #FFF;
+	background: $color1;
+
+	border-radius: 4px;
+	border-top: 4px solid lighten( $color1, 10% );
+
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+	transition: color 0.2s, background 0.2s;
+
+	&:not(:last-child) {
+		margin-bottom: 40px;
+	}
+
+	&:hover {
+		color: #FFF;
+		background: lighten( $color1, 10% );
+	}
+
+	&.block {
+		display: block;
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+
+		@media only screen and (max-width: $small) {
+			width: 75%;
+		}
+	}
+}
+
+.img-row-3 {
+	display: block;
+	font-size: 0; // cba to float
+
+	.img-3 {
+		width: 33%;
+		box-sizing: border-box;
+		padding-left: 10px;
+		padding-right: 10px;
+
+		@media only screen and (max-width: $med) {
+			width: 100%;
+			&:not(:last-child) {
+				margin-bottom: 20px;
+			}
+		}
+	}
+}
+
+#download-prompt {
+	text-align: center;
+	padding-top: 150px;
+	padding-bottom: 150px;
+	background: $color-grey;
+
+	@media only screen and (max-width: $small) {
+		padding-top: 100px;
+		padding-bottom: 100px;
+	}
+
+	.container {
+		.download {
+			font-size: 1.5em;
+			padding: 20px;
+			border-top: 6px solid lighten( $color-green, 10% );
+			background: $color-green;
+			&:hover {
+				color: #FFF;
+				background: lighten( $color-green, 10% );
+			}
+
+			@media only screen and (max-width: $small) {
+				font-size: 1.2em;
+			}
+		}
+	}
+}
