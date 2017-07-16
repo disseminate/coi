@@ -88,13 +88,23 @@ function GM:HUDPaintJoining()
 	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 	local t = "Conflict of Interest";
 	local w, h = surface.GetTextSize( t );
-	surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() / 2 - h / 2 );
+	local x = ScrW() / 2 - w / 2;
+	local y = ScrH() / 2 - h / 2;
+	surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
+	surface.DrawRect( x - 20, y - 20, w + 40, h + 40 );
+	surface.SetTextPos( x, y );
 	surface.DrawText( t );
 
 	surface.SetFont( "COI Title 30" );
 	local t = I18( "press_space" );
+
 	local w2, h2 = surface.GetTextSize( t );
-	surface.SetTextPos( ScrW() / 2 - w2 / 2, ScrH() / 2 + h / 2 + 10 );
+	local x2 = ScrW() / 2 - w2 / 2;
+	local y2 = y + h + 60;
+
+	surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
+	surface.DrawRect( x2 - 10, y2 - 10, w2 + 20, h2 + 20 );
+	surface.SetTextPos( x2, y2 );
 	surface.DrawText( t );
 
 end
