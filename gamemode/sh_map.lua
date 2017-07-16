@@ -35,7 +35,6 @@ function meta:GetBagMoney()
 		if( team.NumPlayers( v ) == 0 ) then
 
 			nEmpty = nEmpty + 1;
-			return 20, 50;
 
 		end
 
@@ -47,8 +46,8 @@ function meta:GetBagMoney()
 	local min = math.floor( 200 / count );
 	local max = math.floor( 500 / count );
 
-	min = Lerp( nEmpty / nTotal, 20, 200 );
-	max = Lerp( nEmpty / nTotal, 50, 500 );
+	min = Lerp( 1 - nEmpty / nTotal, 20, 200 );
+	max = Lerp( 1 - nEmpty / nTotal, 50, 500 );
 
 	-- More players in total means more difficulty though
 	-- Scale to team disparities by comparing team size to all players
