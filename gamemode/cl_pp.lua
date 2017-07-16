@@ -62,13 +62,13 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 
 				if( !v.MoneyViewmodel or !v.MoneyViewmodel:IsValid() ) then
 					v.MoneyViewmodel = ClientsideModel( "models/props_junk/garbage_bag001a.mdl", RENDERGROUP_BOTH );
-					v.MoneyViewmodel:SetRenderBounds( Vector( -256, -256, -256 ), Vector( 256, 256, 256 ) );
+					v.MoneyViewmodel:SetRenderBounds( Vector( -64, -64, -64 ), Vector( 64, 64, 64 ) );
 
 					v.MoneyViewmodel.RenderOverride = function()
 
 						if( v and v:IsValid() ) then
 							
-							if( v.HasMoney ) then
+							if( v.HasMoney and v:Alive() ) then
 								v.MoneyViewmodel:DrawModel();
 							end
 
