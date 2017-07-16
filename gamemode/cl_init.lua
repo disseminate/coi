@@ -5,7 +5,6 @@ include( "sh_class.lua" );
 include( "sh_i18.lua" );
 include( "sh_items.lua" );
 include( "sh_map.lua" );
-include( "sh_money.lua" );
 include( "sh_player.lua" );
 include( "sh_state.lua" );
 include( "cl_binds.lua" );
