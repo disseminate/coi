@@ -54,10 +54,14 @@ function ENT:GetClosestPlayer()
 
 	for _, v in pairs( player.GetJoined() ) do
 
-		local d = v:GetPos():Distance( self:GetPos() );
-		if( d < closest ) then
-			closest = d;
-			ply = v;
+		if( self:CanTargetPlayer( v ) ) then
+			
+			local d = v:GetPos():Distance( self:GetPos() );
+			if( d < closest ) then
+				closest = d;
+				ply = v;
+			end
+
 		end
 		
 	end

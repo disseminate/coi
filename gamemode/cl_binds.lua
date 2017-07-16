@@ -19,6 +19,13 @@ function GM:PlayerBindPress( ply, bind, down )
 
 		end
 
+		if( bind == "+menu_context" ) then
+
+			self:CreateSettingsPanel();
+			return true;
+
+		end
+
 		if( bind == "invnext" or bind == "invprev" ) then -- only 2 weps!
 
 			local add = 1;

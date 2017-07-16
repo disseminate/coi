@@ -2,7 +2,7 @@ AddCSLuaFile();
 
 SWEP.Base = "coi_base";
 SWEP.PrintName = ".357 Magnum";
-SWEP.HoldType = "357";
+SWEP.HoldType = "revolver";
 
 SWEP.ViewModel = "models/weapons/c_357.mdl";
 SWEP.WorldModel = "models/weapons/w_357.mdl";

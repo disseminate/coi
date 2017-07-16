@@ -337,7 +337,7 @@ end
 
 function GM:HUDPaintPlayers()
 
-	for _, v in pairs( player.GetAll() ) do
+	for _, v in pairs( player.GetJoined() ) do
 
 		if( v != LocalPlayer() ) then
 
@@ -367,6 +367,8 @@ function GM:HUDPaintPlayers()
 					local eye = v:EyePos() + Vector( 0, 0, 16 );
 					local pp = eye:ToScreen();
 					pp.y = pp.y - 8;
+
+					local y = pp.y;
 					
 					local t = v:Nick();
 					surface.SetFont( "COI 20" );
@@ -375,7 +377,16 @@ function GM:HUDPaintPlayers()
 						surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
 					end
 					local w, h = surface.GetTextSize( t );
-					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+					surface.SetTextPos( pp.x - w / 2, y - h / 2 );
+					surface.DrawText( t );
+
+					y = y + h;
+
+					surface.SetFont( "COI 18" );
+					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+					local t = v:Health() .. "%";
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, y );
 					surface.DrawText( t );
 
 					surface.SetAlphaMultiplier( 1 );
@@ -457,6 +468,8 @@ function surface.PaintDirectionArrow( x, y, tpos, a )
 end
 
 function GM:HUDPaintGetToTruck()
+
+	if( self:GetSetting( "warning", 1 ) == 0 ) then return end
 
 	local a;
 

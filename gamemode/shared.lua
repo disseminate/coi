@@ -54,17 +54,21 @@ function net.Incoming( len, ply )
 
 	len = len - 16
 
-	if( SERVER ) then
+	if( GAMEMODE.Debug ) then
 
-		MsgC( Color( 100, 100, 255 ), "[SERVER] " );
-		
-	else
+		if( SERVER ) then
 
-		MsgC( Color( 255, 255, 100 ), "[CLIENT] " );
+			MsgC( Color( 100, 100, 255 ), "[SERVER] " );
+			
+		else
+
+			MsgC( Color( 255, 255, 100 ), "[CLIENT] " );
+
+		end
+
+		MsgC( Color( 255, 255, 255 ), strName, Color( 128, 128, 128 ), " (" .. len .. " bits)\n" );
 
 	end
-
-	MsgC( Color( 255, 255, 255 ), strName, Color( 128, 128, 128 ), " (" .. len .. " bits)\n" );
 	
 	func( len, ply )
 

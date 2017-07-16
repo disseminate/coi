@@ -72,7 +72,7 @@ end
 
 local function nMsgWrongTruck( len )
 
-	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, "Wrong truck! You're looking for the truck with the same color as ", team.GetColor( LocalPlayer():Team() ), team.GetName( LocalPlayer():Team() ), GAMEMODE:GetSkin().COLOR_WHITE, "." );
+	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, I18( "wrong_truck" ), " ", team.GetColor( LocalPlayer():Team() ), team.GetName( LocalPlayer():Team() ), GAMEMODE:GetSkin().COLOR_WHITE, "." );
 
 end
 net.Receive( "nMsgWrongTruck", nMsgWrongTruck );
@@ -81,7 +81,7 @@ local function nMsgTruckDeposit( len )
 
 	local amt = net.ReadUInt( NET_MAX_BAG_MONEY );
 
-	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, table.Random( { "Nice work", "Good job", "Well done", "Nice" } ) .. ". You earned ", GAMEMODE:GetSkin().COLOR_MONEY, "$" .. string.Comma( amt ), GAMEMODE:GetSkin().COLOR_WHITE, " for your team." );
+	chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, table.Random( { "Nice work", "Good job", "Well done", "Nice" } ) .. ". " .. I18( "you_earned" ) .. " ", GAMEMODE:GetSkin().COLOR_MONEY, "$" .. string.Comma( amt ), GAMEMODE:GetSkin().COLOR_WHITE, " " .. I18( "for_your_team" ) .. "." );
 
 end
 net.Receive( "nMsgTruckDeposit", nMsgTruckDeposit );
