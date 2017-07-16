@@ -469,6 +469,8 @@ end
 
 function GM:HUDPaintGetToTruck()
 
+	if( self:GetSetting( "warning", 1 ) == 0 ) then return end
+
 	local a;
 
 	if( self:InRushPeriod() and !LocalPlayer().Safe ) then
