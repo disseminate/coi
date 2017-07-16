@@ -63,4 +63,22 @@ function ENT:PhysicsCollide( data, obj )
 		self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
 	end
 
+	if( self:GetDropped() ) then
+
+		if( data.HitEntity and data.HitEntity:IsValid() and data.HitEntity:GetClass() == "coi_truck" ) then
+
+			if( self.Owner and self.Owner:IsValid() ) then
+				
+				if( data.HitEntity:AttemptDeposit( self.Owner ) ) then
+
+					self:Remove();
+
+				end
+
+			end
+
+		end
+
+	end
+
 end

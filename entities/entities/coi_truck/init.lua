@@ -26,32 +26,44 @@ function ENT:Use( ply )
 
 	if( ply.HasMoney ) then
 
-		if( ply:Team() != self:GetTeam() ) then
-			net.Start( "nMsgWrongTruck" );
-			net.Send( ply );
-			return;
-		end
+		self:AttemptDeposit( ply );
 
-		local min, max = ply:GetBagMoney();
+	end
 
-		local amt = math.random( min, max );
-		team.AddScore( self:GetTeam(), amt );
+end
 
-		ply.Bags = ( ply.Bags or 0 ) + 1;
+function ENT:AttemptDeposit( ply )
 
-		net.Start( "nMsgTruckDeposit" );
-			net.WriteUInt( amt, NET_MAX_BAG_MONEY );
+	if( ply:Team() != self:GetTeam() ) then
+		net.Start( "nMsgWrongTruck" );
 		net.Send( ply );
+		return false;
+	end
 
-		self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );
+	local min, max = ply:GetBagMoney();
 
+	local amt = math.random( min, max );
+	team.AddScore( self:GetTeam(), amt );
+
+	ply.Bags = ( ply.Bags or 0 ) + 1;
+
+	net.Start( "nMsgTruckDeposit" );
+		net.WriteUInt( amt, NET_MAX_BAG_MONEY );
+	net.Send( ply );
+
+	self:EmitSound( Sound( "coi/kaching.wav" ), 120, math.random( 90, 110 ) );
+
+	if( ply.HasMoney ) then
+		
 		ply.HasMoney = false;
 		net.Start( "nSetHasMoney" );
 			net.WriteEntity( ply );
 			net.WriteBool( false );
 		net.Broadcast();
-
+		
 	end
+
+	return true;
 
 end
 
