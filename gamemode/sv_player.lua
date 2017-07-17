@@ -23,6 +23,9 @@ local function nJoin( len, ply )
 
 		ply:InitializeSQL();
 
+		ply:SendPlayers();
+		ply:SendState();
+		
 		if( #player.GetJoined() == 1 ) then
 			GAMEMODE:ResetState();
 		end
@@ -49,9 +52,6 @@ function GM:PlayerSpawn( ply )
 	if( !ply.Synced ) then
 
 		ply.Synced = true;
-
-		ply:SendPlayers();
-		ply:SendState();
 
 		ply:SyncMapData();
 

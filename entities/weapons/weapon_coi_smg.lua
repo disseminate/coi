@@ -1,6 +1,6 @@
 AddCSLuaFile();
 
-SWEP.Base = "coi_base";
+SWEP.Base = "weapon_coi_base";
 SWEP.PrintName = "SMG";
 SWEP.HoldType = "smg";
 

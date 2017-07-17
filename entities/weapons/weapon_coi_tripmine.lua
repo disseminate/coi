@@ -1,7 +1,7 @@
 AddCSLuaFile();
 
-SWEP.Base = "coi_base";
-SWEP.PrintName = "Tripwire";
+SWEP.Base = "weapon_coi_base";
+SWEP.PrintName = "Tripmine";
 SWEP.HoldType = "slam";
 
 SWEP.ViewModel = "models/weapons/c_slam.mdl";

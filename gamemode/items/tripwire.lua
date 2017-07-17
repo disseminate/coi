@@ -1,10 +1,10 @@
-EXPORTS["tripwire"] = { };
+EXPORTS["tripmine"] = { };
 
-EXPORTS["tripwire"].Name = "Tripwire";
-EXPORTS["tripwire"].Desc = "Don't touch it or it'll explode!\n\nOnce used, you can get more at your truck.";
-EXPORTS["tripwire"].Secondary = true;
-EXPORTS["tripwire"].Price = 4600;
-EXPORTS["tripwire"].Model = "models/weapons/w_slam.mdl";
-EXPORTS["tripwire"].W = 2;
-EXPORTS["tripwire"].H = 2;
-EXPORTS["tripwire"].SWEP = "coi_tripwire";
+EXPORTS["tripmine"].Name = "Tripmine";
+EXPORTS["tripmine"].Desc = "Don't touch it or it'll explode!\n\nOnce used, you can get more at your truck.";
+EXPORTS["tripmine"].Secondary = true;
+EXPORTS["tripmine"].Price = 4600;
+EXPORTS["tripmine"].Model = "models/weapons/w_slam.mdl";
+EXPORTS["tripmine"].W = 2;
+EXPORTS["tripmine"].H = 2;
+EXPORTS["tripmine"].SWEP = "weapon_coi_tripmine";

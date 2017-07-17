@@ -43,11 +43,8 @@ function meta:GetBagMoney()
 	local count = team.NumPlayers( self:Team() );
 
 	-- More players on my team means more hands
-	local min = math.floor( 200 / count );
-	local max = math.floor( 500 / count );
-
-	min = Lerp( 1 - nEmpty / nTotal, 20, 200 );
-	max = Lerp( 1 - nEmpty / nTotal, 50, 500 );
+	local min = Lerp( 1 - nEmpty / nTotal, math.floor( 20 / count ), math.floor( 200 / count ) );
+	local max = Lerp( 1 - nEmpty / nTotal, math.floor( 50 / count ), math.floor( 500 / count ) );
 
 	-- More players in total means more difficulty though
 	-- Scale to team disparities by comparing team size to all players

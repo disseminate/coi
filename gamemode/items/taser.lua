@@ -7,4 +7,4 @@ EXPORTS["taser"].Price = 7000;
 EXPORTS["taser"].Model = "models/weapons/w_pistol.mdl";
 EXPORTS["taser"].W = 2;
 EXPORTS["taser"].H = 2;
-EXPORTS["taser"].SWEP = "coi_taser";
+EXPORTS["taser"].SWEP = "weapon_coi_taser";

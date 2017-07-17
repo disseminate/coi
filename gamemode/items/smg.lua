@@ -7,4 +7,4 @@ EXPORTS["smg"].Price = 9300;
 EXPORTS["smg"].Model = "models/weapons/w_smg1.mdl";
 EXPORTS["smg"].W = 3;
 EXPORTS["smg"].H = 2;
-EXPORTS["smg"].SWEP = "coi_smg";
+EXPORTS["smg"].SWEP = "weapon_coi_smg";

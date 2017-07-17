@@ -1,6 +1,6 @@
 AddCSLuaFile();
 
-SWEP.Base = "coi_tripwire";
+SWEP.Base = "weapon_coi_tripmine";
 SWEP.PrintName = "Proximity Mine";
 SWEP.HoldType = "slam";
 

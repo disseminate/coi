@@ -7,4 +7,4 @@ EXPORTS["medkit"].Price = 5350;
 EXPORTS["medkit"].Model = "models/weapons/w_medkit.mdl";
 EXPORTS["medkit"].W = 2;
 EXPORTS["medkit"].H = 2;
-EXPORTS["medkit"].SWEP = "coi_medkit";
+EXPORTS["medkit"].SWEP = "weapon_coi_medkit";
