@@ -6,11 +6,12 @@ function ENT:Use( ply )
 
 	if( GAMEMODE:GetState() != STATE_GAME ) then return end
 
-	GAMEMODE:PlayerTakeMoney( ply, self );
-	self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
+	if( GAMEMODE:PlayerTakeMoney( ply, self ) ) then
+		self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
 
-	if( self:GetDropped() ) then
-		self:Remove();
+		if( self:GetDropped() ) then
+			self:Remove();
+		end
 	end
 
 end
@@ -63,13 +64,17 @@ function ENT:PhysicsCollide( data, obj )
 		self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
 	end
 
+end
+
+function ENT:StartTouch( ent )
+
 	if( self:GetDropped() ) then
 
-		if( data.HitEntity and data.HitEntity:IsValid() and data.HitEntity:GetClass() == "coi_truck" ) then
+		if( ent and ent:IsValid() and ent:GetClass() == "coi_truck" ) then
 
 			if( self.Owner and self.Owner:IsValid() ) then
 				
-				if( data.HitEntity:AttemptDeposit( self.Owner ) ) then
+				if( ent:AttemptDeposit( self.Owner ) ) then
 
 					self:Remove();
 

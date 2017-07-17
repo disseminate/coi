@@ -4,6 +4,12 @@ include( "shared.lua" );
 
 function ENT:Use( ply )
 
+	if( ply:Team() != self:GetTeam() ) then
+		net.Start( "nMsgWrongTruck" );
+		net.Send( ply );
+		return false;
+	end
+
 	ply:Loadout();
 	
 	if( GAMEMODE:InRushPeriod() ) then

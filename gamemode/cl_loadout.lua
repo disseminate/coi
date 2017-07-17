@@ -389,7 +389,7 @@ function GM:CreateLoadoutPanel()
 				
 				LocalPlayer():CheckInventory();
 
-				if( #LocalPlayer().Inventory == 0 ) then
+				if( table.Count( LocalPlayer().Inventory ) == 0 ) then
 					surface.SetFont( "COI 18" );
 					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 					local t = I18( "empty_inv" );

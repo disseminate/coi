@@ -225,6 +225,8 @@ function GM:PlayerTakeMoney( ply, ent )
 			net.WriteBool( true );
 		net.Broadcast();
 
+		return true;
+
 	end
 
 end
@@ -358,7 +360,7 @@ function GM:EntityTakeDamage( ply, dmg )
 				dmg:SetDamage( 100 );
 				fattac = i.Owner;
 
-			elseif( i:GetClass() == "coi_taser" ) then
+			elseif( i:GetClass() == "weapon_coi_taser" ) then
 
 				consc = true;
 				fattac = i.Owner;
