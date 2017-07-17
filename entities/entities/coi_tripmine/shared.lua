@@ -14,6 +14,8 @@ function ENT:Initialize()
 
 	if( SERVER ) then
 
+		self:SetTrigger( true );
+
 		self.TripmineOnTime = CurTime() + 1;
 		self:EmitSound( Sound( "weapons/slam/mine_mode.wav" ) );
 

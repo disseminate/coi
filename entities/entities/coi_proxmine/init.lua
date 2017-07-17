@@ -16,7 +16,7 @@ function ENT:Think()
 
 	end
 
-	if( self.StartExpl and CurTime() >= self.StartExpl and self:GetTripmineOn() ) then
+	if( SERVER and self.StartExpl and CurTime() >= self.StartExpl and self:GetTripmineOn() ) then
 
 		local expl = false;
 
