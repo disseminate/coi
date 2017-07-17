@@ -7,4 +7,4 @@ EXPORTS["grenade"].Price = 3200;
 EXPORTS["grenade"].Model = "models/weapons/w_grenade.mdl";
 EXPORTS["grenade"].W = 2;
 EXPORTS["grenade"].H = 2;
-EXPORTS["grenade"].SWEP = "coi_grenade";
+EXPORTS["grenade"].SWEP = "weapon_coi_grenade";

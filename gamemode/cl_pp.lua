@@ -197,7 +197,7 @@ matproxy.Add( {
 		-- The function SHOULD return a Vector with the chosen player's colour.
 		if ( ent.GetPlayerColor ) then
 			local col = ent:GetPlayerColor()
-			if( ent:IsPlayer() and ent:IsCloaked() ) then
+			if( ent:IsPlayer() and ent.IsCloaked and ent:IsCloaked() ) then
 				col = LocalPlayer():GetPlayerColor();
 			end
 			if ( isvector( col ) ) then
@@ -211,7 +211,7 @@ matproxy.Add( {
 
 function GM:PreDrawPlayerHands( hands, vm, ply, wep )
 
-	if( ply.HasMoney ) then
+	if( ply == LocalPlayer() and ply.HasMoney ) then
 		
 		for i = 1, vm:GetBoneCount() do
 
@@ -235,16 +235,20 @@ end
 
 function GM:PostDrawPlayerHands( hands, vm, ply, wep )
 	
-	for i = 1, vm:GetBoneCount() do
+	if( ply == LocalPlayer() ) then
+		
+		for i = 1, vm:GetBoneCount() do
 
-		local name = vm:GetBoneName( i - 1 );
-		if( name == "ValveBiped.Bip01_L_UpperArm" ) then
+			local name = vm:GetBoneName( i - 1 );
+			if( name == "ValveBiped.Bip01_L_UpperArm" ) then
 
-			local matrix = Matrix();
-			matrix:Scale( Vector( 1, 1, 1 ) );
+				local matrix = Matrix();
+				matrix:Scale( Vector( 1, 1, 1 ) );
 
-			vm:SetBoneMatrix( i - 1, matrix );
-			break;
+				vm:SetBoneMatrix( i - 1, matrix );
+				break;
+
+			end
 
 		end
 

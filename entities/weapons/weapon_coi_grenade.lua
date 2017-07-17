@@ -1,6 +1,6 @@
 AddCSLuaFile();
 
-SWEP.Base = "coi_base";
+SWEP.Base = "weapon_coi_base";
 SWEP.PrintName = "Grenade";
 SWEP.HoldType = "grenade";
 
@@ -50,7 +50,7 @@ function SWEP:Throw()
 	local p = self.Owner:EyePos() + fwd * 18 + self.Owner:GetRight() * 8;
 	local gpos = self:GrenadeCheckThrow( p );
 
-	local ent = ents.Create( "coi_handgrenade" );
+	local ent = ents.Create( "coi_grenade" );
 	ent:SetPos( gpos );
 	ent:SetAngles( Angle() );
 	ent:SetPlayer( self.Owner );

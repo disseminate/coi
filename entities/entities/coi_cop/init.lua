@@ -10,11 +10,11 @@ function ENT:RunBehaviour()
 
 			local ply = self:GetClosestPlayer();
 
-			if( self:CanTargetPlayer( ply ) ) then
+			if( ply ) then
 
 				self:StartActivity( ACT_HL2MP_RUN );
 				self.loco:SetDesiredSpeed( 250 );
-				local ret = self:MoveToPlayer( ply );
+				self:MoveToPlayer( ply );
 				if( self.SMG ) then
 					self:StartActivity( ACT_HL2MP_IDLE_SMG1 );
 				else
@@ -22,7 +22,7 @@ function ENT:RunBehaviour()
 				end
 
 				if( ply and ply:IsValid() ) then
-					local ret = self:ShootAtPlayer( ply );
+					self:ShootAtPlayer( ply );
 				end
 
 				coroutine.wait( math.Rand( 0, 1 ) );
@@ -51,12 +51,13 @@ function ENT:GetClosestPlayer()
 
 	local ply = nil;
 	local closest = math.huge;
+	local d;
 
 	for _, v in pairs( player.GetJoined() ) do
 
 		if( self:CanTargetPlayer( v ) ) then
 			
-			local d = v:GetPos():Distance( self:GetPos() );
+			d = v:GetPos():DistToSqr( self:GetPos() ); -- faster than Distance and I don't care about exacts
 			if( d < closest ) then
 				closest = d;
 				ply = v;
@@ -90,29 +91,27 @@ end
 
 function ENT:MoveToPlayer( ply )
 
-	if( !ply or !ply:IsValid() ) then return "invalid ply" end
-
-	local path = Path( "Chase" );
+	local path = Path( "Follow" );
 	path:SetMinLookAheadDistance( 300 );
 	path:SetGoalTolerance( 200 );
 	path:Compute( self, ply:GetPos() );
 
 	local targ = ply;
 
-	if( !path:IsValid() ) then return "failed" end
+	if( !path:IsValid() ) then return "failed to find path" end
 
 	while( path:IsValid() ) do
 
 		if( !self:CanTargetPlayer( targ ) ) then return "invalid ply" end
 
-		path:Chase( self, targ );
+		path:Update( self );
 
 		if( self.loco:IsStuck() ) then
 			self:HandleStuck();
 			return "stuck";
 		end
 
-		if( path:GetAge() > 0.3 ) then
+		if( path:GetAge() > 0.5 ) then
 			local closest = self:GetClosestPlayer();
 			if( closest != targ ) then
 
@@ -123,7 +122,7 @@ function ENT:MoveToPlayer( ply )
 			path:Compute( self, targ:GetPos() );
 
 			local trace = { };
-			trace.start = self:EyePos();
+			trace.start = self:GetPos() + Vector( 0, 0, 60 );
 			trace.endpos = targ:EyePos();
 			trace.filter = { self };
 			local tr = util.TraceLine( trace );
@@ -199,31 +198,31 @@ function ENT:ShootAtPlayer( ply )
 
 		self.loco:FaceTowards( targ:GetPos() );
 
-		local trace = { };
-		trace.start = self:EyePos();
-		trace.endpos = targ:EyePos();
-		trace.filter = { self };
-		local tr = util.TraceLine( trace );
-
-		if( tr.Fraction < 1.0 and ( !tr.Entity or !tr.Entity:IsValid() or tr.Entity != targ ) ) then
-
-			return "lost player LOS";
-
-		end
-
-		if( ( tr.HitPos - tr.StartPos ):Length() >= self.AimDist ) then
-
-			return "player too far";
-
-		end
-
 		if( !self.NextShot ) then
 
-			self.NextShot = CurTime() + 1;
+			self.NextShot = CurTime() + math.Rand( 0.8, 1.2 );
 
 		end
 
 		if( CurTime() >= self.NextShot ) then
+
+			local trace = { };
+			trace.start = self:EyePos();
+			trace.endpos = targ:EyePos();
+			trace.filter = { self };
+			local tr = util.TraceLine( trace );
+
+			if( tr.Fraction < 1.0 and ( !tr.Entity or !tr.Entity:IsValid() or tr.Entity != targ ) ) then
+
+				return "lost player LOS";
+
+			end
+
+			if( ( tr.HitPos - tr.StartPos ):Length() >= self.AimDist ) then
+
+				return "player too far";
+
+			end
 
 			self.NextShot = CurTime() + math.Rand( 0.4, 0.8 );
 			self:ShootAt( targ );
