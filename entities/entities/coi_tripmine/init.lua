@@ -13,47 +13,50 @@ function ENT:Think()
 
 		local trace = { };
 		trace.start = self:GetPos() + self:GetUp();
-		trace.endpos = self:GetUp() * 32768;
+		trace.endpos = trace.start + self:GetUp() * 32768;
 		trace.filter = self;
 		local tr = util.TraceLine( trace );
 
 		self.TraceNormalHit = tr.Entity;
+
+		if( SERVER ) then
+
+			local dist = ( tr.HitPos - trace.start ):Length();
+			self:SetCollisionBounds( Vector( -2, -2, 0 ), Vector( 2, 2, dist ) );
+
+		end
 
 		self.OnPos = self:GetPos();
 		self.OnAng = self:GetAngles();
 
 	end
 
-	if( self.StartExpl and CurTime() >= self.StartExpl and self:GetTripmineOn() ) then
+	if( SERVER and self.StartExpl and CurTime() >= self.StartExpl and self:GetTripmineOn() ) then
 
 		local trace = { };
 		trace.start = self:GetPos() + self:GetUp();
-		trace.endpos = self:GetUp() * 32768;
+		trace.endpos = trace.start + self:GetUp() * 32768;
 		trace.filter = self;
 		local tr = util.TraceLine( trace );
 
-		local expl = false;
+		if( self.TraceNormalHit and self.TraceNormalHit:IsValid() and tr.Entity != self.TraceNormalHit ) then
 
-		if( self.TraceNormalHit and self.TraceNormalHit:IsValid() ) then
-			
-			if( tr.Entity != self.TraceNormalHit ) then
-
-				expl = true;
-
-			end
-
-		else
-
-			if( tr.Entity and tr.Entity:IsValid() ) then
-
-				expl = true;
-
-			end
+			self:Explode();
 
 		end
 
-		if( self.OnPos:Distance( self:GetPos() ) >= 1 or math.AngleDifference( self.OnAng.y, self:GetAngles().y ) >= 1 ) then
-			
+	end
+
+end
+
+function ENT:StartTouch( e )
+
+	if( self.StartExpl and CurTime() >= self.StartExpl and self:GetTripmineOn() ) then
+		
+		local expl = false;
+
+		if( e and e:IsValid() ) then
+
 			expl = true;
 
 		end
@@ -64,27 +67,30 @@ function ENT:Think()
 
 		end
 
-		self:NextThink( CurTime() );
-		return true;
-
 	end
 
 end
 
 function ENT:Explode()
 
-	local ed = EffectData();
-	ed:SetOrigin( self:GetPos() );
-	util.Effect( "Explosion", ed );
+	if( !self.Exploded ) then
+		
+		self.Exploded = true;
 
-	local ply = self:GetPlayer();
-	if( !ply or !ply:IsValid() ) then
-		ply = self;
+		local ed = EffectData();
+		ed:SetOrigin( self:GetPos() );
+		util.Effect( "Explosion", ed, true, true );
+
+		local ply = self:GetPlayer();
+		if( !ply or !ply:IsValid() ) then
+			ply = self;
+		end
+
+		util.BlastDamage( self, ply, self:GetPos(), 256, 300 );
+
+		self:Remove();
+
 	end
-
-	util.BlastDamage( self, ply, self:GetPos(), 256, 300 );
-
-	self:Remove();
 
 end
 
