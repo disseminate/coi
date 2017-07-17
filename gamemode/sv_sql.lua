@@ -46,7 +46,7 @@ function meta:LoadSQL()
 		end
 
 		net.Start( "nSetInventory" );
-			net.WriteUInt( #self.Inventory, 8 );
+			net.WriteUInt( table.Count( self.Inventory ), 8 );
 			for k, v in pairs( self.Inventory ) do
 				net.WriteUInt( k, 16 );
 				net.WriteString( v.ItemClass );
