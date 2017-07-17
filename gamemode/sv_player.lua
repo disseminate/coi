@@ -225,6 +225,8 @@ function GM:PlayerTakeMoney( ply, ent )
 			net.WriteBool( true );
 		net.Broadcast();
 
+		return true;
+
 	end
 
 end

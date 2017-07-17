@@ -6,8 +6,9 @@ function ENT:Use( ply )
 
 	if( GAMEMODE:GetState() != STATE_GAME ) then return end
 
-	GAMEMODE:PlayerTakeMoney( ply, self );
-	self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
+	if( GAMEMODE:PlayerTakeMoney( ply, self ) ) then
+		self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
+	end
 
 	if( self:GetDropped() ) then
 		self:Remove();
