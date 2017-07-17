@@ -52,12 +52,13 @@ function ENT:GetClosestPlayer()
 	local ply = nil;
 	local closest = math.huge;
 	local d;
+	local mp = self:GetPos();
 
-	for _, v in pairs( player.GetJoined() ) do
+	for _, v in pairs( player.GetAll() ) do
 
-		if( self:CanTargetPlayer( v ) ) then
+		if( v.Joined and self:CanTargetPlayer( v ) ) then
 			
-			d = v:GetPos():DistToSqr( self:GetPos() ); -- faster than Distance and I don't care about exacts
+			d = v:GetPos():DistToSqr( mp ); -- faster than Distance and I don't care about exacts
 			if( d < closest ) then
 				closest = d;
 				ply = v;
@@ -110,18 +111,33 @@ function ENT:MoveToPlayer( ply )
 			return "stuck";
 		end
 
-		if( path:GetAge() > 0.5 ) then
+		local delay = 0.5;
+
+		local tp = targ:GetPos();
+		local mp = self:GetPos();
+		local dsqr = tp:DistToSqr( mp );
+
+		if( dsqr > self.AimDist * 6 ) then
+			delay = 1.75;
+		end
+
+		if( path:GetAge() > delay ) then
 
 			local closest = self:GetClosestPlayer();
 			if( closest != targ ) then
 
 				targ = closest;
+				tp = targ:GetPos();
+				mp = self:GetPos();
+				dsqr = tp:DistToSqr( mp );
+
+				path:Compute( self, tp );
 
 			end
 
-			path:Compute( self, targ:GetPos() );
+			path:Compute( self, tp );
 
-			if( self:Visible( targ ) and ( self:GetPos() - targ:GetPos() ):LengthSqr() <= self.AimDist - 16 ) then -- buffer so we don't have edge conditions
+			if( self:Visible( targ ) and dsqr <= self.AimDist - 16 ) then -- buffer so we don't have edge conditions
 				return "got player LOS"
 			end
 		end
