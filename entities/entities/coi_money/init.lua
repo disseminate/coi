@@ -8,10 +8,10 @@ function ENT:Use( ply )
 
 	if( GAMEMODE:PlayerTakeMoney( ply, self ) ) then
 		self:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
-	end
 
-	if( self:GetDropped() ) then
-		self:Remove();
+		if( self:GetDropped() ) then
+			self:Remove();
+		end
 	end
 
 end
