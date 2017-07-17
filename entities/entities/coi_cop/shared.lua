@@ -15,11 +15,14 @@ ENT.CopModels = {
 function ENT:Initialize()
 
 	self.AimDist = math.Rand( 500, 700 );
+	self.AimDist = self.AimDist * self.AimDist; -- sqrt is expensive
 	self.Accuracy = 0.06;
 
 	if( SERVER ) then
 
 		self:SetHealth( math.random( 10, 20 ) );
+
+		self:SetName( "coi_cop_" .. self:EntIndex() );
 
 		if( GAMEMODE:TimeLeftInState() < 150 ) then
 

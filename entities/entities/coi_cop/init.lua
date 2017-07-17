@@ -52,12 +52,13 @@ function ENT:GetClosestPlayer()
 	local ply = nil;
 	local closest = math.huge;
 	local d;
+	local mp = self:GetPos();
 
-	for _, v in pairs( player.GetJoined() ) do
+	for _, v in pairs( player.GetAll() ) do
 
-		if( self:CanTargetPlayer( v ) ) then
+		if( v.Joined and self:CanTargetPlayer( v ) ) then
 			
-			d = v:GetPos():DistToSqr( self:GetPos() ); -- faster than Distance and I don't care about exacts
+			d = v:GetPos():DistToSqr( mp ); -- faster than Distance and I don't care about exacts
 			if( d < closest ) then
 				closest = d;
 				ply = v;
@@ -75,15 +76,15 @@ function ENT:OnStuck()
 
 	local trace = { };
 	trace.start = self:GetPos() + Vector( 0, 0, 64 );
-	trace.endpos = trace.start + self:GetForward() * 16;
+	trace.endpos = trace.start + self:GetForward() * 60;
 	trace.filter = self;
-	trace.mins = Vector( -32, -32, 32 );
-	trace.maxs = Vector( 32, 32, 32 );
+	trace.mins = Vector( -16, -16, 16 );
+	trace.maxs = Vector( 16, 16, 16 );
 	local tr = util.TraceHull( trace );
 
 	if( tr.Entity and tr.Entity:IsValid() and tr.Entity:GetClass() == "prop_door_rotating" ) then
 
-		tr.Entity:Input( "Use", self, self );
+		tr.Entity:Fire( "OpenAwayFrom", self:GetName() );
 
 	end
 
@@ -91,9 +92,9 @@ end
 
 function ENT:MoveToPlayer( ply )
 
-	local path = Path( "Follow" );
+	local path = Path( "Chase" );
 	path:SetMinLookAheadDistance( 300 );
-	path:SetGoalTolerance( 200 );
+	path:SetGoalTolerance( 24 );
 	path:Compute( self, ply:GetPos() );
 
 	local targ = ply;
@@ -103,31 +104,40 @@ function ENT:MoveToPlayer( ply )
 	while( path:IsValid() ) do
 
 		if( !self:CanTargetPlayer( targ ) ) then return "invalid ply" end
-
-		path:Update( self );
-
+		path:Chase( self, targ );
+		
 		if( self.loco:IsStuck() ) then
 			self:HandleStuck();
 			return "stuck";
 		end
 
-		if( path:GetAge() > 0.5 ) then
+		local delay = 0.5;
+
+		local tp = targ:GetPos();
+		local mp = self:GetPos();
+		local dsqr = tp:DistToSqr( mp );
+
+		if( dsqr > self.AimDist * 6 ) then
+			delay = 1.75;
+		end
+
+		if( path:GetAge() > delay ) then
+
 			local closest = self:GetClosestPlayer();
 			if( closest != targ ) then
 
 				targ = closest;
+				tp = targ:GetPos();
+				mp = self:GetPos();
+				dsqr = tp:DistToSqr( mp );
+
+				path:Compute( self, tp );
 
 			end
 
-			path:Compute( self, targ:GetPos() );
+			path:Compute( self, tp );
 
-			local trace = { };
-			trace.start = self:GetPos() + Vector( 0, 0, 60 );
-			trace.endpos = targ:EyePos();
-			trace.filter = { self };
-			local tr = util.TraceLine( trace );
-			
-			if( tr.Entity and tr.Entity:IsValid() and tr.Entity == targ and ( tr.HitPos - tr.StartPos ):Length() < self.AimDist ) then
+			if( self:Visible( targ ) and dsqr <= self.AimDist - 16 ) then -- buffer so we don't have edge conditions
 				return "got player LOS"
 			end
 		end
@@ -141,7 +151,7 @@ function ENT:MoveToPlayer( ply )
 end
 
 function ENT:ShootAt( ply )
-
+	
 	local start = self:GetPos() + Vector( 0, 0, 60 );
 
 	local d = 10;
@@ -206,19 +216,14 @@ function ENT:ShootAtPlayer( ply )
 
 		if( CurTime() >= self.NextShot ) then
 
-			local trace = { };
-			trace.start = self:EyePos();
-			trace.endpos = targ:EyePos();
-			trace.filter = { self };
-			local tr = util.TraceLine( trace );
-
-			if( tr.Fraction < 1.0 and ( !tr.Entity or !tr.Entity:IsValid() or tr.Entity != targ ) ) then
+			local t1 = SysTime();
+			if( !self:Visible( targ ) ) then
 
 				return "lost player LOS";
 
 			end
 
-			if( ( tr.HitPos - tr.StartPos ):Length() >= self.AimDist ) then
+			if( ( targ:GetPos() - self:GetPos() ):LengthSqr() > self.AimDist ) then
 
 				return "player too far";
 
