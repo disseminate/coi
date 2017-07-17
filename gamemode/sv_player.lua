@@ -288,7 +288,7 @@ function meta:Loadout( first )
 
 	self:CheckInventory();
 
-	self:Give( "coi_fists" );
+	self:Give( "weapon_coi_fists" );
 
 	if( self.PrimaryLoadout ) then
 		local item = self.Inventory[self.PrimaryLoadout];
