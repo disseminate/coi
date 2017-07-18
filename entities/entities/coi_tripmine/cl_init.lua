@@ -14,8 +14,14 @@ function ENT:Draw()
 		trace.filter = self;
 		local tr = util.TraceLine( trace );
 
-		render.SetMaterial( GAMEMODE:GetSkin().MAT_REDLASER );
-		render.DrawBeam( tr.StartPos, tr.HitPos, 4, 0, ( tr.HitPos - tr.StartPos ):Length() / 128, Color( 255, 255, 255 ) );
+		local col = GAMEMODE:GetSkin().COLOR_WHITE;
+
+		if( self:GetPlayer() and self:GetPlayer():IsValid() ) then
+			col = team.GetColor( self:GetPlayer():Team() );
+		end
+
+		render.SetMaterial( GAMEMODE:GetSkin().MAT_LASER );
+		render.DrawBeam( tr.StartPos, tr.HitPos, 4, 0, ( tr.HitPos - tr.StartPos ):Length() / 128, col );
 
 	end
 
