@@ -331,9 +331,9 @@ function GM:HUDPaintMoney()
 						surface.SetTextPos( pp.x - w / 2, pp.y + ( rad * 1.3 ) );
 						surface.DrawText( t );
 
-						surface.SetAlphaMultiplier( 1 );
-
 					end
+
+					surface.SetAlphaMultiplier( 1 );
 
 				end
 
@@ -503,12 +503,54 @@ function GM:HUDPaintGetToTruck()
 
 			local w, h = surface.GetTextSize( t );
 			local padding = 6;
+			local x = ScrW() / 2 - w / 2;
+			local y = ScrH() * ( 1 / 4 );
 
 			surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
-			surface.DrawRect( ScrW() / 2 - w / 2 - padding, ScrH() * ( 1 / 4 ) - padding * 2, w + padding * 2, h + padding * 2 );
+			surface.DrawRect( x - padding, y - padding * 2, w + padding * 2, h + padding * 2 );
 
-			surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() * ( 1 / 4 ) - padding );
+			surface.SetTextPos( x, y - padding );
 			surface.DrawText( t );
+
+			y = y + h + 20;
+
+			local pos = LocalPlayer():GetPos();
+			local a2;
+
+			local truck = LocalPlayer():GetTruck();
+
+			if( truck and truck:IsValid() ) then
+
+				local tpos = truck:GetPos();
+
+				if( math.abs( tpos.z - pos.z ) < 100 ) then
+
+					a2 = HUDApproach( "tarrow2", 1, 0 );
+
+				else
+
+					a2 = HUDApproach( "tarrow2", 0, 0 );
+
+				end
+
+				surface.SetAlphaMultiplier( a2 );
+
+					local t = I18( "get_to_truck2" );
+
+					surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+
+					surface.SetFont( "COI 18" );
+					local w, h = surface.GetTextSize( t );
+					local padding = 4;
+					local x = ScrW() / 2 - w / 2;
+
+					surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+					surface.DrawRect( x - padding, y - padding * 2, w + padding * 2, h + padding * 2 );
+
+					surface.SetTextPos( x, y - padding );
+					surface.DrawText( t );
+
+			end
 
 		surface.SetAlphaMultiplier( 1 );
 
