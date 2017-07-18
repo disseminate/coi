@@ -523,7 +523,7 @@ function GM:HUDPaintGetToTruck()
 
 				local tpos = truck:GetPos();
 
-				if( math.abs( tpos.z - pos.z ) < 100 and !LocalPlayer().Safe ) then
+				if( math.abs( tpos.z - pos.z ) < 100 and self:InRushPeriod() and !LocalPlayer().Safe ) then
 
 					a2 = HUDApproach( "tarrow2", 1, 0 );
 
@@ -533,22 +533,26 @@ function GM:HUDPaintGetToTruck()
 
 				end
 
-				surface.SetAlphaMultiplier( a2 );
+				if( a2 > 0 ) then
 
-					local t = I18( "get_to_truck2" );
+					surface.SetAlphaMultiplier( a2 );
 
-					surface.SetTextColor( self:GetSkin().COLOR_WARNING );
+						local t = I18( "get_to_truck2" );
 
-					surface.SetFont( "COI 18" );
-					local w, h = surface.GetTextSize( t );
-					local padding = 4;
-					local x = ScrW() / 2 - w / 2;
+						surface.SetTextColor( self:GetSkin().COLOR_WARNING );
 
-					surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
-					surface.DrawRect( x - padding, y - padding * 2, w + padding * 2, h + padding * 2 );
+						surface.SetFont( "COI 18" );
+						local w, h = surface.GetTextSize( t );
+						local padding = 4;
+						local x = ScrW() / 2 - w / 2;
 
-					surface.SetTextPos( x, y - padding );
-					surface.DrawText( t );
+						surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
+						surface.DrawRect( x - padding, y - padding * 2, w + padding * 2, h + padding * 2 );
+
+						surface.SetTextPos( x, y - padding );
+						surface.DrawText( t );
+
+				end
 
 			end
 
