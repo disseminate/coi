@@ -50,7 +50,7 @@ end
 
 function GM:ShouldCollide( e1, e2 )
 
-	if( e1:IsPlayer() and e2:IsPlayer() and e1:Team() == e2:Team() ) then return false end
+	if( e1:IsPlayer() and e2:IsPlayer() ) then return false end
 	
 	if( e1:IsPlayer() and e1.Unconscious ) then return false end
 	if( e2:IsPlayer() and e2.Unconscious ) then return false end
