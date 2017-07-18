@@ -351,6 +351,10 @@ function GM:EntityTakeDamage( ply, dmg )
 			return true;
 		end
 
+		if( ply.Safe ) then
+			return true;
+		end
+
 		local consc = false;
 		local fattac = nil;
 
