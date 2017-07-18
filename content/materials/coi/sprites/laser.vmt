@@ -1,5 +1,6 @@
 UnlitGeneric {
 	$basetexture "coi/sprites/laser"
 	$translucent 1
+	$vertexcolor 1
 	$selfillum 1
 }
