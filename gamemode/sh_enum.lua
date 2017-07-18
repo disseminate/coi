@@ -8,6 +8,13 @@ STATE_TIMES = {
 	[STATE_POSTGAME] = 30
 };
 
+if( true ) then
+
+	STATE_TIMES[STATE_PREGAME] = 5;
+	STATE_TIMES[STATE_GAME] = 4800;
+	
+end
+
 TEAM_UNJOINED = 999;
 
 NET_MAX_BAG_MONEY = 10; -- max $2^10 in one bag
