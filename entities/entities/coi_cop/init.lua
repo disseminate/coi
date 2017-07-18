@@ -118,7 +118,7 @@ function ENT:MoveToPlayer( ply )
 		local dsqr = tp:DistToSqr( mp );
 
 		if( dsqr > self.AimDist * 6 ) then
-			delay = 1.75;
+			--delay = 1.75;
 		end
 
 		if( path:GetAge() > delay ) then
