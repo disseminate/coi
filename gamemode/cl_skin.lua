@@ -43,7 +43,7 @@ SKIN.ICON_TRASH = Material( "coi/icons/trash" );
 SKIN.ICON_GEAR = Material( "coi/icons/gear" );
 
 SKIN.MAT_GREEN = Material( "coi/vgui/green" );
-SKIN.MAT_REDLASER = Material( "coi/sprites/redlaser" );
+SKIN.MAT_LASER = Material( "coi/sprites/laser" );
 SKIN.MAT_GLOW = Material( "coi/sprites/glow01" );
 
 function SKIN:PaintFrame( panel, w, h )

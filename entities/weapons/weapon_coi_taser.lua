@@ -26,9 +26,11 @@ function SWEP:Attack()
 	trace.start = self.Owner:GetShootPos();
 	trace.endpos = trace.start + self.Owner:GetAimVector() * 200;
 	trace.filter = self.Owner;
+	trace.mins = Vector( -12, -12, -12 );
+	trace.maxs = Vector( 12, 12, 12 );
 
 	self.Owner:LagCompensation( true );
-	local tr = util.TraceLine( trace );
+	local tr = util.TraceHull( trace );
 	self.Owner:LagCompensation( false );
 
 	if( tr.Entity and tr.Entity:IsValid() ) then

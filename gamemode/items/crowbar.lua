@@ -2,7 +2,7 @@ EXPORTS["crowbar"] = { };
 
 EXPORTS["crowbar"].Name = "Crowbar";
 EXPORTS["crowbar"].Desc = "Use it to pry nails out of walls.";
-EXPORTS["crowbar"].Secondary = true;
+EXPORTS["crowbar"].Secondary = false;
 EXPORTS["crowbar"].Price = 500;
 EXPORTS["crowbar"].Model = "models/weapons/w_crowbar.mdl";
 EXPORTS["crowbar"].W = 2;
