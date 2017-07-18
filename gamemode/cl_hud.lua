@@ -523,7 +523,7 @@ function GM:HUDPaintGetToTruck()
 
 				local tpos = truck:GetPos();
 
-				if( math.abs( tpos.z - pos.z ) < 100 ) then
+				if( math.abs( tpos.z - pos.z ) < 100 and !LocalPlayer().Safe ) then
 
 					a2 = HUDApproach( "tarrow2", 1, 0 );
 
