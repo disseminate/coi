@@ -3,6 +3,7 @@ EXPORTS["en"] = {
 	["cop"] = "Cop",
 	["money_to_truck"] = "Put the money in the truck!",
 	["get_to_truck"] = "Get to your truck before it leaves!",
+	["get_to_truck2"] = "Press E on your truck. If it leaves without you, you lose your money!",
 	["next_round_begins"] = "Next round begins in",
 	["heist"] = "Heist",
 	["successful"] = "Successful",
