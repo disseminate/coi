@@ -342,7 +342,9 @@ function GM:EntityTakeDamage( ply, dmg )
 	if( ply:IsPlayer() ) then
 
 		if( a and a:IsValid() and a:IsPlayer() and a:Team() == ply:Team() ) then
-			return true;
+			if( a != ply ) then -- let players damage themselves (for explosions)
+				return true;
+			end
 		end
 
 		if( ply.Unconscious ) then
