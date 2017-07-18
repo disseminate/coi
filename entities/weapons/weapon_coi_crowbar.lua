@@ -59,7 +59,7 @@ function SWEP:Attack()
 			if( tr.Entity.TakeDamageInfo ) then
 
 				local dmg = DamageInfo();
-				dmg:SetDamage( 20 );
+				dmg:SetDamage( 40 );
 				dmg:SetAttacker( self.Owner );
 				dmg:SetInflictor( self );
 				dmg:SetDamageType( DMG_CLUB );
