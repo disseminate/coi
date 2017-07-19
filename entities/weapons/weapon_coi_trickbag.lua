@@ -4,9 +4,10 @@ SWEP.Base = "weapon_coi_grenade";
 SWEP.PrintName = "Trick Bag";
 SWEP.HoldType = "grenade";
 
-SWEP.ViewModel = "";
+SWEP.ViewModel = "models/weapons/c_grenade.mdl";
 SWEP.WorldModel = "";
-SWEP.UseHands = true;
+SWEP.UseHands = false;
+SWEP.NoDraw = true;
 
 SWEP.Primary.Ammo = "trickbag";
 SWEP.Primary.ClipSize = 1;
@@ -20,7 +21,7 @@ function SWEP:PrimaryAttack()
 
 	self.Owner:SetAnimation( PLAYER_ATTACK1 );
 	
-	self.RemoveTime = CurTime() + 0.2;
+	self.RemoveTime = CurTime() + 0.1;
 
 end
 
@@ -38,5 +39,7 @@ function SWEP:Throw()
 	ent:SetPlayer( self.Owner );
 	ent:Spawn();
 	ent:Activate();
+
+	self.Owner:EmitSound( Sound( "coi/coin.wav" ), 100, math.random( 80, 120 ) );
 
 end

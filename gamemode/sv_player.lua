@@ -314,24 +314,6 @@ function meta:Loadout( first )
 		end
 	end
 
-	local w = self:GetActiveWeapon();
-	if( w and w:IsValid() and w != NULL ) then
-
-		if( w.NoDraw ) then
-
-			for _, v in pairs( self:GetWeapons() ) do
-
-				if( !v.NoDraw ) then
-					self:SelectWeapon( v:GetClass() );
-					break;
-				end
-
-			end
-
-		end
-
-	end
-
 end
 
 function GM:EntityTakeDamage( ply, dmg )

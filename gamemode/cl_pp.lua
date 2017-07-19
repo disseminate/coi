@@ -2,10 +2,7 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 	
 	for _, v in pairs( player.GetAll() ) do
 		
-		local wep = v:GetActiveWeapon();
-		local fakeWep = ( wep and wep:IsValid() and wep:GetClass() == "weapon_coi_trickbag" );
-
-		if( v.HasMoney or fakeWep ) then
+		if( v.HasMoney ) then
 
 			if( v == LocalPlayer() ) then
 				
@@ -17,7 +14,7 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 					self.MoneyViewmodel.RenderOverride = function()
 
 						local wep = LocalPlayer():GetActiveWeapon();
-						if( LocalPlayer().HasMoney or ( wep and wep:IsValid() and wep:GetClass() == "weapon_coi_trickbag" ) ) then
+						if( LocalPlayer().HasMoney ) then
 							self.MoneyViewmodel:DrawModel();
 						end
 
@@ -30,17 +27,9 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 
 				local pos = EyePos() + f * 20 + r * -8 + u * -15;
 
-				if( fakeWep ) then
-					pos = pos + r * 16;
-				end
-
 				local ang = EyeAngles();
 				ang:RotateAroundAxis( r, -110 );
 				ang:RotateAroundAxis( f, 20 );
-
-				if( fakeWep ) then
-					ang:RotateAroundAxis( f, -40 );
-				end
 
 				if( !self.MoneyViewmodel.m_vecLastFacing ) then
 					self.MoneyViewmodel.m_vecLastFacing = EyePos();
@@ -63,8 +52,23 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 				self.MoneyViewmodel.m_vecLastFacing:Normalize();
 				local newPos = pos + ( vDifference * -1 ) * 5;
 
-				self.MoneyViewmodel:SetPos( newPos );
-				self.MoneyViewmodel:SetRenderOrigin( newPos );
+				-- CBaseHL2MPCombatWeapon::AddViewmodelBob
+				local f = ang:Forward();
+				local r = ang:Right();
+
+				local verticalBob, lateralBob = self:CalcViewmodelBob();
+
+				local origin = newPos + f * verticalBob * 0.1;
+				origin.z = origin.z + verticalBob * 0.1;
+
+				ang.r = ang.r + verticalBob * 0.5;
+				ang.p = ang.p - verticalBob * 0.4;
+				ang.y = ang.y - lateralBob * 0.3;
+
+				origin = origin + r * lateralBob * 0.8;
+
+				self.MoneyViewmodel:SetPos( origin );
+				self.MoneyViewmodel:SetRenderOrigin( origin );
 				self.MoneyViewmodel:SetRenderAngles( ang );
 				cam.IgnoreZ( true )
 					self.MoneyViewmodel:DrawModel();
@@ -137,6 +141,128 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 		end
 
 	end
+
+	local wep = LocalPlayer():GetActiveWeapon();
+	local fakeWep = ( wep and wep:IsValid() and wep:GetClass() == "weapon_coi_trickbag" );
+
+	if( fakeWep ) then
+
+		if( !self.FakeMoneyViewmodel or !self.FakeMoneyViewmodel:IsValid() ) then
+			self.FakeMoneyViewmodel = ClientsideModel( "models/props_junk/garbage_bag001a.mdl", RENDERGROUP_VIEWMODEL );
+			self.FakeMoneyViewmodel:SetRenderBounds( Vector( -256, -256, -256 ), Vector( 256, 256, 256 ) );
+			self.FakeMoneyViewmodel.m_vecLastFacing = EyePos();
+
+			self.FakeMoneyViewmodel.RenderOverride = function()
+
+				local wep = LocalPlayer():GetActiveWeapon();
+				if( wep and wep:IsValid() and wep:GetClass() == "weapon_coi_trickbag" ) then
+					self.FakeMoneyViewmodel:DrawModel();
+				end
+
+			end;
+		end
+
+		local f = EyeAngles():Forward();
+		local r = EyeAngles():Right();
+		local u = EyeAngles():Up();
+
+		local pos = EyePos() + f * 20 + r * 8 + u * -15;
+
+		local ang = EyeAngles();
+		ang:RotateAroundAxis( r, -110 );
+		ang:RotateAroundAxis( f, -20 );
+
+		if( !self.FakeMoneyViewmodel.m_vecLastFacing ) then
+			self.FakeMoneyViewmodel.m_vecLastFacing = EyePos();
+		end
+		
+		local vDifference = self.FakeMoneyViewmodel.m_vecLastFacing - f;
+		
+		local flSpeed = 7;
+		
+		local flDiff = vDifference:Length();
+		if( flDiff > 1.5 ) then
+			
+			flSpeed = flSpeed * ( flDiff / 1.5 );
+			
+		end
+		
+		vDifference:Normalize();
+		
+		self.FakeMoneyViewmodel.m_vecLastFacing = self.FakeMoneyViewmodel.m_vecLastFacing + vDifference * flSpeed * FrameTime();
+		self.FakeMoneyViewmodel.m_vecLastFacing:Normalize();
+		local newPos = pos + ( vDifference * -1 ) * 5;
+
+		-- CBaseHL2MPCombatWeapon::AddViewmodelBob
+		local f = ang:Forward();
+		local r = ang:Right();
+
+		local verticalBob, lateralBob = self:CalcViewmodelBob();
+
+		local origin = newPos + f * verticalBob * 0.1;
+		origin.z = origin.z + verticalBob * 0.1;
+
+		ang.r = ang.r + verticalBob * 0.5;
+		ang.p = ang.p - verticalBob * 0.4;
+		ang.y = ang.y - lateralBob * 0.3;
+
+		origin = origin + r * lateralBob * 0.8;
+		
+		self.FakeMoneyViewmodel:SetPos( origin );
+		self.FakeMoneyViewmodel:SetRenderOrigin( origin );
+		self.FakeMoneyViewmodel:SetRenderAngles( ang );
+		cam.IgnoreZ( true )
+			self.FakeMoneyViewmodel:DrawModel();
+		cam.IgnoreZ( false );
+
+	end
+
+end
+
+-- void CBaseHL2MPCombatWeapon::AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles )
+local bobtime = 0;
+local lastbobtime = 0;
+local HL2_BOB_CYCLE_MAX = 0.45;
+local HL2_BOB_UP = 0.5;
+function GM:CalcViewmodelBob()
+
+	local cycle;
+	local ply = LocalPlayer();
+
+	local speed = ply:GetVelocity():Length2D();
+	speed = math.min( speed, 320 );
+	local bob_offset = speed / 320;
+
+	bobtime = bobtime + ( CurTime() - lastbobtime ) * bob_offset;
+	lastbobtime = CurTime();
+
+	cycle = bobtime - math.floor( bobtime / HL2_BOB_CYCLE_MAX ) * HL2_BOB_CYCLE_MAX;
+	cycle = cycle / HL2_BOB_CYCLE_MAX;
+
+	if( cycle < HL2_BOB_UP ) then
+		cycle = math.pi * cycle / HL2_BOB_UP;
+	else
+		cycle = math.pi + math.pi * ( cycle - HL2_BOB_UP ) / ( 1 - HL2_BOB_UP );
+	end
+
+	local verticalBob = speed * 0.005;
+	verticalBob = verticalBob * 0.3 + verticalBob * 0.7 * math.sin( cycle );
+	verticalBob = math.Clamp( verticalBob, -7, 4 );
+
+	cycle = bobtime - math.floor( bobtime / HL2_BOB_CYCLE_MAX * 2 ) * HL2_BOB_CYCLE_MAX * 2;
+	cycle = cycle / ( HL2_BOB_CYCLE_MAX * 2 );
+
+	if( cycle < HL2_BOB_UP ) then
+		cycle = math.pi * cycle / HL2_BOB_UP;
+	else
+		cycle = math.pi + math.pi * ( cycle - HL2_BOB_UP ) / ( 1 - HL2_BOB_UP );
+	end
+
+	local lateralBob = speed * 0.005;
+	lateralBob = lateralBob * 0.3 + lateralBob * 0.7 * math.sin( cycle );
+	lateralBob = math.Clamp( lateralBob, -7, 4 );
+	
+	return verticalBob, lateralBob;
 
 end
 

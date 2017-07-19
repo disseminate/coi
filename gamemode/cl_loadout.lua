@@ -264,6 +264,7 @@ function GM:CreateLoadoutPanel()
 		p2:DockPadding( 10, 10, 10, 10 );
 
 		local keys = table.GetKeys( self.Items );
+		table.sort( keys, function( a, b ) return self.Items[a].Name < self.Items[b].Name; end );
 		local item = keys[1];
 		local ItemData = {
 			Name = self.Items[item].Name,

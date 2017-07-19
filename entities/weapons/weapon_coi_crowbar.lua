@@ -77,7 +77,7 @@ function SWEP:Attack()
 			bull.Spread = Vector();
 			bull.Src = self.Owner:GetShootPos();
 			bull.Num = 1;
-			bull.Force = 0;
+			bull.Force = Vector();
 			self:FireBullets( bull );
 
 		end
