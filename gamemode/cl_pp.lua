@@ -2,7 +2,10 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 	
 	for _, v in pairs( player.GetAll() ) do
 		
-		if( v.HasMoney ) then
+		local wep = v:GetActiveWeapon();
+		local fakeWep = ( wep and wep:IsValid() and wep:GetClass() == "weapon_coi_trickbag" );
+
+		if( v.HasMoney or fakeWep ) then
 
 			if( v == LocalPlayer() ) then
 				
@@ -13,7 +16,8 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 
 					self.MoneyViewmodel.RenderOverride = function()
 
-						if( LocalPlayer().HasMoney ) then
+						local wep = LocalPlayer():GetActiveWeapon();
+						if( LocalPlayer().HasMoney or ( wep and wep:IsValid() and wep:GetClass() == "weapon_coi_trickbag" ) ) then
 							self.MoneyViewmodel:DrawModel();
 						end
 
@@ -26,9 +30,17 @@ function GM:PreDrawOpaqueRenderables( depth, sky )
 
 				local pos = EyePos() + f * 20 + r * -8 + u * -15;
 
+				if( fakeWep ) then
+					pos = pos + r * 16;
+				end
+
 				local ang = EyeAngles();
 				ang:RotateAroundAxis( r, -110 );
 				ang:RotateAroundAxis( f, 20 );
+
+				if( fakeWep ) then
+					ang:RotateAroundAxis( f, -40 );
+				end
 
 				if( !self.MoneyViewmodel.m_vecLastFacing ) then
 					self.MoneyViewmodel.m_vecLastFacing = EyePos();

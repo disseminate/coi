@@ -360,7 +360,7 @@ function GM:EntityTakeDamage( ply, dmg )
 
 		if( i and i:IsValid() ) then
 			
-			if( i:GetClass() == "coi_money" ) then
+			if( i:GetClass() == "coi_money" or ( i:GetClass() == "coi_trickbag" and dmg:GetDamageType() != DMG_BLAST ) ) then
 
 				consc = true;
 				dmg:SetDamage( 100 );
