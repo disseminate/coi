@@ -343,6 +343,80 @@ function GM:HUDPaintMoney()
 
 	end
 
+	for _, v in pairs( ents.FindByClass( "coi_trickbag" ) ) do
+
+		local p = v:GetPos();
+
+		local dist = LocalPlayer():GetPos():Distance( p );
+
+		if( dist < 1000 ) then
+
+			local amul = 1;
+			if( dist >= 700 ) then
+
+				amul = 1 - ( ( dist - 700 ) / 300 );
+
+			end
+
+			local trace = { };
+			trace.start = EyePos();
+			trace.endpos = p;
+			trace.filter = { LocalPlayer() };
+			local tr = util.TraceLine( trace );
+
+			if( tr.Entity and tr.Entity:IsValid() and tr.Entity == v ) then
+
+				surface.SetAlphaMultiplier( amul );
+				
+				local pp = p:ToScreen();
+				if( pp.visible ) then
+					
+					local rad = 50;
+
+					local perc = math.Clamp( ( v:GetDieTime() - CurTime() ) / 15, 0, 1 );
+					
+					surface.DrawProgressCircle( pp.x, pp.y, perc, rad );
+
+					local t = "" .. math.abs( math.ceil( v:GetDieTime() - CurTime() ) );
+
+					surface.SetFont( "COI Title 48" );
+					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y - h / 2 );
+					surface.DrawText( t );
+
+					local t = "Money";
+					local r = v:EntIndex() % 6;
+					if( r == 0 ) then
+						t = "M0ney";
+					elseif( r == 1 ) then
+						t = "Moneyy";
+					elseif( r == 2 ) then
+						t = "Monee";
+					elseif( r == 3 ) then
+						t = "MOney";
+					elseif( r == 4 ) then
+						t = "Mooney";
+					else
+						t = "Noney";
+					end
+
+					surface.SetFont( "COI Title 24" );
+					surface.SetTextColor( self:GetSkin().COLOR_WHITE );
+					local w, h = surface.GetTextSize( t );
+					surface.SetTextPos( pp.x - w / 2, pp.y + ( rad * 1.3 ) );
+					surface.DrawText( t );
+
+				end
+
+				surface.SetAlphaMultiplier( 1 );
+
+			end
+
+		end
+
+	end
+
 end
 
 function GM:HUDPaintPlayers()

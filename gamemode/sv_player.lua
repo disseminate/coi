@@ -314,24 +314,6 @@ function meta:Loadout( first )
 		end
 	end
 
-	local w = self:GetActiveWeapon();
-	if( w and w:IsValid() and w != NULL ) then
-
-		if( w.NoDraw ) then
-
-			for _, v in pairs( self:GetWeapons() ) do
-
-				if( !v.NoDraw ) then
-					self:SelectWeapon( v:GetClass() );
-					break;
-				end
-
-			end
-
-		end
-
-	end
-
 end
 
 function GM:EntityTakeDamage( ply, dmg )
@@ -351,12 +333,16 @@ function GM:EntityTakeDamage( ply, dmg )
 			return true;
 		end
 
+		if( ply.Safe ) then
+			return true;
+		end
+
 		local consc = false;
 		local fattac = nil;
 
 		if( i and i:IsValid() ) then
 			
-			if( i:GetClass() == "coi_money" ) then
+			if( i:GetClass() == "coi_money" or ( i:GetClass() == "coi_trickbag" and dmg:GetDamageType() != DMG_BLAST ) ) then
 
 				consc = true;
 				dmg:SetDamage( 100 );

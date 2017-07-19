@@ -26,8 +26,8 @@ function SWEP:Attack()
 	trace.start = self.Owner:GetShootPos();
 	trace.endpos = trace.start + self.Owner:GetAimVector() * 200;
 	trace.filter = self.Owner;
-	trace.mins = Vector( -12, -12, -12 );
-	trace.maxs = Vector( 12, 12, 12 );
+	trace.mins = Vector( -8, -8, -8 );
+	trace.maxs = Vector( 8, 8, 8 );
 
 	self.Owner:LagCompensation( true );
 	local tr = util.TraceHull( trace );
