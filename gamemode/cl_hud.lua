@@ -61,6 +61,8 @@ function GM:HUDPaint()
 
 	if( self:GetState() == STATE_GAME ) then
 
+		self:HUDPaintUnconsciousness();
+
 		self:HUDPaintMoney();
 		self:HUDPaintPlayers();
 		self:HUDPaintCops();
@@ -69,8 +71,6 @@ function GM:HUDPaint()
 		self:HUDPaintWeapon();
 		self:HUDPaintDirectionArrow();
 		self:HUDPaintGetToTruck();
-
-		self:HUDPaintUnconsciousness();
 
 	end
 

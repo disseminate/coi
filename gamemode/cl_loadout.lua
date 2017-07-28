@@ -484,7 +484,7 @@ function GM:CreateLoadoutPanel()
 						net.SendToServer();
 
 						local mdl = GAMEMODE:CreateModelPanel( self, FILL, 0, 0, item.Model, Vector( 50, 50, 20 ), nil, 20 );
-						GAMEMODE:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+						GAMEMODE:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 4, 4, 4, 4 );
 						mdl.Item = v;
 						mdl:Droppable( "item" );
 						function mdl.DoClick( mdl )
@@ -626,8 +626,11 @@ function GM:ResetLoadoutInventory()
 			local ih = item.H * i.IconSize;
 			mdl = self:CreateModelPanel( i, NODOCK, iw, ih, item.Model, Vector( 50, 50, 20 ), nil, 20 );
 			mdl:SetPos( ( v.X - 1 ) * i.IconSize, ( v.Y - 1 ) * i.IconSize );
-			
-			self:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+		
+			self:CreateLabel( mdl, BOTTOM, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+			local l = self:CreateLabel( mdl, BOTTOM, "COI 14", item.Primary and "Primary" or "Secondary", 3 );
+			l:DockMargin( 0, 4, 4, 0 );
+			l:SetTextColor( self:GetSkin().COLOR_GRAY );
 
 			mdl.Item = k;
 			mdl:Droppable( "item" );
