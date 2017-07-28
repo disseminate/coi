@@ -628,7 +628,7 @@ function GM:ResetLoadoutInventory()
 			mdl:SetPos( ( v.X - 1 ) * i.IconSize, ( v.Y - 1 ) * i.IconSize );
 		
 			self:CreateLabel( mdl, BOTTOM, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
-			local l = self:CreateLabel( mdl, BOTTOM, "COI 14", item.Primary and "Primary" or "Secondary", 3 );
+			local l = self:CreateLabel( mdl, BOTTOM, "COI 14", item.Secondary and "Secondary" or "Primary", 3 );
 			l:DockMargin( 0, 4, 4, 0 );
 			l:SetTextColor( self:GetSkin().COLOR_GRAY );
 
