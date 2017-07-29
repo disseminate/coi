@@ -78,6 +78,17 @@ function GM:StateThink()
 
 		end
 
+		if( s == STATE_GAME ) then
+
+			if( self:GetSetting( "showed_first_message", 0 ) == 0 ) then
+
+				self:SetSetting( "showed_first_message", 1 );
+				chat.AddText( GAMEMODE:GetSkin().COLOR_WHITE, I18( "first_message" ) );
+
+			end
+
+		end
+
 	end
 
 	if( s == self.CacheState ) then
