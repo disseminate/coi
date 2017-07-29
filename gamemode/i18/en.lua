@@ -1,3 +1,5 @@
+-- en: English
+
 EXPORTS["en"] = {
 	["press_space"] = "Press Space",
 	["cop"] = "Cop",
@@ -44,5 +46,7 @@ EXPORTS["en"] = {
 	["wrong_truck"] = "Wrong truck! You're looking for the truck with the same color as",
 
 	["you_earned"] = "You earned",
-	["for_your_team"] = "for your team"
+	["for_your_team"] = "for your team",
+
+	["first_message"] = "Get money from the bank and return it to your truck!"
 };

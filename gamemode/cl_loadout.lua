@@ -19,9 +19,9 @@ function GM:CreateLoadoutPanel()
 		local l = self:CreateLabel( p1, LEFT, "COI Title 64", I18( "select_loadout" ), 7 );
 		local p2 = self:CreatePanel( p1, RIGHT, 200, 0 );
 		p2:DockPadding( 0, 17, 0, 17 );
-			local l = self:CreateLabel( p2, TOP, "COI 16", "Conflict of Interest β", 9 );
+			local l = self:CreateLabel( p2, TOP, "COI 16", "Conflict of Interest " .. COI_VERSION, 9 );
 			l:SetTextColor( Alpha( self:GetSkin().COLOR_WHITE, 0.7 ) );
-			local l = self:CreateLabel( p2, TOP, "COI 14", "Everything subject to change.", 9 );
+			local l = self:CreateLabel( p2, TOP, "COI 14", "by disseminate", 9 );
 			l:SetTextColor( Alpha( self:GetSkin().COLOR_WHITE, 0.6 ) );
 
 	local p1 = self:CreatePanel( self.Loadout, BOTTOM, 0, 68 );

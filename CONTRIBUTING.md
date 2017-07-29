@@ -8,7 +8,7 @@ All strings that the player sees must be internationalized (see [I18](#i18)).
 
 ## Mapping
 
-Use the `coi.fgd` provided in this repository.
+Use the `coi.fgd` provided in this repository. In addition, the `.vmf` for `coi_test` is provided in `content/maps` (needs CS:S content).
 
 ### coi_truck
 
@@ -20,4 +20,4 @@ Place these in the vault. You can put any number of these in, as long as there's
 
 ## I18
 
-If you'd like to translate the gamemode, you are welcome! Look at `gamemode/i18/en.lua` as a starting point. The language code (`en`) will be what's displayed, according to the Garry's Mod main menu language selection.
+If you'd like to translate the gamemode, you are welcome! Look at `gamemode/i18/en.lua` as a starting point. Whatever language the client has set (`en`, `fr` etc.) will be what's displayed, according to the Garry's Mod main menu language selection.
