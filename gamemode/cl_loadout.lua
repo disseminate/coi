@@ -57,7 +57,7 @@ function GM:CreateLoadoutPanel()
 	local p1 = self:CreatePanel( self.Loadout, LEFT, ScrW() * 0.3, 0 );
 		p1:DockMargin( 0, 0, 20, 0 );
 		local p2 = self:CreatePanel( p1, TOP, 0, 30 );
-			self:CreateLabel( p2, LEFT, "COI Title 30", I18( "your_team" ), 7 ):DockMargin( 0, 0, 10, 0 );
+			self:CreateLabel( p2, LEFT, "COI Title 30", I18( "your_team" ), 4 ):DockMargin( 0, 0, 10, 0 );
 			local l = self:CreateLabel( p2, FILL, "COI Title 24", "Team Green", 4 ):BindInput( function( panel )
 				panel:SetTextColor( team.GetColor( LocalPlayer():Team() ) );
 				return team.GetName( LocalPlayer():Team() );
@@ -276,6 +276,7 @@ function GM:CreateLoadoutPanel()
 			local a, b = itemModel.Entity:GetModelBounds();
 			itemModel:SetLookAt( ( a + b ) / 2 );
 			itemModel:DockMargin( 0, 0, 0, 10 );
+			itemModel:SetTooltip( self.Items[item].Name );
 			
 			local p3 = self:CreatePanel( p2, FILL );
 				local p4 = self:CreatePanel( p3, TOP, 0, 24 );
@@ -485,6 +486,7 @@ function GM:CreateLoadoutPanel()
 
 						local mdl = GAMEMODE:CreateModelPanel( self, FILL, 0, 0, item.Model, Vector( 50, 50, 20 ), nil, 20 );
 						GAMEMODE:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 4, 4, 4, 4 );
+						mdl:SetTooltip( item.Name );
 						mdl.Item = v;
 						mdl:Droppable( "item" );
 						function mdl.DoClick( mdl )
@@ -573,6 +575,7 @@ function GM:CreateLoadoutPanel()
 
 						local mdl = GAMEMODE:CreateModelPanel( self, FILL, 0, 0, item.Model, Vector( 50, 50, 20 ), nil, 20 );
 						GAMEMODE:CreateLabel( mdl, FILL, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
+						mdl:SetTooltip( item.Name );
 						mdl.Item = v;
 						mdl:Droppable( "item" );
 						function mdl.DoClick( mdl )
@@ -626,9 +629,10 @@ function GM:ResetLoadoutInventory()
 			local ih = item.H * i.IconSize;
 			mdl = self:CreateModelPanel( i, NODOCK, iw, ih, item.Model, Vector( 50, 50, 20 ), nil, 20 );
 			mdl:SetPos( ( v.X - 1 ) * i.IconSize, ( v.Y - 1 ) * i.IconSize );
+			mdl:SetTooltip( item.Name );
 		
 			self:CreateLabel( mdl, BOTTOM, "COI 18", item.Name, 3 ):DockMargin( 0, 0, 4, 4 );
-			local l = self:CreateLabel( mdl, BOTTOM, "COI 14", item.Secondary and "Secondary" or "Primary", 3 );
+			local l = self:CreateLabel( mdl, BOTTOM, "COI 14", item.Secondary and I18( "secondary" ) or I18( "primary" ), 3 );
 			l:DockMargin( 0, 4, 4, 0 );
 			l:SetTextColor( self:GetSkin().COLOR_GRAY );
 
