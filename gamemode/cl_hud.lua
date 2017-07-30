@@ -17,6 +17,8 @@ function GM:HUDShouldDraw( name )
 
 end
 
+SCREEN_PADDING = 40;
+
 local HUDApproaches = { };
 local HUDTimes = { };
 function HUDApproach( val, targ, default, speed )
@@ -141,17 +143,17 @@ function GM:HUDPaintTimer()
 	local totalW = w + w2 + 4;
 	local padding = 6;
 	surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
-	surface.DrawRect( ScrW() / 2 - w / 2 - padding, 40, totalW + padding * 2, 48 + padding * 2 );
+	surface.DrawRect( ScrW() / 2 - w / 2 - padding, SCREEN_PADDING, totalW + padding * 2, h + padding * 2 );
 
 	surface.SetFont( "COI Title 48" );
 
-	surface.SetTextPos( ScrW() / 2 - w / 2, 40 + padding );
+	surface.SetTextPos( ScrW() / 2 - w / 2, SCREEN_PADDING + padding );
 	surface.DrawText( text );
 
 	surface.SetFont( "COI Title 24" );
 
 	surface.SetTextColor( self:GetSkin().COLOR_GRAY );
-	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, 40 + padding );
+	surface.SetTextPos( ScrW() / 2 + w / 2 + 4, SCREEN_PADDING + padding );
 	surface.DrawText( text2 );
 
 end
@@ -163,14 +165,14 @@ function GM:HUDPaintHealth()
 	local pad = 2;
 
 	surface.SetDrawColor( self:GetSkin().COLOR_GLASS );
-	surface.DrawRect( 40, ScrH() - 40 - bh, bw, bh );
+	surface.DrawRect( SCREEN_PADDING, ScrH() - SCREEN_PADDING - bh, bw, bh );
 
 	local hp = HUDApproach( "health", math.max( LocalPlayer():Health(), 0 ), LocalPlayer():GetMaxHealth() );
 
 	if( hp > 0 ) then
 		
 		surface.SetDrawColor( self:GetSkin().COLOR_HEALTH );
-		surface.DrawRect( 40 + pad, ScrH() - 40 - bh + pad, ( bw - pad * 2 ) * ( hp / LocalPlayer():GetMaxHealth() ), bh - pad * 2 );
+		surface.DrawRect( SCREEN_PADDING + pad, ScrH() - SCREEN_PADDING - bh + pad, ( bw - pad * 2 ) * ( hp / LocalPlayer():GetMaxHealth() ), bh - pad * 2 );
 
 	end
 
@@ -178,7 +180,7 @@ function GM:HUDPaintHealth()
 
 	surface.SetFont( "COI 20" );
 	local w, h = surface.GetTextSize( hp );
-	surface.SetTextPos( 40 + bw / 2 - w / 2, ScrH() - 40 - bh + bh / 2 - h / 2 );
+	surface.SetTextPos( SCREEN_PADDING + bw / 2 - w / 2, ScrH() - SCREEN_PADDING - bh + bh / 2 - h / 2 );
 	surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 	surface.DrawText( hp );
 
@@ -202,7 +204,7 @@ function GM:HUDPaintWeapon()
 
 	local nw = #LocalPlayer():GetWeapons();
 	local padding = 6;
-	local y = 40;
+	local y = SCREEN_PADDING;
 
 	for k, v in pairs( LocalPlayer():GetWeapons() ) do
 
@@ -210,6 +212,8 @@ function GM:HUDPaintWeapon()
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 		local t = v:GetPrintName();
 		local w, h = surface.GetTextSize( t );
+
+		local xW = 200 * ( ScrW() / 1920 );
 
 		local bw;
 		if( v == LocalPlayer():GetActiveWeapon() ) then
@@ -220,9 +224,9 @@ function GM:HUDPaintWeapon()
 			surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
 		end
 
-		surface.DrawRect( ScrW() - 40 - bw - padding * 2, y, bw + padding * 2, h + padding * 2 );
+		surface.DrawRect( ScrW() - SCREEN_PADDING - bw - padding * 2, y, bw + padding * 2, h + padding * 2 );
 
-		surface.SetTextPos( ScrW() - 40 - w - padding, y + padding );
+		surface.SetTextPos( ScrW() - SCREEN_PADDING - w - padding, y + padding );
 		surface.DrawText( t );
 
 		y = y + h + padding * 2 + 10;
@@ -245,17 +249,17 @@ function GM:HUDPaintWeapon()
 		local padding = 6;
 
 		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
-		surface.DrawRect( ScrW() - 40 - totalW - padding * 2, ScrH() - 40 - 64 - padding * 2, totalW + padding * 2, 64 + padding * 2 );
+		surface.DrawRect( ScrW() - SCREEN_PADDING - totalW - padding * 2, ScrH() - SCREEN_PADDING - 64 - padding * 2, totalW + padding * 2, 64 + padding * 2 );
 
-		local x = ScrW() - 40 - w - padding;
+		local x = ScrW() - SCREEN_PADDING - w - padding;
 		surface.SetFont( "COI Title 30" );
-		surface.SetTextPos( x, ScrH() - 40 - 64 - padding );
+		surface.SetTextPos( x, ScrH() - SCREEN_PADDING - 64 - padding );
 		surface.DrawText( t );
 		
 		surface.SetFont( "COI Title 64" );
 
 		x = x - w2 - 10;
-		surface.SetTextPos( x, ScrH() - 40 - h2 - padding );
+		surface.SetTextPos( x, ScrH() - SCREEN_PADDING - h2 - padding );
 		surface.DrawText( t2 );
 
 	elseif( clip ) then
@@ -268,9 +272,9 @@ function GM:HUDPaintWeapon()
 		local padding = 6;
 
 		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
-		surface.DrawRect( ScrW() - 40 - w - padding * 2, ScrH() - 40 - 64 - padding * 2, w + padding * 2, 64 + padding * 2 );
+		surface.DrawRect( ScrW() - SCREEN_PADDING - w - padding * 2, ScrH() - SCREEN_PADDING - 64 - padding * 2, w + padding * 2, 64 + padding * 2 );
 
-		surface.SetTextPos( ScrW() - 40 - w - padding, ScrH() - 40 - h - padding );
+		surface.SetTextPos( ScrW() - SCREEN_PADDING - w - padding, ScrH() - SCREEN_PADDING - h - padding );
 		surface.DrawText( t );
 
 	end
@@ -547,7 +551,7 @@ function surface.PaintDirectionArrow( x, y, tpos, a )
 
 	surface.SetDrawColor( GAMEMODE:GetSkin().COLOR_WHITE );
 	surface.SetMaterial( GAMEMODE:GetSkin().ICON_ARROW );
-	surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 40 - 100, 64, 64, 90 - d );
+	surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - SCREEN_PADDING - 100, 64, 64, 90 - d );
 
 end
 
@@ -659,7 +663,7 @@ function GM:HUDPaintDirectionArrow()
 
 		if( a > 0 ) then
 
-			surface.PaintDirectionArrow( ScrW() / 2, ScrH() - 40 - 100, tpos, a );
+			surface.PaintDirectionArrow( ScrW() / 2, ScrH() - SCREEN_PADDING - 100, tpos, a );
 
 			surface.SetAlphaMultiplier( a );
 
@@ -671,9 +675,9 @@ function GM:HUDPaintDirectionArrow()
 				local padding = 6;
 
 				surface.SetDrawColor( self:GetSkin().COLOR_GLASS_LIGHT );
-				surface.DrawRect( ScrW() / 2 - w / 2 - padding, ScrH() - 40 - h - padding * 2, w + padding * 2, h + padding * 2 );
+				surface.DrawRect( ScrW() / 2 - w / 2 - padding, ScrH() - SCREEN_PADDING - h - padding * 2, w + padding * 2, h + padding * 2 );
 
-				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 40 - h - padding );
+				surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - SCREEN_PADDING - h - padding );
 				surface.DrawText( t );
 
 			surface.SetAlphaMultiplier( 1 );
@@ -737,17 +741,20 @@ function GM:HUDPaintGameOver()
 		surface.SetDrawColor( self:GetSkin().COLOR_GLASS_DARK );
 		surface.DrawRect( 0, 0, ScrW(), ScrH() );
 
+		surface.SetFont( "COI Title 30" );
+		local w_30, h_30 = surface.GetTextSize( "h" );
+
 		surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 		surface.SetFont( "COI 18" );		
 		local t = I18( "next_round_begins" );
 		local w, h = surface.GetTextSize( t );
-		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - 30 - 40 - 10 - h );
+		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - SCREEN_PADDING - h_30 - 10 - h );
 		surface.DrawText( t );
 
 		surface.SetFont( "COI Title 30" );		
 		local t = string.ToMinutesSeconds( self:TimeLeftInState() );
 		local w, h = surface.GetTextSize( t );
-		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - h - 40 );
+		surface.SetTextPos( ScrW() / 2 - w / 2, ScrH() - SCREEN_PADDING - h_30 );
 		surface.DrawText( t );
 
 	surface.SetAlphaMultiplier( 1 );
@@ -848,8 +855,16 @@ function GM:HUDPaintGameOver()
 			HUDClear( "gameover_" .. i );
 		end
 
+		surface.SetFont( "COI Title 30" );
+		local w_30, h_30 = surface.GetTextSize( "h" );
+		surface.SetFont( "COI Title 64" );
+		local w_64, h_64 = surface.GetTextSize( "h" );
+
+		local pad = 40 * ( ScrH() / 1080 );
+		local pPad = 10 * ( ScrH() / 1080 );
+
 		local numTeam = team.NumPlayers( LocalPlayer():Team() );
-		local totalY = numTeam * 30 + ( numTeam - 1 ) * 10 + 40 + 64;
+		local totalY = numTeam * h_30 + ( numTeam - 1 ) * pPad + pad + h_64;
 
 		surface.SetFont( "COI Title 64" );
 		surface.SetTextColor( team.GetColor( LocalPlayer():Team() ) );
@@ -879,7 +894,7 @@ function GM:HUDPaintGameOver()
 
 					local t = v:Nick();
 					local w, h = surface.GetTextSize( t );
-					local dest = ScrH() / 2 - totalY / 2 + 64 + 40 + ( 30 + 10 ) * ( k - 1 );
+					local dest = ScrH() / 2 - totalY / 2 + h_64 + pad + ( h_30 + pPad ) * ( k - 1 );
 					if( dt < 9 ) then
 						local ym = HUDEase( "gameover_pl" .. k, 1, -ScrH() * 0.2, dest, 0, 1 );
 						surface.SetTextPos( ScrW() / 2 - w - 40, ym );
@@ -964,7 +979,7 @@ function GM:HUDPaintGameOver()
 
 				local t = "$" .. string.Comma( amt );
 				local w, h = surface.GetTextSize( t );
-				local dest = ScrH() / 2 - totalY / 2 + 64 + 40 + ( 30 + 10 ) * ( k - 1 );
+				local dest = ScrH() / 2 - totalY / 2 + h_64 + pad + ( h_30 + pPad ) * ( k - 1 );
 				if( dt < 9 ) then
 					surface.SetTextPos( ScrW() / 2 + 40, dest );
 				else
@@ -982,7 +997,15 @@ function GM:HUDPaintGameOver()
 
 		dt = dt - 20;
 
-		local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 );
+		local pad = 40 * ( ScrH() / 1080 );
+
+		surface.SetFont( "COI Title 30" );
+		local w_30, h_30 = surface.GetTextSize( "h" );
+		surface.SetFont( "COI Title 64" );
+		local w_64, h_64 = surface.GetTextSize( "h" );
+
+		local y0 = ScrH() / 2 - ( h_64 * 5 + pad * 4 ) / 2; -- 5 stats
+		local y = y0;
 
 		local awards = { I18( "most_bags_collected" ), I18( "most_money" ), I18( "most_kills" ), I18( "most_knockouts" ), I18( "most_cops" ) };
 		surface.SetFont( "COI Title 30" );
@@ -1001,13 +1024,13 @@ function GM:HUDPaintGameOver()
 			end
 
 			surface.DrawText( t );
-			y = y + 64 + 40;
+			y = y + h_64 + pad;
 
 		end
 
 		if( dt > 2 ) then
 
-			local y = ScrH() / 2 - ( 20 + 64 + 40 + 64 ) - 17;
+			local y = y0 - ( h_64 - h_30 ) / 2;
 
 			local best = 1;
 			local bestAmt = -1;
@@ -1089,7 +1112,7 @@ function GM:HUDPaintGameOver()
 
 							surface.SetTextColor( self:GetSkin().COLOR_WHITE );
 							local t = "with " .. data[k];
-							surface.SetTextPos( xm + w + 20, y + 34 );
+							surface.SetTextPos( xm + w + 20, y + h_64 - h_30 );
 
 							surface.DrawText( t );
 
@@ -1115,7 +1138,7 @@ function GM:HUDPaintGameOver()
 
 				end
 
-				y = y + 64 + 40;
+				y = y + h_64 + pad;
 
 			end
 

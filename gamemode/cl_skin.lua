@@ -1,16 +1,21 @@
 local sizes = { 12, 14, 16, 18, 20, 24, 30, 48, 64, 128 };
 
+local h = math.min( ScrW() / 1920, 1 );
+if( h < 1 ) then
+	h = ( h / 2 ) + 0.5;
+end
+
 for _, v in pairs( sizes ) do
 
 	surface.CreateFont( "COI " .. v, {
 		font = "Open Sans",
-		size = v,
+		size = math.ceil( v * h ),
 		weight = 500
 	} );
 
 	surface.CreateFont( "COI Title " .. v, {
 		font = "Arvo",
-		size = v,
+		size = math.ceil( v * h ),
 		weight = 500
 	} );
 
@@ -118,6 +123,20 @@ function SKIN:PaintCheckBox( panel, w, h )
 		surface.SetDrawColor( self.COLOR_WHITE );
 		surface.DrawRect( w / 3, h / 3, w * ( 1 / 3 ), h * ( 1 / 3 ) );
 
+	end
+
+end
+
+function SKIN:PaintTooltip( panel, w, h )
+
+	surface.SetDrawColor( self.COLOR_GLASS_DARK );
+	surface.DrawRect( 0, 0, w, h );
+
+	if( !panel._SetUp ) then
+		panel._SetUp = true;
+
+		panel:SetFont( "COI 16" );
+		panel:SetTextColor( self.COLOR_WHITE );
 	end
 
 end
