@@ -31,7 +31,12 @@ function ENT:Initialize()
 
 		else
 
-			self:SetModel( table.Random( self.CopModels ) );
+			local m = table.Random( self.CopModels );
+			if( util.IsValidModel( m ) ) then
+				self:SetModel( m );
+			else
+				self:SetModel( "models/player/swat.mdl" );
+			end
 
 		end
 
