@@ -11,3 +11,7 @@ Checkout this repository to `garrysmod/garrysmod/gamemodes`.
 ## Maps
 
 `coi_*` maps by default have the ability to function with COI. No setup required!
+
+## Content
+
+The workshop content collection (don't worry, there's not much!) can be found [here](http://steamcommunity.com/sharedfiles/filedetails/?id=972128319).
