@@ -18,6 +18,10 @@ Place these where you want spawnpoints/loot points to be. Players spawn at the b
 
 Place these in the vault. You can put any number of these in, as long as there's at least one.
 
+### coi_copspawner
+
+Place where you want cops to spawn in. There should be a decent peppering of these throughout the map.
+
 ## I18
 
 If you'd like to translate the gamemode, you are welcome! Look at `gamemode/i18/en.lua` as a starting point. Whatever language the client has set (`en`, `fr` etc.) will be what's displayed, according to the Garry's Mod main menu language selection.
