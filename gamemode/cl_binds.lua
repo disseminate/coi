@@ -2,7 +2,7 @@ function GM:PlayerBindPress( ply, bind, down )
 
 	if( down ) then
 		
-		if( bind == "+jump" and !LocalPlayer().Joined ) then
+		if( input.IsKeyDown( KEY_SPACE ) and !LocalPlayer().Joined ) then
 
 			LocalPlayer().Joined = true;
 			net.Start( "nJoin" );
