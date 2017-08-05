@@ -165,38 +165,38 @@ function GM:ResetMapTrucks()
 end
 
 local teamNames = {
-	"Lion",
-	"Crocodile",
-	"Bear",
 	"Stallion",
-	"Wasp",
-	"Cobra",
-	"Mosquito",
-	"Scorpion",
-	"Union",
-	"Sexsmith",
-	"Lambda",
-	"Omega",
-	"Hunter",
-	"Blade",
-	"Scar",
-	"Hammer",
-	"Fist",
-	"Razor",
-	"Stab",
-	"Dagger",
-	"Reaper",
 	"Nomad",
 	"Star",
+	"Scar",
+	"Mosquito",
+	"Scorpion",
+	"Omega",
+	"Crocodile",
+	"Sexsmith",
+	"Hunter",
+	"Wasp",
+	"Bear",
+	"Lambda",
+	"Dagger",
+	"Razor",
+	"Lion",
+	"Fist",
+	"Stab",
+	"Hammer",
+	"Blade",
+	"Cobra",
+	"Reaper",
+	"Union",
 	"Phantom",
 	"12th Street"
 };
 
 local gangNames = {
-	"Crew",
-	"Team",
-	"Squad",
 	"Family",
+	"Squad",
+	"Team",
+	"Crew",
 	"Saints",
 	"Kings",
 	"Mafia",
@@ -212,9 +212,32 @@ function GM:InitializeTeams()
 	-- New team name per day.
 	math.randomseed( 1499450893 + tonumber( os.date( "%j", math.floor( os.time() - CurTime() ) ) ) );
 
-	for k, v in pairs( self.Teams ) do
+	local teamUsed = { };
+	local gangUsed = { };
 
-		team.SetUp( v, table.Random( teamNames ) .. " " .. table.Random( gangNames ), HSVToColor( ( v - 1 ) * 70, 0.5, 1 ) );
+	for k, v in pairs( self.Teams ) do
+		
+		local teamName = math.random( 1, #teamNames );
+		local gangName = math.random( 1, #gangNames );
+
+		while( table.HasValue( teamUsed, teamName ) ) do
+			teamName = teamName + 1;
+			if( teamName > #teamNames ) then
+				teamName = 1;
+			end
+		end
+
+		while( table.HasValue( gangUsed, gangName ) ) do
+			gangName = gangName + 1;
+			if( gangName > #gangNames ) then
+				gangName = 1;
+			end
+		end
+
+		table.insert( teamUsed, teamName );
+		table.insert( gangUsed, gangName );
+
+		team.SetUp( v, teamNames[teamName] .. " " .. gangNames[gangName], HSVToColor( ( v - 1 ) * 70, 0.5, 1 ) );
 
 	end
 
