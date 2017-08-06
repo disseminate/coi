@@ -501,3 +501,9 @@ function GM:GetFallDamage( ply, speed )
 	return 0;
 
 end
+
+function GM:PlayerShouldTaunt( ply, act )
+
+	return !ply.Safe;
+
+end
