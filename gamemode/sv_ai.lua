@@ -62,8 +62,8 @@ function GM:AIThink()
 
 	if( CurTime() >= self.NextAISpawn ) then
 
-		local minRate = ( 1 / #player.GetJoined() ) * 20;
-		local maxRate = ( 1 / #player.GetJoined() ) * 2;
+		local minRate = ( 1 / #player.GetJoined() ) * 30;
+		local maxRate = ( 1 / #player.GetJoined() ) * 6;
 		local mul = ( t - 60 * timeNPCsStart ) / ( STATE_TIMES[STATE_GAME] - 60 * timeNPCsStart );
 
 		self.NextAISpawn = CurTime() + Lerp( mul, minRate, maxRate );

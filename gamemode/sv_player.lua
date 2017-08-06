@@ -89,6 +89,8 @@ function GM:PlayerSpawn( ply )
 
 	end
 
+	ply.ActiveWep = nil;
+
 	ply:SetColorToTeam();
 	ply:SpawnAtTruck();
 
@@ -447,6 +449,20 @@ function GM:ConsciousnessThink()
 
 end
 
+function GM:PlayerSwitchWeapon( ply, old, n )
+
+	if( n and n:IsValid() ) then
+		ply.ActiveWep = n:GetClass();
+	end
+
+end
+
+function GM:PlayerCanPickupWeapon( ply, wep )
+
+	return !ply:HasWeapon( wep:GetClass() );
+
+end
+
 function GM:PlayerDeath( ply, inflictor, attacker )
 
 	self.BaseClass:PlayerDeath( ply, inflictor, attacker );
@@ -458,6 +474,19 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 		ang.r = 0;
 
 		ply:DropMoney( true, ang:Forward() );
+
+	end
+
+	local w = ply.ActiveWep;
+	if( w and w != "weapon_coi_fists" ) then
+
+		local gun = ents.Create( w );
+		gun:SetPos( ply:GetPos() + Vector( 0, 0, 48 ) );
+		gun:SetAngles( Angle( math.Rand( -180, 180 ), math.Rand( -180, 180 ), math.Rand( -180, 180 ) ) );
+		gun:Spawn();
+		gun:Activate();
+		gun:GetPhysicsObject():SetVelocity( ply:GetPhysicsObject():GetVelocity() );
+		gun:GetPhysicsObject():AddAngleVelocity( Vector( math.Rand( -100, 100 ), math.Rand( -200, 200 ), 0 ) );
 
 	end
 
