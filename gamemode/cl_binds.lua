@@ -34,13 +34,14 @@ function GM:PlayerBindPress( ply, bind, down )
 			end
 
 			local tab = ply:GetWeapons();
+			local keys = table.GetKeys( tab );
 			local wep = ply:GetActiveWeapon();
 			if( wep and wep:IsValid() and wep != NULL ) then
 
 				local cur;
-				for k, v in pairs( tab ) do
+				for k, v in pairs( keys ) do
 
-					if( v == wep ) then
+					if( tab[v] == wep ) then
 
 						cur = k;
 						break;
@@ -53,11 +54,11 @@ function GM:PlayerBindPress( ply, bind, down )
 
 					local slot = cur + add;
 					if( slot < 1 ) then
-						self.NextWeapon = tab[#tab];
-					elseif( slot > #tab ) then
-						self.NextWeapon = tab[1];
+						self.NextWeapon = tab[keys[#keys]];
+					elseif( slot > #keys ) then
+						self.NextWeapon = tab[keys[1]];
 					else
-						self.NextWeapon = tab[slot];
+						self.NextWeapon = tab[keys[slot]];
 					end
 
 				end

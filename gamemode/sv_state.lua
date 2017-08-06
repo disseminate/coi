@@ -56,6 +56,8 @@ function GM:Reset()
 
 		v.Cloaked = nil;
 
+		v.ActiveWep = nil;
+
 		v:StripWeapons();
 		v:Spawn();
 

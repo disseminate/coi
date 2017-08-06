@@ -71,6 +71,23 @@ function ENT:OnKilled( dmg )
 
 	end
 
+	local gun;
+
+	if( self.SMG ) then
+
+		gun = ents.Create( "weapon_coi_smg" );
+
+	else
+
+		gun = ents.Create( "weapon_coi_pistol" );
+
+	end
+
+	gun:SetPos( self:GetPos() + Vector( 0, 0, 48 ) );
+	gun:SetAngles( Angle( math.Rand( -180, 180 ), math.Rand( -180, 180 ), math.Rand( -180, 180 ) ) );
+	gun:Spawn();
+	gun:Activate();
+
 end
 
 function ENT:SetupDataTables()

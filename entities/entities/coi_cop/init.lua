@@ -46,7 +46,6 @@ function ENT:RunBehaviour()
 
 end
 
-
 function ENT:GetClosestPlayer()
 
 	local ply = nil;
